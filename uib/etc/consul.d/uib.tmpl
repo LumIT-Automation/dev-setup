@@ -1,0 +1,11 @@
+{{ range service "api-cisconx" }}
+  api-cisconx: {{ .Address }}:{{ .Port }};
+{{ end }}
+
+{{ range service "api-infoblox" }}
+  api-infoblox: {{ .Address }}:{{ .Port }};
+{{ end }}
+
+{{ range service "api-f5" }}
+  api-f5: {{ .Address }}:{{ .Port }};
+{{ end }}

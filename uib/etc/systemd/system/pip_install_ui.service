@@ -1,0 +1,20 @@
+[Unit]
+Description=pip_install
+#After=network-online.target
+#Wants=network-online.target
+After=systemd-networkd-wait-online.service
+Wants=systemd-networkd-wait-online.service
+
+[Service]
+Type=idle
+RemainAfterExit=no
+Restart=no
+KillMode=process
+ExecStart=pip install -r /var/www/ui-backend/backend/pip.requirements
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=pip_install
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+# Development nodes:
+	revp            10.0.111.10
+
+	uif             10.0.111.11
+	uifng           10.0.111.13
+
+	uib             10.0.111.12
+
+	api             10.0.111.20 # api_cisconx
+	api_infoblox    10.0.111.21
+	api_f5          10.0.111.22
+
+	aaa             10.0.111.100
+	udb             10.0.111.110
+
+	log             10.0.111.253
+	dns             10.0.111.254
+
+
+# Test nodes:
+    centos8         10.0.111.201
+	deb11           10.0.111.202

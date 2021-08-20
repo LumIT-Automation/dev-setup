@@ -1,0 +1,15 @@
+[Unit]
+After=network.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/consul-template.sh start
+ExecStop=/usr/bin/consul-template.sh stop
+KillMode=process
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=20
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

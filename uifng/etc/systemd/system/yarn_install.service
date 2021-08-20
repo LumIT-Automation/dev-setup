@@ -1,0 +1,19 @@
+[Unit]
+Description=yarn_install
+After=systemd-networkd-wait-online.service
+Wants=systemd-networkd-wait-online.service
+
+[Service]
+Type=idle
+RemainAfterExit=no
+Restart=no
+KillMode=process
+WorkingDirectory=/var/www/ui-frontend-ng
+ExecStart=yarn install
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=yarn_install
+
+[Install]
+WantedBy=multi-user.target

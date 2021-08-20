@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitor /var/www/ui-frontend/package.json for changes.
+After=systemd-networkd-wait-online.service
+Wants=systemd-networkd-wait-online.service
+Wants=yarn_install.service
+
+[Path]
+PathChanged=/var/www/ui-frontend/package.json
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+.idea
+.vagrant
+.env
+.vpn.env
+*swp
+*deb
+*rpm
+!samba_*deb
+sources.list

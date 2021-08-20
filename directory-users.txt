@@ -1,0 +1,33 @@
+Valid users (already created for the development):
+
+    Superadmin
+    ^^^^^^^^^^
+    username                    password
+
+    admin@automation.local      password
+
+
+    Active Directory
+    ^^^^^^^^^^^^^^^^
+    username    password   groups
+
+    userAdmin   password   groupRequired groupAdmin
+    userStaff   password   groupRequired groupStaff
+    userRo1     password   groupRequired groupReadOnly
+
+    groupAdmin, groupStaff, groupReadOnly are contained in groupGrandPa.
+
+    Authentication:
+        1 # Simple group required configuration.
+        2 # Group of groups configuration (required nested groups)
+
+        --> configuration in sso / identityProvider/ad_conf.py file: users can login (obtain a JWT token) only if:
+        1 # they belong to the group "groupRequired" [as in binary sso package's scripts];
+        2 # their groups are contained within groupGrandPa [as in development].
+
+
+    Radius
+    ^^^^^^
+    username    password
+
+    user-tigers password

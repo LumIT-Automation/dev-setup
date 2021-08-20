@@ -1,0 +1,8 @@
+# List running containers
+podman ps
+
+# Run a Bash within a container
+podman exec -it containerName bash
+
+# Stop the container
+podman stop containerName
