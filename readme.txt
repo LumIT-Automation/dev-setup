@@ -29,7 +29,7 @@ Development infrastructure:
     cd dev-setup
     # vagrant up
     # actually test nodes's creation can be skipped now. A minimal machine set can be run by (for example with F5 support only):
-    vagrant up udb aaa dns log revp uifng uib api-f5
+    vagrant up udb aaa dns log revp uifng uib apif5
         --> guests will mount the nfs share host-side, where related code is saved (all is automated by Vagrant)
 
     In order to avoid inserting the sudo password every time, use the following sudoers file.
