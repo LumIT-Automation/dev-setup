@@ -1,5 +1,4 @@
-Development infrastructure installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+DEVELOPMENT INFRASTRUCTURE INFORMATION
 
 A Vagrant virtual machine is set up and run for each node (a subnet where all nodes are placed is also pulled up by Vagrant).
 An Active Directory/Radius node is created for the user authentication as well.
