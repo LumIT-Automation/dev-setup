@@ -27,7 +27,7 @@ Requirements:
 Development infrastructure:
     cd dev-setup
     # vagrant up
-    # actually test nodes's creation can be skipped now. A minimal machines set can be run by (for example with F5 support only):
+    # Actually test nodes's creation can be skipped now. A minimal machines set can be run by (for example with F5 support only):
     vagrant up udb aaa dns log revp uifng uib apif5
         --> guests will mount the nfs share host-side, where related code is saved (all is automated by Vagrant)
 	
@@ -83,6 +83,8 @@ Notes:
         vagrant halt <node>
         vagrant up <node>
         vagrant ssh <node>
+
+    Update database (only) on an already-created vm: vagrant provision <node> --provision-with db # for nodes with SQL database.
 
     Destroy everything:
         vagrant destroy -f <node>
