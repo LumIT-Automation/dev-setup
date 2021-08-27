@@ -392,6 +392,10 @@ Vagrant.configure("2") do |config|
       s.path = "api-infoblox/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+    api.vm.provision "db", type: "shell" do |s|
+      s.path = "api-infoblox/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
   end
 
   ############################################################################################
