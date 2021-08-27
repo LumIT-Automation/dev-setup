@@ -630,6 +630,51 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
+  # SMTP
+  ############################################################################################
+
+  config.vm.define :smtp do |smtp|
+    smtp.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "512"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    smtp.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "512"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+
+    smtp.vm.box = "debian/bullseye64"
+    # smtp.vm.box_version = ""
+
+    # Network.
+
+    smtp.vm.network :private_network, ip: "10.0.111.252"
+    smtp.vm.hostname = "smtp"
+
+    # Synced folders.
+    #if OS.linux?
+    #  smtp.vm.synced_folder "../smtp", "/var/www/smtp", type: "nfs"
+    #end
+
+    # Alternative debian mirror.
+    if File.exist?("sources.list")
+      smtp.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    smtp.vm.provision "shell" do |s|
+      s.path = "smtp/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+
+  end
+
+  ############################################################################################
   # Empty Centos8 vm
   ############################################################################################
 
