@@ -492,7 +492,10 @@ Vagrant.configure("2") do |config|
       s.path = "aaa/bootstrap.sh"
       s.args = ["--action", "install"]
     end
-
+    aaa.vm.provision "db", type: "shell" do |s|
+      s.path = "aaa/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
   end
 
   ############################################################################################
@@ -657,9 +660,9 @@ Vagrant.configure("2") do |config|
     smtp.vm.hostname = "smtp"
 
     # Synced folders.
-    #if OS.linux?
-    #  smtp.vm.synced_folder "../smtp", "/var/www/smtp", type: "nfs"
-    #end
+    if OS.linux?
+      smtp.vm.synced_folder "../smtp", "/var/smtp", type: "nfs", nfs_version: 4
+    end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")

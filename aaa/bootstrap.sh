@@ -41,11 +41,12 @@ function System_run()
             System_installDependencies
             System_pythonSetup
             System_syslogngInstall
+            System_mtaSetup
             System_ldapTlsSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            System_mariadbRestore
+            # System_mariadbRestore
             System_pipInstallDaemon_aaa
         else
             echo "A Debian Buster operating system is required for the installation. Aborting."
@@ -424,6 +425,15 @@ System_syslogngInstall()
 
 }
 
+
+
+System_mtaSetup()
+{
+    # Add mta entry in /etc/hosts (mta).
+    serverAddress="10.0.111.252"
+    sed -r -i '/ mta$/d' /etc/hosts
+    echo "$serverAddress    mta" >> /etc/hosts
+}
 
 # ##################################################################################################################################################
 # Main

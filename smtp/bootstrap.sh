@@ -158,7 +158,6 @@ EOF
     debconf-set-selections /tmp/postfix.selections
 
     #apt-mark hold grub-pc grub-pc-bin
-    #DEBIAN_FRONTEND=noninteractive apt -y upgrade
 
     apt install -y wget git unzip dnsutils net-tools dos2unix openconnect # base.
     DEBIAN_FRONTEND=noninteractive apt -y upgrade
