@@ -45,7 +45,7 @@ function System_run()
             # System_sqlitedbSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            System_mariadbRestore
+            # System_mariadbRestore
             System_consulAgentInstall
             System_redisSetup
             System_vpnSupplicantSetup
