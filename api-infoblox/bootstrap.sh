@@ -41,9 +41,9 @@ function System_run()
             System_installDependencies
             System_pythonSetup
             System_syslogngInstall
+            System_mtaSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            # System_mariadbRestore
             System_consulAgentInstall
             System_redisSetup
             System_lumitVpnSupplicantSetup
@@ -302,21 +302,6 @@ function System_apacheSetup()
 
 
 
-System_mariadbRestore()
-{
-    printf "\n* Restoring the database from its SQL dump...\n"
-
-    mysql -e 'DROP DATABASE IF EXISTS `api`;'
-    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -e "GRANT USAGE ON *.* TO 'api'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `api`.* TO `api`@`localhost`;'
-
-    mysql api < /var/www/api/infoblox/sql/infoblox.schema.sql
-    mysql api < /var/www/api/infoblox/sql/infoblox.initialData.sql
-}
-
-
-
 System_consulAgentInstall()
 {
     printf "\n* Setting up the Consul agent...\n"
@@ -374,6 +359,16 @@ System_syslogngInstall()
 
     mkdir -p /var/log/automation
     systemctl restart syslog-ng
+}
+
+
+
+System_mtaSetup()
+{
+    # Add mta entry in /etc/hosts (mta).
+    serverAddress="10.0.111.252"
+    sed -r -i '/ mta$/d' /etc/hosts
+    echo "$serverAddress    mta" >> /etc/hosts
 }
 
 

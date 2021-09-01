@@ -38,6 +38,7 @@ function System_run()
             System_proxySet "$PROXY"
             System_installDependencies
             System_syslogngInstall
+            System_mtaSetup
             System_consulAgentInstall
             System_nginxSetup
         else
@@ -264,6 +265,15 @@ System_syslogngInstall()
     systemctl restart syslog-ng
 }
 
+
+
+System_mtaSetup()
+{
+    # Add mta entry in /etc/hosts (mta).
+    serverAddress="10.0.111.252"
+    sed -r -i '/ mta$/d' /etc/hosts
+    echo "$serverAddress    mta" >> /etc/hosts
+}
 
 # ##################################################################################################################################################
 # Main

@@ -46,7 +46,6 @@ function System_run()
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            # System_mariadbRestore
             System_pipInstallDaemon_aaa
         else
             echo "A Debian Buster operating system is required for the installation. Aborting."
@@ -248,24 +247,6 @@ function System_mariadbSetup()
         echo "MariaDB error: shell access disabled."
         exit 1
     fi
-}
-
-
-
-System_mariadbRestore()
-{
-    printf "\n* Restoring the database from its SQL dump...\n"
-
-    mysql -e 'DROP DATABASE IF EXISTS `sso`;'
-    mysql -e 'CREATE DATABASE `sso` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -e "GRANT USAGE ON *.* TO 'sso'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `sso`.* TO `sso`@`localhost`;'
-
-    mysql sso < /var/www/aaa/sso/sql/sso.sql
-
-    # Default admin user.
-    cd /var/www/aaa
-    echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin@automation.local', 'admin@automation.local', 'password')" | python manage.py shell
 }
 
 

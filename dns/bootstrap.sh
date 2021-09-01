@@ -39,6 +39,7 @@ function System_run()
             System_proxySet "$PROXY"
             System_installDependencies
             System_syslogngInstall
+            System_mtaSetup
             System_consulServerAgentInstall
         else
             echo "A Debian Buster operating system is required for the installation. Aborting."
@@ -203,6 +204,16 @@ System_syslogngInstall()
     mkdir -p /var/log/automation
     systemctl restart syslog-ng
 
+}
+
+
+
+System_mtaSetup()
+{
+    # Add mta entry in /etc/hosts (mta).
+    serverAddress="10.0.111.252"
+    sed -r -i '/ mta$/d' /etc/hosts
+    echo "$serverAddress    mta" >> /etc/hosts
 }
 
 # ##################################################################################################################################################
