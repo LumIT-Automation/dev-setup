@@ -38,6 +38,7 @@ function System_run()
             System_proxySet "$PROXY"
             System_installDependencies
             System_installPodman
+            System_postfixConfig
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
@@ -157,8 +158,6 @@ EOF
 
     debconf-set-selections /tmp/postfix.selections
 
-    #apt-mark hold grub-pc grub-pc-bin
-
     apt install -y wget git unzip dnsutils net-tools dos2unix openconnect # base.
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade
     DEBIAN_FRONTEND=noninteractive apt install -y postfix mutt s-nail bsd-mailx
@@ -173,6 +172,19 @@ function System_installPodman()
 
     apt install -y vim mc podman buildah
     apt clean
+}
+
+
+
+function System_postfixConfig()
+{
+    printf "\n* Configuring postfix...\n"
+
+    if [ -r /tmp/smtp-vars.conf ]; then
+        . /tmp/smtp-vars.conf
+        cp -r /var/smtp/etc/postfix/templates /etc/postfix
+        bash /var/smtp/usr/bin/postfix-setup.sh -f $myFrom -a $myTo -t smtp -r 192.168.10.53 -n 10.0.111.0/24
+    fi
 }
 
 # ##################################################################################################################################################

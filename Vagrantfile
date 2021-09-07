@@ -673,6 +673,11 @@ Vagrant.configure("2") do |config|
       smtp.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
     end
 
+    # SMTP config variables.
+    if File.exist?("smtp/smtp-vars.conf")
+      smtp.vm.provision "file", source: "smtp/smtp-vars.conf", destination: "/tmp/smtp-vars.conf"
+    end
+
     # Provision.
     smtp.vm.provision "shell" do |s|
       s.path = "smtp/bootstrap.sh"

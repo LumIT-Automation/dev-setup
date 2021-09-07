@@ -2,6 +2,7 @@
 .vagrant
 .env
 .vpn.env
+smtp/smtp-vars.conf
 *swp
 *deb
 *rpm
