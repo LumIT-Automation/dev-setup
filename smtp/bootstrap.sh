@@ -160,7 +160,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
 
     apt install -y wget git unzip dnsutils net-tools dos2unix openconnect # base.
-    DEBIAN_FRONTEND=noninteractive apt -y upgrade
+    #DEBIAN_FRONTEND=noninteractive apt -y upgrade
     DEBIAN_FRONTEND=noninteractive apt install -y postfix mutt s-nail bsd-mailx
     apt clean
 }
