@@ -180,17 +180,10 @@ function System_postfixConfig()
 {
     printf "\n* Configuring postfix...\n"
 
-    # smtp-vars.conf example:
-    #myFrom=myself@mydomain.com
-    #myTo=yourself@yourdomain.com
-    #relayHost=my.smtp.provider.com
-    #relayHostUser=myself@mydomain.com
-    #relayHostPwd=xxxxxxxxxx
-
     if [ -r /tmp/smtp-vars.conf ]; then
         . /tmp/smtp-vars.conf
         cp -r /var/smtp/etc/postfix/templates /etc/postfix
-        bash /var/smtp/usr/bin/postfix-setup.sh -f $myFrom -a $myTo -t authsmtp -r $relayHost -n 10.0.111.0/24 -u $relayHostUser:$relayHostPwd
+        bash /var/smtp/usr/bin/postfix-setup.sh -f $From -a $To -t authsmtp -r $relayHost -n 10.0.111.0/24 -u $relayHostUser:$relayHostPwd
     fi
 }
 

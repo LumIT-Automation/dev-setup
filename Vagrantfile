@@ -674,8 +674,8 @@ Vagrant.configure("2") do |config|
     end
 
     # SMTP config variables.
-    if File.exist?("smtp/smtp-vars.conf")
-      smtp.vm.provision "file", source: "smtp/smtp-vars.conf", destination: "/tmp/smtp-vars.conf"
+    if File.exist?(".env")
+      smtp.vm.provision "file", source: ".env", destination: "/tmp/smtp-vars.conf"
     end
 
     # Provision.
