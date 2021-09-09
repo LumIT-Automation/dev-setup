@@ -76,6 +76,8 @@ Notes:
 
     A .env file can be setup basing on the .env-example in order to VPN connect to the appliance (for example F5); this is used by the core development team.
     You can make use of it, if needed, of course in case modify to suit your needs.
+
+    The SMTP relay has to be configured via the .env file as well (see .env-example).
     
     Update code-base: only a git pull is needed
 
