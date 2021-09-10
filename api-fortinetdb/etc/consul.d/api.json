@@ -1,0 +1,18 @@
+{
+  "service": {
+    "id": "api-fortinetdb",
+    "name": "api-fortinetdb",
+    "tags": [
+      "api-fortinetdb"
+    ],
+    "port": 80
+  },
+  "check": {
+    "id": "api-fortinetdb",
+    "name": "HTTP API",
+    "http": "http://127.0.0.1/api/?consul-check",
+    "method": "GET",
+    "interval": "60s",
+    "timeout": "2s"
+  }
+}

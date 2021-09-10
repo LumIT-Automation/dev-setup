@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitor /var/www/api/api/pip.requirements for changes.
+After=systemd-networkd-wait-online.service
+Wants=systemd-networkd-wait-online.service
+Wants=pip_install_api.service
+
+[Path]
+PathChanged=/var/www/api/api/pip.requirements
+
+[Install]
+WantedBy=multi-user.target
