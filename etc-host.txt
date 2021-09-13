@@ -9,6 +9,7 @@
 	api cisconx     10.0.111.20
 	api infoblox    10.0.111.21
 	api f5          10.0.111.22
+	api fortinetdb  10.0.111.23
 
 	aaa             10.0.111.100
 	udb             10.0.111.110
@@ -19,5 +20,5 @@
 
 
 # Test nodes:
-        centos8         10.0.111.201
+    centos8         10.0.111.201
 	deb11           10.0.111.202
