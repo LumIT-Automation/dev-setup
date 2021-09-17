@@ -79,7 +79,8 @@ System_mariadbRestore()
     mysql api < /var/www/api/fortinetdb/sql/fortinetdb.schema.sql
     mysql api < /var/www/api/fortinetdb/sql/fortinetdb.initialData.sql
     mysql soc_db_clienti < /var/www/api/fortinetdb/sql/soc_db_clienti.sql
-    mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.sql
+    mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.schema.sql
+    mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.initialData.sql
 }
 
 
