@@ -772,12 +772,12 @@ Vagrant.configure("2") do |config|
 
     # Triggers.
     # Use a script to expand the vdisk with libvirtd.
-    if ! Vagrant.has_plugin?("vagrant-disksize")
-      centos8.trigger.after :up do |trigger|
-        trigger.info = "Expanding disk..."
-        trigger.run = {inline: "sudo resize_libvirtd.sh centos8 5 > /tmp/res.log"}
-      end
-    end
+    #if ! Vagrant.has_plugin?("vagrant-disksize")
+    #  centos8.trigger.after :up do |trigger|
+    #    trigger.info = "Expanding disk..."
+    #    trigger.run = {inline: "sudo resize_libvirtd.sh centos8 5 > /tmp/res.log"}
+    #  end
+    #end
 
     centos8.trigger.after :up do |trigger|
       trigger.info = "Expanding filesystem..."

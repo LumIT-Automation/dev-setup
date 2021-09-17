@@ -210,6 +210,7 @@ function System_mariadbSetup()
     systemctl restart mysql
 
     if mysql -e "exit" >/dev/null 2>&1; then
+        mysql -e "INSTALL PLUGIN federated SONAME 'ha_federatedx.so';"
         if [ "$(mysql --vertical -e "SELECT User FROM mysql.user WHERE User = 'api';" | tail -1 | awk '{print $2}')" == "" ]; then
             # User api not present: create.
             mysql -e "CREATE USER 'api'@'localhost' IDENTIFIED BY '$databaseUserPassword';"

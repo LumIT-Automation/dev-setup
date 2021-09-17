@@ -1,5 +1,6 @@
 [mariadb]
 plugin_load_add = server_audit
+plugin_load_add=federated='ha_federatedx.so'
 server_audit=FORCE_PLUS_PERMANENT
 server_audit_logging = on
 server-audit-output-type = syslog
