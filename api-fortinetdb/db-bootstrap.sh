@@ -81,6 +81,11 @@ System_mariadbRestore()
     mysql soc_db_clienti < /var/www/api/fortinetdb/sql/soc_db_clienti.sql
     mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.schema.sql
     mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.initialData.sql
+
+    # Insert the lista_comuni from ISTAT.
+    cd
+    /usr/bin/get_list_comunit.sh
+    cd -
 }
 
 

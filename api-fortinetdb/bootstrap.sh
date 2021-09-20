@@ -222,6 +222,9 @@ function System_mariadbSetup()
         echo "MariaDB error: shell access disabled."
         exit 1
     fi
+
+    cp -f /vagrant/api-fortinetdb/usr/bin/get_list_comunit.sh /usr/bin/get_list_comunit.sh
+    chmod 755 /usr/bin/get_list_comunit.sh
 }
 
 
