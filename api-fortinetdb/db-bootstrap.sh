@@ -84,7 +84,7 @@ System_mariadbRestore()
 
     # Insert the lista_comuni from ISTAT.
     cd
-    /usr/bin/get_list_comunit.sh
+    /usr/bin/get_list_comuni.sh
     cd -
 }
 
