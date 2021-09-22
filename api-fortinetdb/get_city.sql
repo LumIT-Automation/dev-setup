@@ -1,112 +1,107 @@
 /* Procedura che trova la citta' nella stringa indirizzo */
 
-delimiter ;
-drop procedure if exists P_find_city_in_address;
-delimiter //
-create procedure P_find_city_in_address(IN address varchar(255))
+DELIMITER ;
+DROP PROCEDURE IF EXISTS P_find_city_in_address;
+DELIMITER //
+CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
     BEGIN
-        declare done, idc, idres, nl, res, len int;
-        declare sstr, sstr2, city,  reg varchar(128);
+        declare done, idc,  nl int;
+        declare res_str, city, reg varchar(128);
         declare get_cities CURSOR FOR SELECT id, comune FROM comuni_italiani;
-        declare get_cities_tmp CURSOR FOR SELECT * FROM tmpMatches;
         declare CONTINUE HANDLER FOR NOT FOUND SET done = true;
 
-        drop temporary table if exists tmpMatches;
-        create temporary table tmpMatches(id int, city varchar(128));
+        DROP temporary TABLE IF EXISTS tmpMatches;
+        CREATE temporary TABLE tmpMatches(id int, comune varchar(128));
 
-        set done = 0;
-        OPEN get_cities;
+        SET done = 0;
+        OPEN get_cities; /* Scan the `comuni_italiani` TABLE. */
         g_city: LOOP
             FETCH get_cities INTO idc, city;
             IF done THEN LEAVE g_city; END IF;
 
-            /* Find if a word in the string address matche a city in the `comune` column. */
-            SELECT CONCAT('\\b', city, '\\b') into reg;
-            SELECT REGEXP_SUBSTR(address, reg) into sstr;
+            /* Check IF a word in the string address matches a city in the `comune` column. 
+               If so, insert INTO the tmpMatches TABLE. */
+            SELECT CONCAT('\\b', city, '\\b') INTO reg;
+            SELECT REGEXP_SUBSTR(address, reg) INTO res_str;
 
-            IF char_length(sstr) > 0
-                THEN INSERT into tmpMatches values (idc, city);
+            IF char_length(res_str) > 0
+                THEN INSERT INTO tmpMatches values (idc, city);
             END IF;
         END LOOP;
         CLOSE get_cities;
 
-        SELECT count(*) into nl FROM tmpMatches;
-        /* The whole `comune` column was checked, if there is one match the job is done. */
+        SELECT count(*) INTO nl FROM tmpMatches;
+        /* The whole `comune` column wAS checked, IF there is only one match the job is done. */
         IF nl < 2
             THEN SELECT * FROM tmpMatches;
         ELSE
-            /* More than one matches, drop the false positives (streets with a city name. */
-            drop temporary table if exists tmpMatches2;
-            create temporary table tmpMatches2(id int, city varchar(128));
+            /* More than one matches: DROP the false positives (addresses with a city name. */
+            DROP temporary TABLE IF EXISTS tmpMatches2;
+            CREATE temporary TABLE tmpMatches2(id int, comune varchar(128));
 
-            set done = 0; set city = '';
-            OPEN get_cities_tmp;
-            g_city_t: LOOP
-                FETCH get_cities_tmp INTO idc, city;
-                IF done THEN LEAVE g_city_t; END IF;
+            /* Use a self join of the tmpMatches TABLE to insert INTO tmpMatches2 TABLE 
+               the filtered matches.
+               For each row of tmpMatches: IF the city name is after a keyword (Via, Piazza ...), 
+               DROP it (it means is a street with the name of a city: Via Roma, Piazza Venezia ... ) 
+            */
+            INSERT INTO tmpMatches2
+            SELECT T1.* 
+            FROM tmpMatches T1
+            INNER JOIN tmpMatches T2 ON T1.id = T2.id
+            WHERE address REGEXP CONCAT('Via ', T2.comune, '|Piazza ', T2.comune, '|Viale ', T2.comune, '|Piazzale ', T2.comune, '|Bastioni ', T2.comune, '|Strada ', T2.comune, '|Vicolo ', T2.comune) = 0;
 
-                /* Drop a city if is placed after a keyword (Via, Piazza ...) in the address string */
-                SELECT CONCAT('Via ', city, '|Piazza ', city, '|Viale ', city, '|Piazzale ', city, '|Bastioni ', city, '|Strada ', city, '|Vicolo ', city) into reg;
-                SELECT address REGEXP reg into res;
-                /* res = 0 means "this city is not after a keyword, don't drop it."*/
-                IF res = 0
-                    THEN INSERT into tmpMatches2 values (idc, city);
-                END IF;
-            END LOOP;
-            CLOSE get_cities_tmp;
-
-            SELECT count(*) into nl FROM tmpMatches2;
-            /* If there is one match the job is done. */
+            SELECT count(*) INTO nl FROM tmpMatches2;
             IF nl < 2
+                /* If there is still only one match in the tmpMatches2 TABLE then the job is done. */
                 THEN SELECT * FROM tmpMatches2;
             ELSE
-                /* Otherwise: choose the city using this standard:
-                    - Choose the city before a keyword, if there is one.
-                    - Otherwise choose the last city in the string.
+                /* Otherwise: choose the city using these standards:
+                    1) Choose the city before a keyword, IF there is one.
+                    2) Otherwise choose the last city in the address string.
                 */
-                TRUNCATE table tmpMatches;
-                INSERT into tmpMatches SELECT * FROM  tmpMatches2;
-                set done = 0; set len = 0;  set idc = 0;
-                set city = ''; set reg = ''; set sstr = '';
-                set reg = '(.*)(Via |Piazza |Viale |Piazzale |Bastioni |Strada |Vicolo )(.*)';
-                SELECT REGEXP_REPLACE(address, reg, '\\1') into sstr;
-                IF char_length(sstr) > 0
-                    THEN 
-                    select T1.* 
-                    FROM tmpMatches T1
-                    INNER JOIN tmpMatches T2 ON T1.id = T2.id
-                    WHERE INSTR(sstr, T2.city) > 0;
-
+                SET reg = ''; SET res_str = '';
+                /* Try criterion 1) first */
+                SET reg = '(.*)(Via |Piazza |Viale |Piazzale |Bastioni |Strada |Vicolo )(.*)';
+                SELECT REGEXP_REPLACE(address, reg, '\\1') INTO res_str;
+                IF char_length(res_str) > 0
+                    THEN
+                    /* WHERE INSTR(res_str, T2.comune) expression seems not work in a direct SELECT to the TABLE.
+                       Problem solved using a self join. */
+                    SELECT T1.* 
+                    FROM tmpMatches2 T1
+                    INNER JOIN tmpMatches2 T2 ON T1.id = T2.id
+                    WHERE INSTR(res_str, T2.comune) > 0;
                 ELSE
-                    SELECT REGEXP_REPLACE(address, reg, '\\3') into sstr;
-                    OPEN get_cities_tmp;
-                    g_city_t: LOOP
-                        FETCH get_cities_tmp INTO idc, city;
-                        IF done THEN LEAVE g_city_t; END IF;
-                        SELECT CONCAT(city, '.*') into reg;
-                        SELECT REGEXP_REPLACE(sstr, reg, '') into sstr2;
+                    /* If the res_str string is empty, it means that criterion 2) is needed. */
+                    SELECT REGEXP_REPLACE(address, reg, '\\3') INTO res_str;
 
-                        IF char_length(sstr2) < char_length(sstr)
-                            THEN 
-                            IF char_length(sstr2) > len
-                                THEN 
-                                set len = char_length(sstr2);
-                                set idres = idc;
-                            END IF;
-                        END IF;
-                    END LOOP;
-                    CLOSE get_cities_tmp;
-                    SELECT * FROM tmpMatches where id = idres;
+                    /* In the subquery, for each line:
+                       - Cut the string res_str: delete chars starting FROM the match of the `city` field in the
+                       string to the end.
+                       - Get the lenght of the remaining substring.
+                       -Get only the row of the tmpMatches2 TABLE that give the longest substring
+                         (it means the city is the last match in the res_str string. 
+                    */
+                    SELECT T.id, T.comune
+                    FROM
+                    (
+                      SELECT T1.*,
+                      char_length(REGEXP_REPLACE(res_str, CONCAT(T2.comune, '.*'), '')) AS srt_len
+                      FROM tmpMatches2 T1
+                      INNER JOIN tmpMatches2 T2 ON T1.id = T2.id
+                      HAVING srt_len = MAX(srt_len)
+                    ) AS T;
+
                 END IF;
             END IF;        
         END IF;
 
-/*        drop temporary table if exists tmpMatches;
-        drop temporary table if exists tmpMatches2; */
+        DROP temporary TABLE IF EXISTS tmpMatches;
+        DROP temporary TABLE IF EXISTS tmpMatches2;
     END
 //
 
-delimiter ;
+DELIMITER ;
 
 
 
