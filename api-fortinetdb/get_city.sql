@@ -13,36 +13,26 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
         DROP temporary TABLE IF EXISTS tmpMatches;
         CREATE temporary TABLE tmpMatches(id int, comune varchar(128));
 
-        SET done = 0;
-        OPEN get_cities; /* Scan the `comuni_italiani` TABLE. */
-        g_city: LOOP
-            FETCH get_cities INTO idc, city;
-            IF done THEN LEAVE g_city; END IF;
-
-            /* Check IF a word in the string address matches a city in the `comune` column. 
-               If so, insert INTO the tmpMatches TABLE. */
-            SELECT CONCAT('\\b', city, '\\b') INTO reg;
-            SELECT REGEXP_SUBSTR(address, reg) INTO res_str;
-
-            IF char_length(res_str) > 0
-                THEN INSERT INTO tmpMatches values (idc, city);
-            END IF;
-        END LOOP;
-        CLOSE get_cities;
+        /* Check if a word in the string address matches a city in the `comune` column. 
+           If so, insert into the tmpMatches table. */
+        INSERT INTO tmpMatches
+        SELECT id, comune
+        FROM comuni_italiani
+        WHERE address REGEXP CONCAT('\\b', comune, '\\b');
 
         SELECT count(*) INTO nl FROM tmpMatches;
-        /* The whole `comune` column wAS checked, IF there is only one match the job is done. */
+        /* The whole `comune` column was checked, if there is only one match the job is done. */
         IF nl < 2
             THEN SELECT * FROM tmpMatches;
         ELSE
-            /* More than one matches: DROP the false positives (addresses with a city name. */
+            /* More than one matches: drop the false positives (addresses with a city name. */
             DROP temporary TABLE IF EXISTS tmpMatches2;
             CREATE temporary TABLE tmpMatches2(id int, comune varchar(128));
 
-            /* Use a self join of the tmpMatches TABLE to insert INTO tmpMatches2 TABLE 
+            /* Use a self join of the tmpMatches table to insert into tmpMatches2 table
                the filtered matches.
                For each row of tmpMatches: IF the city name is after a keyword (Via, Piazza ...), 
-               DROP it (it means is a street with the name of a city: Via Roma, Piazza Venezia ... ) 
+               drop it (it means is a street with the name of a city: Via Roma, Piazza Venezia ... ) 
             */
             INSERT INTO tmpMatches2
             SELECT T1.* 
@@ -52,11 +42,11 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
 
             SELECT count(*) INTO nl FROM tmpMatches2;
             IF nl < 2
-                /* If there is still only one match in the tmpMatches2 TABLE then the job is done. */
+                /* If there is still only one match in the tmpMatches2 table then the job is done. */
                 THEN SELECT * FROM tmpMatches2;
             ELSE
                 /* Otherwise: choose the city using these standards:
-                    1) Choose the city before a keyword, IF there is one.
+                    1) Choose the city before a keyword, if there is one.
                     2) Otherwise choose the last city in the address string.
                 */
                 SET reg = ''; SET res_str = '';
@@ -65,7 +55,7 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
                 SELECT REGEXP_REPLACE(address, reg, '\\1') INTO res_str;
                 IF char_length(res_str) > 0
                     THEN
-                    /* WHERE INSTR(res_str, T2.comune) expression seems not work in a direct SELECT to the TABLE.
+                    /* WHERE INSTR(res_str, T2.comune) expression seems not work in a direct select to the table.
                        Problem solved using a self join. */
                     SELECT T1.* 
                     FROM tmpMatches2 T1
@@ -76,10 +66,10 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
                     SELECT REGEXP_REPLACE(address, reg, '\\3') INTO res_str;
 
                     /* In the subquery, for each line:
-                       - Cut the string res_str: delete chars starting FROM the match of the `city` field in the
+                       - Cut the string res_str: delete chars starting from the match of the `city` field in the
                        string to the end.
                        - Get the lenght of the remaining substring.
-                       -Get only the row of the tmpMatches2 TABLE that give the longest substring
+                       -Get only the row of the tmpMatches2 table that give the longest substring
                          (it means the city is the last match in the res_str string. 
                     */
                     SELECT T.id, T.comune
