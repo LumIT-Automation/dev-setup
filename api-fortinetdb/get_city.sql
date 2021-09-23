@@ -7,8 +7,6 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
     BEGIN
         declare done, idc,  nl int;
         declare res_str, city, reg varchar(128);
-        declare get_cities CURSOR FOR SELECT id, comune FROM comuni_italiani;
-        declare CONTINUE HANDLER FOR NOT FOUND SET done = true;
 
         DROP temporary TABLE IF EXISTS tmpMatches;
         CREATE temporary TABLE tmpMatches(id int, comune varchar(128));
@@ -38,7 +36,7 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
             SELECT T1.* 
             FROM tmpMatches T1
             INNER JOIN tmpMatches T2 ON T1.id = T2.id
-            WHERE address REGEXP CONCAT('Via ', T2.comune, '|Piazza ', T2.comune, '|Viale ', T2.comune, '|Piazzale ', T2.comune, '|Bastioni ', T2.comune, '|Strada ', T2.comune, '|Vicolo ', T2.comune) = 0;
+            WHERE address REGEXP CONCAT('Via ', T2.comune, '|Piazza ', T2.comune, '|P.zza ',  T2.comune, '|Viale ', T2.comune, '|V.le ', T2.comune, '|Piazzale ', T2.comune, '|Corso ', T2.comune, '|Largo ', T2.comune, '|Bastioni ', T2.comune, '|Strada ', T2.comune, '|Stradone ', T2.comune, '|Vicolo ', T2.comune, '|Calle ', T2.comune, '|Traversa ', T2.comune, '|Vic. ', T2.comune ) = 0;
 
             SELECT count(*) INTO nl FROM tmpMatches2;
             IF nl < 2
@@ -51,7 +49,7 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
                 */
                 SET reg = ''; SET res_str = '';
                 /* Try criterion 1) first */
-                SET reg = '(.*)(Via |Piazza |Viale |Piazzale |Bastioni |Strada |Vicolo )(.*)';
+                SET reg = '(.*)(Via |Piazza |P.zza |Viale |V.le |Piazzale |Corso |Largo |Bastioni |Strada |Stradone |Vicolo |Calle |Traversa |Vic. )(.*)';
                 SELECT REGEXP_REPLACE(address, reg, '\\1') INTO res_str;
                 IF char_length(res_str) > 0
                     THEN
