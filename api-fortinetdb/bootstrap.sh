@@ -223,7 +223,7 @@ function System_mariadbSetup()
         exit 1
     fi
 
-    cp -f /vagrant/api-fortinetdb/usr/bin/get_list_comunit.sh /usr/bin/get_list_comuni.sh
+    cp -f /vagrant/api-fortinetdb/usr/bin/get_list_comuni.sh /usr/bin/get_list_comuni.sh
     chmod 755 /usr/bin/get_list_comuni.sh
 }
 
