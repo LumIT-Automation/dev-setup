@@ -1,12 +1,14 @@
-/* Procedura che trova la citta' nella stringa indirizzo */
+/* Procedure that find the right city in the address string */
 
 DELIMITER ;
 DROP PROCEDURE IF EXISTS P_find_city_in_address;
 DELIMITER //
-CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
+CREATE PROCEDURE P_find_city_in_address(IN address varchar(255), OUT id_city INT)
     BEGIN
         declare done, idc,  nl int;
         declare res_str, city, reg varchar(128);
+        declare get_cities CURSOR FOR SELECT id, comune FROM comuni_italiani;
+        declare CONTINUE HANDLER FOR NOT FOUND SET done = true;
 
         DROP temporary TABLE IF EXISTS tmpMatches;
         CREATE temporary TABLE tmpMatches(id int, comune varchar(128));
@@ -21,7 +23,8 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
         SELECT count(*) INTO nl FROM tmpMatches;
         /* The whole `comune` column was checked, if there is only one match the job is done. */
         IF nl < 2
-            THEN SELECT * FROM tmpMatches;
+            THEN 
+            SELECT id FROM tmpMatches into id_city;
         ELSE
             /* More than one matches: drop the false positives (addresses with a city name. */
             DROP temporary TABLE IF EXISTS tmpMatches2;
@@ -41,7 +44,8 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
             SELECT count(*) INTO nl FROM tmpMatches2;
             IF nl < 2
                 /* If there is still only one match in the tmpMatches2 table then the job is done. */
-                THEN SELECT * FROM tmpMatches2;
+                THEN 
+                SELECT id FROM tmpMatches2 into id_city;
             ELSE
                 /* Otherwise: choose the city using these standards:
                     1) Choose the city before a keyword, if there is one.
@@ -55,7 +59,7 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
                     THEN
                     /* WHERE INSTR(res_str, T2.comune) expression seems not work in a direct select to the table.
                        Problem solved using a self join. */
-                    SELECT T1.* 
+                    SELECT T1.id into id_city
                     FROM tmpMatches2 T1
                     INNER JOIN tmpMatches2 T2 ON T1.id = T2.id
                     WHERE INSTR(res_str, T2.comune) > 0;
@@ -70,7 +74,7 @@ CREATE PROCEDURE P_find_city_in_address(IN address varchar(255))
                        -Get only the row of the tmpMatches2 table that give the longest substring
                          (it means the city is the last match in the res_str string. 
                     */
-                    SELECT T.id, T.comune
+                    SELECT T.id into id_city
                     FROM
                     (
                       SELECT T1.*,
