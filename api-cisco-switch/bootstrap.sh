@@ -199,8 +199,8 @@ function System_mariadbSetup()
     databaseUserPassword=$1
 
     # Enable general log and log error via syslog.
-    cp -f /vagrant/api-cisco/etc/mysql/mariadb.conf.d/51-mariadb.cnf /etc/mysql/mariadb.conf.d
-    cp -f /vagrant/api-cisco/etc/mysql/mariadb.conf.d/99-log.cnf /etc/mysql/mariadb.conf.d
+    cp -f /vagrant/api-cisco-switch/etc/mysql/mariadb.conf.d/51-mariadb.cnf /etc/mysql/mariadb.conf.d
+    cp -f /vagrant/api-cisco-switch/etc/mysql/mariadb.conf.d/99-log.cnf /etc/mysql/mariadb.conf.d
     chmod 644 /etc/mysql/mariadb.conf.d/*cnf
 
     # By default /etc/systemd/system/mysql.service and mysqld.service are symlink to /lib/systemd/system/mariadb.service.
@@ -269,11 +269,11 @@ function System_apacheSetup()
 
     # Setup the Django project virtual host.
     # Static content has been moved from rest_framework to static/ via the use of python manage.py collectstatic.
-    cp -f /vagrant/api-cisco/etc/apache2/sites-available/001-django.conf /etc/apache2/sites-available/001-django.conf
+    cp -f /vagrant/api-cisco-switch/etc/apache2/sites-available/001-django.conf /etc/apache2/sites-available/001-django.conf
     chmod 644 /etc/apache2/sites-available/001-django.conf
 
     # Setup the phpMyAdmin virtual host on port 8300.
-    cp -f /vagrant/api-cisco/etc/apache2/sites-available/001-mysql.conf /etc/apache2/sites-available/001-mysql.conf
+    cp -f /vagrant/api-cisco-switch/etc/apache2/sites-available/001-mysql.conf /etc/apache2/sites-available/001-mysql.conf
     chmod 644 /etc/apache2/sites-available/001-mysql.conf
 
     # This is a trick in order for Apache not to need to be reloaded at every .py modification.
@@ -312,15 +312,15 @@ System_consulAgentInstall()
     apt install -y consul
 
     # Expose Consul api service.
-    cp -f /vagrant/api-cisco/etc/consul.d/api.json /etc/consul.d/api.json
+    cp -f /vagrant/api-cisco-switch/etc/consul.d/api.json /etc/consul.d/api.json
     chmod 644 /etc/consul.d/api.json
 
     # Setup a Systemd Consul service unit.
     # Consul will bind to the source IP address which has route to Consul server agent.
-    cp -f /vagrant/api-cisco/usr/bin/consul.sh /usr/bin/consul.sh
+    cp -f /vagrant/api-cisco-switch/usr/bin/consul.sh /usr/bin/consul.sh
     chmod 755 /usr/bin/consul.sh
 
-    cp -f /vagrant/api-cisco/etc/systemd/system/consul.service /etc/systemd/system/consul.service
+    cp -f /vagrant/api-cisco-switch/etc/systemd/system/consul.service /etc/systemd/system/consul.service
     chmod 644 /etc/systemd/system/consul.service
 
     systemctl daemon-reload
@@ -356,7 +356,7 @@ System_syslogngInstall()
     echo "$serverAddress        syslog.host" >> /etc/hosts
 
     # syslog-ng config files.
-    cp -f /vagrant/api-cisco/etc/syslog-ng/conf.d/*conf /etc/syslog-ng/conf.d/
+    cp -f /vagrant/api-cisco-switch/etc/syslog-ng/conf.d/*conf /etc/syslog-ng/conf.d/
     chmod 644 /etc/syslog-ng/conf.d/*conf
 
     mkdir -p /var/log/automation
@@ -389,10 +389,10 @@ System_vpnSupplicantSetup()
         sed -i 's/trusted_cert/trusted-cert/g' /etc/openfortivpn/config
 
         # Systemd VPN service.
-        cp -f /vagrant/api-cisco/etc/systemd/system/lumitvpn.service /etc/systemd/system/lumitvpn.service
+        cp -f /vagrant/api-cisco-switch/etc/systemd/system/lumitvpn.service /etc/systemd/system/lumitvpn.service
         chmod 644 /etc/systemd/system/lumitvpn.service
 
-        cp -f /vagrant/api-cisco/sbin/lumitvpn.sh /sbin/lumitvpn.sh
+        cp -f /vagrant/api-cisco-switch/sbin/lumitvpn.sh /sbin/lumitvpn.sh
         chmod 755 /sbin/lumitvpn.sh
 
         systemctl daemon-reload
@@ -410,11 +410,11 @@ System_pipInstallDaemon_api()
     printf "\n* Setting up Systemd service for installing pip dependencies from project's requirements file...\n"
 
     # pip install service.
-    cp -f /vagrant/api-cisco/etc/systemd/system/pip_install_api.service /etc/systemd/system/pip_install_api.service
+    cp -f /vagrant/api-cisco-switch/etc/systemd/system/pip_install_api.service /etc/systemd/system/pip_install_api.service
     chmod 644 /etc/systemd/system/pip_install_api.service
 
     # Watchdog service: monitor folder for changes.
-    cp -f /vagrant/api-cisco/etc/systemd/system/pip_install_api.path /etc/systemd/system/pip_install_api.path
+    cp -f /vagrant/api-cisco-switch/etc/systemd/system/pip_install_api.path /etc/systemd/system/pip_install_api.path
     chmod 644 /etc/systemd/system/pip_install_api.path
 
     systemctl daemon-reload

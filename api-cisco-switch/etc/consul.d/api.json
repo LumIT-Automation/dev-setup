@@ -1,14 +1,14 @@
 {
   "service": {
-    "id": "api-cisco",
-    "name": "api-cisco",
+    "id": "api-cisco-switch",
+    "name": "api-cisco-switch",
     "tags": [
-      "api-cisco"
+      "api-cisco-switch"
     ],
     "port": 80
   },
   "check": {
-    "id": "api-cisco",
+    "id": "api-cisco-switch",
     "name": "HTTP API",
     "http": "http://127.0.0.1/api/?consul-check",
     "method": "GET",

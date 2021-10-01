@@ -454,10 +454,10 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # API Cisco
+  # API Cisco-switch
   ############################################################################################
 
-  config.vm.define :apicisco do |api|
+  config.vm.define :apiciscoswitch do |api|
     api.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "1024"
@@ -478,12 +478,12 @@ Vagrant.configure("2") do |config|
     # Network.
 
     api.vm.network :private_network, ip: "10.0.111.24"
-    api.vm.hostname = "apicisco"
+    api.vm.hostname = "api-cisco-switch"
 
     # Synced folders.
 
     if OS.linux?
-      api.vm.synced_folder "../api-cisco", "/var/www/api", type: "nfs"
+      api.vm.synced_folder "../api-cisco-switch", "/var/www/api", type: "nfs"
     end
 
     # Set VPN credentials.
@@ -499,11 +499,11 @@ Vagrant.configure("2") do |config|
 
     # Provision.
     api.vm.provision "shell" do |s|
-      s.path = "api-cisco/bootstrap.sh"
+      s.path = "api-cisco-switch/bootstrap.sh"
       s.args = ["--action", "install"]
     end
     api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-cisco/db-bootstrap.sh"
+      s.path = "api-cisco-switch/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
