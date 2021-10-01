@@ -454,6 +454,61 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
+  # API Cisco
+  ############################################################################################
+
+  config.vm.define :apicisco do |api|
+    api.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+    end
+
+    api.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+
+    api.vm.box = "debian/buster64"
+    api.vm.box_version = "10.20210409.1"
+
+    # Network.
+
+    api.vm.network :private_network, ip: "10.0.111.24"
+    api.vm.hostname = "apicisco"
+
+    # Synced folders.
+
+    if OS.linux?
+      api.vm.synced_folder "../api-cisco", "/var/www/api", type: "nfs"
+    end
+
+    # Set VPN credentials.
+    api.vm.provision "shell" do |s|
+      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
+      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("sources.list")
+      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    api.vm.provision "shell" do |s|
+      s.path = "api-cisco/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    api.vm.provision "db", type: "shell" do |s|
+      s.path = "api-cisco/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+  end
+
+  ############################################################################################
   # API Fortinetdb
   ############################################################################################
 
