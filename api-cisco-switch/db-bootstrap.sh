@@ -68,10 +68,10 @@ System_mariadbRestore()
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
-    mysql api < /var/www/api/cisco-switch/sql/cisco-switch.schema.sql
-    mysql api < /var/www/api/cisco-switch/sql/cisco-switch.data.sql
-    if [ -f /var/www/api/cisco-switch/sql/cisco-switch.data-development.sql ]; then
-        mysql api < /var/www/api/cisco-switch/sql/cisco-switch.data-development.sql
+    mysql api < /var/www/api/ciscoSwitch/sql/ciscoSwitch.schema.sql
+    mysql api < /var/www/api/ciscoSwitch/sql/ciscoSwitch.data.sql
+    if [ -f /var/www/api/ciscoSwitch/sql/ciscoSwitch.data-development.sql ]; then
+        mysql api < /var/www/api/ciscoSwitch/sql/ciscoSwitch.data-development.sql
     fi
 }
 
