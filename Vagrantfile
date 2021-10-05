@@ -651,48 +651,55 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # Log collector - log
+  # Hostsystem: Log collector, smtp
   ############################################################################################
 
-  config.vm.define :log do |log|
-    log.vm.provider "virtualbox" do |vb|
+  config.vm.define :hostsystem do |hostsystem|
+    hostsystem.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "512"
       vb.cpus = 1
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
-    log.vm.provider "libvirt" do |libvrt|
+    hostsystem.vm.provider "libvirt" do |libvrt|
       libvrt.memory = "512"
       libvrt.cpus = 1
     end
 
     # OS.
 
-    log.vm.box = "debian/buster64"
-    log.vm.box_version = "10.20210409.1"
+    hostsystem.vm.box = "debian/bullseye64"
+    # hostsystem.vm.box_version = ""
 
     # Network.
 
-    log.vm.network :private_network, ip: "10.0.111.253"
-    log.vm.hostname = "log"
+    hostsystem.vm.network :private_network, ip: "10.0.111.253"
+    hostsystem.vm.hostname = "hostsystem"
 
     # Synced folders.
 
     if OS.linux?
-      log.vm.synced_folder "../log", "/var/syslog-ng", type: "nfs"
+      hostsystem.vm.synced_folder "../log", "/var/syslog-ng", type: "nfs", nfs_version: 4
+      hostsystem.vm.synced_folder "../smtp", "/var/smtp", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      log.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      hostsystem.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # SMTP config variables.
+    if File.exist?(".env")
+      hostsystem.vm.provision "file", source: ".env", destination: "/tmp/smtp-vars.conf"
     end
 
     # Provision.
-    log.vm.provision "shell" do |s|
-      s.path = "log/bootstrap.sh"
+    hostsystem.vm.provision "shell" do |s|
+      s.path = "hostsystem/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+
   end
 
   ############################################################################################
@@ -738,56 +745,6 @@ Vagrant.configure("2") do |config|
       s.path = "dns/bootstrap.sh"
       s.args = ["--action", "install"]
     end
-  end
-
-  ############################################################################################
-  # SMTP
-  ############################################################################################
-
-  config.vm.define :smtp do |smtp|
-    smtp.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "512"
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    end
-
-    smtp.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "512"
-      libvrt.cpus = 1
-    end
-
-    # OS.
-
-    smtp.vm.box = "debian/bullseye64"
-    # smtp.vm.box_version = ""
-
-    # Network.
-
-    smtp.vm.network :private_network, ip: "10.0.111.252"
-    smtp.vm.hostname = "smtp"
-
-    # Synced folders.
-    if OS.linux?
-      smtp.vm.synced_folder "../smtp", "/var/smtp", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("sources.list")
-      smtp.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # SMTP config variables.
-    if File.exist?(".env")
-      smtp.vm.provision "file", source: ".env", destination: "/tmp/smtp-vars.conf"
-    end
-
-    # Provision.
-    smtp.vm.provision "shell" do |s|
-      s.path = "smtp/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-
   end
 
   ############################################################################################

@@ -16,8 +16,8 @@ function System()
     # Properties list.
     ACTION="$ACTION"
     PROXY="$PROXY"
-    
-    SYSTEM_USERS_PASSWORD="a"
+
+    SYSTEM_USERS_PASSWORD="Password01!"
 }
 
 # ##################################################################################################################################################
@@ -31,16 +31,17 @@ function System_run()
 {
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
-            echo "This script requires a fresh-installation of Debian Bullseye..."
+            printf "\n* Installing a syslog-ng log collector...\n"
+            echo "This script requires a fresh-installation of Debian Buster..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
             System_proxySet "$PROXY"
             System_installDependencies
-            System_installPodman
+            System_syslogngInstall
             System_postfixConfig
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Buster operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -55,9 +56,8 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if true; then
-        #if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
-            return 0
+        if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+            return 1
         fi
     else
         return 1
@@ -65,7 +65,6 @@ function System_checkEnvironment()
 
     return 0
 }
-
 
 
 function System_rootPasswordConfig()
@@ -76,7 +75,6 @@ function System_rootPasswordConfig()
 }
 
 
-
 function System_sshConfig()
 {
     printf "\n* Enabling SSH with password auth [Vagrant installation]...\n"
@@ -85,7 +83,6 @@ function System_sshConfig()
     sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
     systemctl restart ssh
 }
-
 
 
 function System_proxySet()
@@ -105,20 +102,19 @@ function System_proxySet()
 }
 
 
-
 function System_installDependencies()
 {
-    printf "\n* Preparing the environment:\n"
+    printf "\n* Preparing the environment: removing the cdrom entry in apt/sources.list, if present...\n"
     printf "\n* Installing system dependencies...\n"
 
-    sed -i 's/^deb cdrom/#deb cdrom/' /etc/apt/sources.list
-
     if [ -r /tmp/sources.list ]; then
-        cp -f /tmp/sources.list /etc/apt/sources.list
+        cp -r /tmp/sources.list /etc/apt/sources.list
+    else
+        sed -i 's/^deb cdrom/#deb cdrom/' /etc/apt/sources.list
     fi
 
     apt update
-    
+
 cat > /tmp/grub-pc.selections<<EOF
 grub-pc grub2/kfreebsd_cmdline_default string quiet
 grub-pc grub-pc/timeout string 1
@@ -142,7 +138,7 @@ grub-pc grub-pc/install_devices_failed boolean false
 EOF
 
     debconf-set-selections /tmp/grub-pc.selections
-    
+
 cat > /tmp/postfix.selections<<EOF
 postfix  postfix/compat_conversion_warning: true
 postfix  postfix/rfc1035_violation: false
@@ -157,23 +153,32 @@ postfix  postfix/mailname: /etc/mailname
 EOF
 
     debconf-set-selections /tmp/postfix.selections
+    
+    #apt-mark hold grub-pc grub-pc-bin
+    #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip dnsutils net-tools dos2unix openconnect # base.
-    #DEBIAN_FRONTEND=noninteractive apt -y upgrade
+    apt install -y wget git unzip net-tools dos2unix vim mc tree # base.
+    apt install -y syslog-ng
     DEBIAN_FRONTEND=noninteractive apt install -y postfix mutt s-nail bsd-mailx bc
+    apt install -y rpm # for building rh packages.
     apt clean
 }
 
 
-
-function System_installPodman()
+System_syslogngInstall()
 {
-    printf "\n* Installing Podman from saved packages...\n"
+    mkdir -p /var/log/automation/api-f5
+    mkdir -p /var/log/automation/api-infoblox
+    mkdir -p /var/log/automation/sso
+    mkdir -p /var/log/automation/uif
+    mkdir -p /var/log/automation/uib
+    mkdir -p /var/log/automation/revp
+    mkdir -p /var/log/automation/dns
 
-    apt install -y vim mc podman buildah
-    apt clean
+    ln -s /var/syslog-ng/etc/syslog-ng/conf.d/logcollector.conf /etc/syslog-ng/conf.d/log-collector.conf
+
+    systemctl restart syslog-ng
 }
-
 
 
 function System_postfixConfig()
