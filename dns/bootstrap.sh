@@ -211,7 +211,7 @@ System_syslogngInstall()
 System_mtaSetup()
 {
     # Add mta entry in /etc/hosts (mta).
-    serverAddress="10.0.111.252"
+    serverAddress="10.0.111.253"
     sed -r -i '/ mta$/d' /etc/hosts
     echo "$serverAddress    mta" >> /etc/hosts
 }
