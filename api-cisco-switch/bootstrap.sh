@@ -163,6 +163,10 @@ EOF
     apt install -y rpm # for building rh packages.
 
     apt clean
+
+    if [ -r /tmp/switch-config.txt ]; then
+        cp -f /tmp/switch-config.txt /root/switch-config.txt
+    fi
 }
 
 

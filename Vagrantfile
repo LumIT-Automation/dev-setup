@@ -496,6 +496,9 @@ Vagrant.configure("2") do |config|
     if File.exist?("sources.list")
       api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
     end
+    if File.exist?("api-cisco-switch/switch-config.txt")
+      api.vm.provision "file", source: "api-cisco-switch/switch-config.txt", destination: "/tmp/switch-config.txt"
+    end
 
     # Provision.
     api.vm.provision "shell" do |s|
