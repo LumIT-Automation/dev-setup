@@ -71,7 +71,10 @@ System_mariadbRestore()
     mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `api`.* TO `api`@`localhost`;'
 
     mysql api < /var/www/api/infoblox/sql/infoblox.schema.sql
-    mysql api < /var/www/api/infoblox/sql/infoblox.initialData.sql
+    mysql api < /var/www/api/infoblox/sql/infoblox.data.sql
+    if [ -f /var/www/api/infoblox/sql/infoblox.data-development.sql ]; then
+        mysql api < /var/www/api/infoblox/sql/infoblox.data-development.sql
+    fi
 }
 
 

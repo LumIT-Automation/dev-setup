@@ -44,7 +44,6 @@ function System_run()
             System_mtaSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            System_mariadbRestore
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_ui
@@ -225,20 +224,6 @@ function System_mariadbSetup()
     fi
 
     systemctl restart mysql
-}
-
-
-
-System_mariadbRestore()
-{
-    printf "\n* Restoring the database from its SQL dump...\n"
-
-    #mysql -e 'DROP DATABASE IF EXISTS `uib`;'
-    #mysql -e 'CREATE DATABASE `uib` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    #mysql -e "GRANT USAGE ON *.* TO 'uib'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    #mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `uib`.* TO `uib`@`localhost`;'
-
-    #mysql uib < /var/www/ui-backend/awx/sql/dump.sql
 }
 
 

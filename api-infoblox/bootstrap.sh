@@ -43,6 +43,7 @@ function System_run()
             System_syslogngInstall
             System_mtaSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
+            # System_mariadbRestore -> performed by db-bootstrap.sh
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             System_redisSetup

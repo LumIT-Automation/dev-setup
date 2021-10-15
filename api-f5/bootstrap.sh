@@ -45,7 +45,7 @@ function System_run()
             # System_sqlitedbSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
-            # System_mariadbRestore
+            # System_mariadbRestore -> performed by db-bootstrap.sh
             System_consulAgentInstall
             System_redisSetup
             System_vpnSupplicantSetup
@@ -240,24 +240,6 @@ function System_mariadbSetup()
 
 
 
-System_mariadbRestore()
-{
-    printf "\n* Restoring the database from its SQL dump...\n"
-
-    mysql -e 'DROP DATABASE IF EXISTS `api`;'
-    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
-
-    mysql api < /var/www/api/f5/sql/f5.schema.sql
-    mysql api < /var/www/api/f5/sql/f5.data.sql
-    if [ -f /var/www/api/f5/sql/f5.data-development.sql ]; then
-        mysql api < /var/www/api/f5/sql/f5.data-development.sql
-    fi
-}
-
-
-
 function System_apacheSetup()
 {
     printf "\n* Setting up Apache...\n"
@@ -288,7 +270,6 @@ function System_apacheSetup()
     mv phpMyAdmin-5.0.2-all-languages /var/www/myadmin
     chown -R www-data:www-data /var/www/myadmin
 
-    # Configure phpMyAdmin for direct login.
     # Configure phpMyAdmin for direct login.
     sed -i "s/\$cfg\['Servers'\]\[\$i\]\['auth_type'\].*/\$cfg\['Servers'\]\[\$i\]\['auth_type'\] = 'config';/g" /var/www/myadmin/libraries/config.default.php
     sed -i "s/\$cfg\['Servers'\]\[\$i\]\['user'\].*/\$cfg\['Servers'\]\[\$i\]\['user'\] = 'api';/g" /var/www/myadmin/libraries/config.default.php
