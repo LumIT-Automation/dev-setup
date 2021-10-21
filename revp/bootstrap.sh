@@ -223,6 +223,8 @@ function System_nginxSetup()
 
     cp -f /vagrant/revp/etc/nginx/conf.d/log.conf /etc/nginx/conf.d/log.conf  
     chmod 644 /etc/nginx/conf.d/log.conf  
+    cp -f /vagrant/revp/etc/nginx/conf.d/big-http-headers.conf /etc/nginx/conf.d/
+    chmod 644 /etc/nginx/conf.d/big-http-headers.conf
 
     systemctl daemon-reload
     systemctl restart nginx
