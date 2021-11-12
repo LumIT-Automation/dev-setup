@@ -77,7 +77,10 @@ System_mariadbRestore()
     mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `soc_extra_data`.* TO `api`@`localhost`;'
 
     mysql api < /var/www/api/fortinetdb/sql/fortinetdb.schema.sql
-    mysql api < /var/www/api/fortinetdb/sql/fortinetdb.data-development.sql
+    mysql api < /var/www/api/fortinetdb/sql/fortinetdb.data.sql
+    if [ -f /var/www/api/fortinetdb/sql/fortinetdb.data-development.sql ]; then
+        mysql api < /var/www/api/fortinetdb/sql/fortinetdb.data-development.sql
+    fi
     mysql soc_db_clienti < /var/www/api/fortinetdb/sql/soc_db_clienti.sql
     mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.schema.sql
     mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.data-development.sql
