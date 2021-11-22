@@ -169,6 +169,9 @@ System_syslogngInstall()
 {
     mkdir -p /var/log/automation/api-f5
     mkdir -p /var/log/automation/api-infoblox
+    mkdir -p /var/log/automation/api-fortinetdb
+    mkdir -p /var/log/automation/api-cisco-switch
+    mkdir -p /var/log/automation/api-vmware
     mkdir -p /var/log/automation/sso
     mkdir -p /var/log/automation/uif
     mkdir -p /var/log/automation/uib
