@@ -182,6 +182,8 @@ System_syslogngInstall()
     for F in `ls *conf`; do 
         ln -s ${PWD}/${F} /etc/syslog-ng/conf.d
     done
+    # Copy external config files (in production these are in the apis packages).
+    cp /vagrant/hostsystem/etc/syslog-ng/conf.d/* /etc/syslog-ng/conf.d
 
     systemctl restart syslog-ng
 }
