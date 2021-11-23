@@ -178,7 +178,10 @@ System_syslogngInstall()
     mkdir -p /var/log/automation/revp
     mkdir -p /var/log/automation/dns
 
-    ln -s /var/syslog-ng/etc/syslog-ng/conf.d/logcollector.conf /etc/syslog-ng/conf.d/log-collector.conf
+    cd /var/syslog-ng/etc/syslog-ng/conf.d
+    for F in `ls *conf`; do 
+        ln -s ${PWD}/${F} /etc/syslog-ng/conf.d
+    done
 
     systemctl restart syslog-ng
 }
