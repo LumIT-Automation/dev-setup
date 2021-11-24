@@ -747,6 +747,20 @@ Vagrant.configure("2") do |config|
       hostsystem.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
     end
 
+    # Copy syslog-ng apis config files from their repos.
+    if File.exist?("../api-f5/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../api-f5/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-f5_syslog-ng"
+    end
+    if File.exist?("../api-infoblox/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../api-infoblox/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-infoblox_syslog-ng"
+    end
+    if File.exist?("../api-fortinetdb/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../api-fortinetdb/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-fortinetdb_syslog-ng"
+    end
+    if File.exist?("../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-vmware/syslog-ng"
+    end
+
     # SMTP config variables.
     if File.exist?(".env")
       hostsystem.vm.provision "file", source: ".env", destination: "/tmp/smtp-vars.conf"
@@ -757,7 +771,6 @@ Vagrant.configure("2") do |config|
       s.path = "hostsystem/bootstrap.sh"
       s.args = ["--action", "install"]
     end
-
   end
 
   ############################################################################################
