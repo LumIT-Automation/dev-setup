@@ -170,7 +170,6 @@ System_syslogngInstall()
     mkdir -p /var/log/automation/uif
     mkdir -p /var/log/automation/uib
     mkdir -p /var/log/automation/revp
-    mkdir -p /var/log/automation/dns
 
     # Link config files in log repo.
     cd /var/syslog-ng/etc/syslog-ng/conf.d
