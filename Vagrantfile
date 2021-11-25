@@ -747,7 +747,7 @@ Vagrant.configure("2") do |config|
       hostsystem.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
     end
 
-    # Copy syslog-ng apis config files from their repos.
+    # Copy syslog-ng config files from container repos.
     if File.exist?("../api-f5/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
       hostsystem.vm.provision "file", source: "../api-f5/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-f5_syslog-ng"
     end
@@ -758,7 +758,10 @@ Vagrant.configure("2") do |config|
       hostsystem.vm.provision "file", source: "../api-fortinetdb/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-fortinetdb_syslog-ng"
     end
     if File.exist?("../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
-      hostsystem.vm.provision "file", source: "../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-vmware/syslog-ng"
+      hostsystem.vm.provision "file", source: "../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-vmware_syslog-ng"
+    end
+    if File.exist?("../aaa/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../aaa/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/aaa_syslog-ng"
     end
 
     # SMTP config variables.

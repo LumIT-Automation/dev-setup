@@ -167,26 +167,24 @@ EOF
 
 System_syslogngInstall()
 {
-    mkdir -p /var/log/automation/api-f5
-    mkdir -p /var/log/automation/api-infoblox
-    mkdir -p /var/log/automation/api-fortinetdb
-    mkdir -p /var/log/automation/api-cisco-switch
-    mkdir -p /var/log/automation/api-vmware
-    mkdir -p /var/log/automation/sso
     mkdir -p /var/log/automation/uif
     mkdir -p /var/log/automation/uib
     mkdir -p /var/log/automation/revp
     mkdir -p /var/log/automation/dns
 
+    # Link config files in log repo.
     cd /var/syslog-ng/etc/syslog-ng/conf.d
     for F in `ls *conf`; do 
         ln -s ${PWD}/${F} /etc/syslog-ng/conf.d
     done
-    # Copy apis config files (in production these are in the apis packages).
-    set -vx
+
+    # Copy apis config files (in production these are in the apis packages) and create relative log folders.
     cd /tmp
-    for d in `ls -d api-*`; do 
-        cd $d && cp * /etc/syslog-ng/conf.d
+    for confDir in `ls -d *_syslog-ng`; do 
+        logDir=`echo $confDir | sed 's/_syslog-ng//'`
+        mkdir -p /var/log/automation/${logDir}
+
+        cd $confDir && cp * /etc/syslog-ng/conf.d
         cd -
     done
 
