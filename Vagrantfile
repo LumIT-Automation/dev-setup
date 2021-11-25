@@ -769,6 +769,12 @@ Vagrant.configure("2") do |config|
     if File.exist?("../revp/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
       hostsystem.vm.provision "file", source: "../revp/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/revp_syslog-ng"
     end
+    if File.exist?("../ui-backend/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../ui-backend/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/uib_syslog-ng"
+    end
+    if File.exist?("../ui-frontend-ng/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
+      hostsystem.vm.provision "file", source: "../ui-frontend-ng/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/uif_syslog-ng"
+    end
 
     # SMTP config variables.
     if File.exist?(".env")

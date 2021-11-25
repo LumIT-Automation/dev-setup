@@ -167,9 +167,6 @@ EOF
 
 System_syslogngInstall()
 {
-    mkdir -p /var/log/automation/uif
-    mkdir -p /var/log/automation/uib
-
     # Link config files in log repo.
     cd /var/syslog-ng/etc/syslog-ng/conf.d
     for F in `ls *conf`; do 
