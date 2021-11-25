@@ -761,7 +761,7 @@ Vagrant.configure("2") do |config|
       hostsystem.vm.provision "file", source: "../api-vmware/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/api-vmware_syslog-ng"
     end
     if File.exist?("../aaa/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
-      hostsystem.vm.provision "file", source: "../aaa/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/aaa_syslog-ng"
+      hostsystem.vm.provision "file", source: "../aaa/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/sso_syslog-ng"
     end
     if File.exist?("../dns/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d")
       hostsystem.vm.provision "file", source: "../dns/CONTAINER-DEBIAN-PKG/etc/syslog-ng/conf.d", destination: "/tmp/dns_syslog-ng"
