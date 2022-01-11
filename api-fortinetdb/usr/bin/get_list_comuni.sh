@@ -13,8 +13,8 @@ if [ -s Elenco-comuni-italiani.csv ]; then
     if (( `wc -l $todayFile | cut -d' ' -f1` > 7000 )); then
         mysql -e "truncate table comuni_italiani" soc_extra_data
 
-        loadCommand="load data local infile \"./$todayFile\" into table comuni_italiani FIELDS TERMINATED BY "'";"'" (@skip1,@skip2,@skip3,@skip4,@skip5,@skip6,comune,@skip8,@skip9,@skip10,regione,provincia,@skip13,@skip14,targa,@skip16,@skip17,@skip18,@skip19,@skip20,@skip21,@skip22,@skip23,@skip24,@skip25,@skip26);"
-	mysql -e "$loadCommand" soc_extra_data
+        loadCommand="load data local infile \"./$todayFile\" into table comuni_italiani FIELDS TERMINATED BY ""'"";""'"" (@skip1,@skip2,@skip3,@skip4,@skip5,@skip6,comune,@skip8,@skip9,@skip10,regione,provincia,@skip13,@skip14,targa,id,@skip17,@skip18,@skip19,@skip20,@skip21,@skip22,@skip23,@skip24,@skip25,@skip26);"
+	    mysql -e "$loadCommand" soc_extra_data
     fi
 
     xz -f -z $todayFile
