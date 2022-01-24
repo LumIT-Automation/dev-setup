@@ -86,16 +86,14 @@ System_mariadbRestore()
     mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.data-development.sql
 
     # Insert the lista_comuni from ISTAT.
-    cd
-    /usr/bin/get_list_comuni.sh
-    cd -
+    /vagrant/api-fortinetdb/usr/bin/get_list_comuni.sh
 
     # Load stored routines.
-    mysql soc_extra_data < /var/www/api/fortinetdb/sql/get_city.sql
-    mysql soc_extra_data < /var/www/api/fortinetdb/sql/set_cities.sql
+    mysql soc_db_clienti < /var/www/api/fortinetdb/sql/get_city.sql
+    mysql soc_db_clienti < /var/www/api/fortinetdb/sql/set_cities.sql
 
     # Run the parent routine.
-    mysql soc_extra_data -e 'CALL P_db_apparato_extra_data_set_location;'
+    mysql soc_db_clienti -e 'CALL P_db_apparato_set_location;'
 }
 
 
