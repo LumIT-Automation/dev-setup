@@ -66,15 +66,12 @@ System_mariadbRestore()
     mysql -e 'REVOKE ALL PRIVILEGES, GRANT OPTION FROM  `api`@`localhost`;'
     mysql -e 'DROP DATABASE IF EXISTS `api`;'
     mysql -e 'DROP DATABASE IF EXISTS `soc_db_clienti`;'
-    mysql -e 'DROP DATABASE IF EXISTS `soc_extra_data`;'
 
     mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
     mysql -e 'CREATE DATABASE `soc_db_clienti` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -e 'CREATE DATABASE `soc_extra_data` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
     mysql -e 'GRANT USAGE ON *.* TO `api`@`localhost` REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;'
     mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `api`.* TO `api`@`localhost`;'
     mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `soc_db_clienti`.* TO `api`@`localhost`;'
-    mysql -e 'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EXECUTE ON `soc_extra_data`.* TO `api`@`localhost`;'
 
     mysql api < /var/www/api/fortinetdb/sql/fortinetdb.schema.sql
     mysql api < /var/www/api/fortinetdb/sql/fortinetdb.data.sql
@@ -82,8 +79,6 @@ System_mariadbRestore()
         mysql api < /var/www/api/fortinetdb/sql/fortinetdb.data-development.sql
     fi
     mysql soc_db_clienti < /var/www/api/fortinetdb/sql/soc_db_clienti.sql
-    mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.schema.sql
-    mysql soc_extra_data < /var/www/api/fortinetdb/sql/soc_extra_data.data-development.sql
 
     # Insert the lista_comuni from ISTAT.
     /vagrant/api-fortinetdb/usr/bin/get_list_comuni.sh

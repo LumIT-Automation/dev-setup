@@ -168,7 +168,7 @@ Vagrant.configure("2") do |config|
     end
 
     uifng.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1536"
+      libvrt.memory = "4096"
       libvrt.cpus = 2
     end
 
