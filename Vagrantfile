@@ -915,4 +915,37 @@ Vagrant.configure("2") do |config|
       s.args = ["--action", "install"]
     end
   end
+
+  ############################################################################################
+  # Empty Ubuntu 20.04
+  ############################################################################################
+
+  config.vm.define :ubu20 do |empty|
+    empty.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    empty.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "2048"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    empty.vm.box = "generic/ubuntu2004"
+
+    # Network.
+    empty.vm.network :private_network, ip: "10.0.111.203"
+    empty.vm.hostname = "ubu20"
+
+    # Provision.
+    empty.vm.provision "shell" do |s|
+      s.path = "ubu20/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
+
 end
+
