@@ -213,10 +213,10 @@ function System_mariadbSetup()
         mysql -e "INSTALL PLUGIN federated SONAME 'ha_federatedx.so';"
         if [ "$(mysql --vertical -e "SELECT User FROM mysql.user WHERE User = 'api';" | tail -1 | awk '{print $2}')" == "" ]; then
             # User api not present: create.
-            mysql -e "CREATE USER 'api'@'localhost' IDENTIFIED BY '$databaseUserPassword';"
+            mysql -e "CREATE USER 'api'@'%' IDENTIFIED BY '$databaseUserPassword';"
         else
             # Update user's password.
-            mysql -e "SET PASSWORD FOR 'api'@'localhost' = PASSWORD('$databaseUserPassword');"
+            mysql -e "SET PASSWORD FOR 'api'@'%' = PASSWORD('$databaseUserPassword');"
         fi
     else
         echo "MariaDB error: shell access disabled."

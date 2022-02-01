@@ -11,7 +11,7 @@ thread_cache_size      = 1024
 max_connections        = 1024
 #table_cache            = 64
 # thread_concurrency     = 1024
-
+bind-address            = 0.0.0.0
 
 [mariadb]
 plugin_load_add = server_audit
