@@ -55,7 +55,7 @@ function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
         if true; then
-        #if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -q 'Ubuntu' /etc/os-release; then
             return 0
         fi
     else
