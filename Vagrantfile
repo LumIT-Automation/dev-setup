@@ -163,7 +163,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :uifng do |uifng|
     uifng.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.memory = "2048"
+      vb.memory = "4096"
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
