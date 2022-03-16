@@ -5,7 +5,9 @@ An Active Directory/Radius node is created for the user authentication as well.
 
 Requirements:
     - Linux host as development machine (tested on modern Debian and Ubuntu OS; any other should work)
-    - VirtualBox
+    - VirtualBox 
+        From version 6.1.28 of virtualbox can be necessary edit the file /etc/vbox/networks.conf:
+            command: echo '* 10.0.0.0/8' >> /etc/vbox/networks.conf
     - Vagrant
         Plugins (user-installed):
         vagrant plugin install vagrant-reload
