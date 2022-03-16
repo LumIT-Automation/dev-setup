@@ -6,7 +6,7 @@ Wants=systemd-networkd-wait-online.service
 [Service]
 Type=idle
 RemainAfterExit=no
-Restart=no
+Restart=on-failure
 KillMode=process
 WorkingDirectory=/var/www/ui-frontend
 ExecStart=yarn install
