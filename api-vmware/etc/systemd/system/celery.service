@@ -1,0 +1,23 @@
+[Unit]
+Description=celery service
+After=apache2.service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=idle
+RemainAfterExit=no
+Restart=always
+RestartSec=10
+KillMode=process
+ExecStart=/bin/bash /usr/bin/celery.sh start
+ExecStop=/bin/bash /usr/bin/celery.sh stop
+User=www-data
+Group=www-data
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=api_celery
+
+[Install]
+WantedBy=multi-user.target
