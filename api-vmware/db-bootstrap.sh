@@ -63,16 +63,21 @@ System_mariadbRestore()
 {
     printf "\n* Restoring the database from its SQL dump...\n"
 
-    mysql -e 'DROP DATABASE IF EXISTS `api`;'
-    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
+
+    mysql -e 'DROP DATABASE IF EXISTS `api`;'
+    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+
+    mysql -e 'DROP DATABASE IF EXISTS `stage2`;'
+    mysql -e 'CREATE DATABASE `stage2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
 
     mysql api < /var/www/api/vmware/sql/vmware.schema.sql
     mysql api < /var/www/api/vmware/sql/vmware.data.sql
     if [ -f /var/www/api/vmware/sql/vmware.data-development.sql ]; then
         mysql api < /var/www/api/vmware/sql/vmware.data-development.sql
     fi
+    mysql stage2 < /var/www/api/vmware/sql/stage2.schema.sql
 }
 
 

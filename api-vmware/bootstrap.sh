@@ -46,6 +46,7 @@ function System_run()
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             System_redisSetup
+            System_celeryStart
             System_vpnSupplicantSetup
             System_pipInstallDaemon_api
         else
@@ -431,6 +432,23 @@ System_redisSetup() {
         sed -i -e '$a syslog-enabled yes' /etc/redis/redis.conf
         systemctl restart redis.service
     fi
+}
+
+
+
+System_celeryStart()
+{
+    printf "\n* Setting up Systemd service for starting Celery...\n"
+
+    cp -f /vagrant/api-vmware/usr/bin/celery.sh /usr/bin/celery.sh
+    chmod 755 /usr/bin/celery.sh
+
+    cp -f /vagrant/api-vmware/etc/systemd/system/celery.service /etc/systemd/system/celery.service
+    chmod 644 /etc/systemd/system/celery.service
+
+    systemctl daemon-reload
+    systemctl enable celery.service
+    systemctl restart celery.service
 }
 
 # ##################################################################################################################################################
