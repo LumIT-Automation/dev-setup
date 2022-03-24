@@ -1,11 +1,15 @@
 #!/bin/bash
 
+app=api
+workdir=/var/www/api
+logLevel=INFO
+
 function start()
 {
     if [ -x /var/lib/api-venv/bin/celery ]; then
-        /var/lib/api-venv/bin/celery worker -l info -n api --app api --workdir /var/www/api
+        /var/lib/api-venv/bin/celery --app $app --workdir $workdir worker -l $logLevel --hostname api@%h --autoscale 2,10
     else
-        celery worker -l info -n api --app api --workdir /var/www/api
+        celery --app $app --workdir $workdir worker -l $logLevel --hostname api@%h --autoscale 2,10
     fi
 }
 
@@ -24,6 +28,11 @@ function restart()
     start
 }
 
+function status()
+{
+    celery --app $app --workdir $workdir inspect stats
+}
+
 case $1 in
         start)
             start
@@ -38,8 +47,12 @@ case $1 in
             start
             ;;
 
+        status)
+            status
+            ;;
+
         *)
-            echo $"Usage: $0 {start|stop|restart}"
+            echo $"Usage: $0 {start|stop|restart|status}"
             exit 1
 esac
 
