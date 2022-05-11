@@ -2,13 +2,14 @@
 Description=pip_install
 #After=network-online.target
 #Wants=network-online.target
-After=systemd-networkd-wait-online.service
+After=nfs-client.target
 Wants=systemd-networkd-wait-online.service
 
 [Service]
 Type=idle
 RemainAfterExit=no
-Restart=yes
+Restart=always
+RestartSec=30
 KillMode=process
 ExecStart=pip install -r /var/www/api/api/pip.requirements
 
