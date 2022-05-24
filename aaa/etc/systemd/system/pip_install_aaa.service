@@ -8,7 +8,8 @@ Wants=systemd-networkd-wait-online.service
 [Service]
 Type=idle
 RemainAfterExit=no
-Restart=on-failure
+Restart=always
+RestartSec=10
 KillMode=process
 ExecStart=pip install -r /var/www/aaa/aaa/pip.requirements
 
