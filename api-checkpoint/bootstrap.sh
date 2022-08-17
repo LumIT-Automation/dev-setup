@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 set -e
 
@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Buster..."
+            echo "This script requires a fresh-installation of Debian Bullseye ..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -65,7 +65,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'bullseye' /etc/os-release; then
+        if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
             return 1
         fi
     else
