@@ -73,13 +73,13 @@ else
 fi
 
 if [ "$uPn" == "y" ]; then
-    includeDjangoAuthLdap="from django_auth_ldap.config import LDAPSearch, LDAPGroupQuery, LDAPGroupType, GroupOfNamesType, PosixGroupType, LDAPSearchUnion"
+    includeDjangoAuthLdap="from django_auth_ldap.config import LDAPSearch, LDAPGroupQuery, LDAPGroupType, GroupOfNamesType, PosixGroupType, LDAPSearchUnion, NestedActiveDirectoryGroupType"
     ldapUserSearch="AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
     LDAPSearch(\"${usersSearchString}\", ldap.SCOPE_SUBTREE, \"(sAMAccountName=%(user)s)\"),
     LDAPSearch(\"${usersSearchString}\", ldap.SCOPE_SUBTREE, \"userPrincipalName=%(user)s\")
 )"
 else
-    includeDjangoAuthLdap="from django_auth_ldap.config import LDAPSearch, LDAPGroupQuery, LDAPGroupType, GroupOfNamesType, PosixGroupType"
+    includeDjangoAuthLdap="from django_auth_ldap.config import LDAPSearch, LDAPGroupQuery, LDAPGroupType, GroupOfNamesType, PosixGroupType, NestedActiveDirectoryGroupType"
     ldapUserSearch="AUTH_LDAP_USER_SEARCH = LDAPSearch(\"${usersSearchString}\", ldap.SCOPE_SUBTREE, \"(sAMAccountName=%(user)s)\")"
 fi
 
@@ -92,6 +92,11 @@ $includeDjangoAuthLdap
 AUTH_LDAP_SERVER_URI = \"$ldapUrl\"
 
 # SETTINGS.
+AUTH_LDAP_CONNECTION_OPTIONS = {
+    ldap.OPT_DEBUG_LEVEL: 1,
+    ldap.OPT_NETWORK_TIMEOUT: 10,
+    ldap.OPT_TIMEOUT: 10,
+}
 
 AUTH_LDAP_BIND_DN = \"CN=${connectUser},${usersSearchString}\"
 AUTH_LDAP_BIND_PASSWORD = \"${connectUserPwd}\"
