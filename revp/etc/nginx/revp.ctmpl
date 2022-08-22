@@ -47,6 +47,7 @@ server {
   location /auth {
     rewrite /auth/(.*) /$1 break;
     proxy_pass http://sso;
+    proxy_read_timeout 30;
   }
 
   location /backend {
