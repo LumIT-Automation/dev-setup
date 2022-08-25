@@ -1,0 +1,18 @@
+{
+  "service": {
+    "id": "dotnet",
+    "name": "dotnet",
+    "tags": [
+      "dotnet"
+    ],
+    "port": 80
+  },
+  "check": {
+    "id": "dotnet",
+    "name": "HTTP API",
+    "http": "http://127.0.0.1/",
+    "method": "GET",
+    "interval": "60s",
+    "timeout": "2s"
+  }
+}
