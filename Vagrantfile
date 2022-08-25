@@ -889,6 +889,72 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
+  # DOTNET STUB (for future use... maybe)
+  ############################################################################################
+
+  config.vm.define :dotnet do |dotnet|
+    dotnet.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    dotnet.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "4096"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+
+    dotnet.vm.box = "debian/bullseye64"
+
+    # Network.
+
+    dotnet.vm.network :private_network, ip: "10.0.111.30"
+    dotnet.vm.hostname = "dotnet"
+
+    # Synced folders.
+
+    if OS.linux?
+      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_version: 4, fsnotify: true
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("sources.list")
+      dotnet.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    dotnet.vm.provision "shell" do |s|
+      s.path = "dotnet/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+
+    # @todo: inotify -> systemctl restart dotnet; sleep 2; systemctl restart nginx (?)
+
+    # Triggers.
+    #if OS.linux?
+    #  dotnet.trigger.before :up do |trigger|
+    #    trigger.name = "fsnotify: increase host max_user_watches limit"
+    #    trigger.run = { inline: "bash ./set-inotify.sh dotnet start" }
+    #  end
+    #  dotnet.trigger.after :up do |trigger|
+    #    trigger.name = "vagrant-fsnotify"
+    #    trigger.run = { inline: "bash -c '(vagrant fsnotify dotnet) > /dev/null 2>&1 &' " }
+    #  end
+    #  dotnet.trigger.after :halt, :destroy do |trigger|
+    #    trigger.name = "fsnotify: restore host max_user_watches limit"
+    #    trigger.run = { inline: "bash ./set-inotify.sh dotnet stop" }
+    #  end
+    #  dotnet.trigger.after :halt, :destroy do |trigger|
+    #    trigger.name = "kill vagrant-fsnotify dotnet"
+    #    trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify dotnet'" }
+    #    trigger.exit_codes = [ 0, 1 ]
+    #  end
+    #end
+  end
+
+  ############################################################################################
   # Empty Centos8 vm
   ############################################################################################
 

@@ -1,0 +1,23 @@
+[Unit]
+Description=dotnet.run service
+#Wants=network-online.target
+After=systemd-networkd-wait-online.service
+Wants=systemd-networkd-wait-online.service
+
+[Service]
+Type=forking
+RemainAfterExit=no
+Restart=always
+RestartSec=1
+KillMode=process
+
+WorkingDirectory=/var/www/dotnet
+#StandardOutput=syslog
+#StandardError=syslog
+#SyslogIdentifier=dotnet
+TimeoutStartSec=30
+ExecStart=/usr/bin/dotnet.sh start
+ExecStop=/usr/bin/dotnet.sh stop
+
+[Install]
+WantedBy=multi-user.target
