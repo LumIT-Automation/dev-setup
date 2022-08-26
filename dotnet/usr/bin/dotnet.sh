@@ -1,7 +1,10 @@
 #!/bin/bash
 
 function start() {
-    setsid bash -c 'exec su - vagrant -c "cd /var/www/dotnet && dotnet run | logger -t dotnet" <> /dev/tty2 >&0 2>&1' >> /tmp/dotnet.log & # attach dotnet to tty2; otherwise it is killed by Systemd.
+    # Run and watch for changes.
+    setsid bash -c 'exec su - vagrant -c "cd /var/www/dotnet && DOTNET_USE_POLLING_FILE_WATCHER=1 DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER=1 dotnet watch run | logger -t dotnet" <> /dev/tty2 >&0 2>&1' >> /tmp/dotnet.log & # attach dotnet to tty2; otherwise it is killed by Systemd.
+
+    # tail -f /var/log/syslog | grep 'Hot reload of changes succeeded'
 }
 
 function stop() {
