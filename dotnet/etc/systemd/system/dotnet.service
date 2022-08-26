@@ -8,7 +8,7 @@ Wants=systemd-networkd-wait-online.service
 Type=forking
 RemainAfterExit=no
 Restart=always
-RestartSec=1
+RestartSec=5
 KillMode=process
 
 WorkingDirectory=/var/www/dotnet

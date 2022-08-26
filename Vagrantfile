@@ -916,7 +916,7 @@ Vagrant.configure("2") do |config|
     # Synced folders.
 
     if OS.linux?
-      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_version: 4, fsnotify: true
+      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
@@ -929,29 +929,6 @@ Vagrant.configure("2") do |config|
       s.path = "dotnet/bootstrap.sh"
       s.args = ["--action", "install"]
     end
-
-    # @todo: inotify -> systemctl restart dotnet; sleep 2; systemctl restart nginx (?)
-
-    # Triggers.
-    #if OS.linux?
-    #  dotnet.trigger.before :up do |trigger|
-    #    trigger.name = "fsnotify: increase host max_user_watches limit"
-    #    trigger.run = { inline: "bash ./set-inotify.sh dotnet start" }
-    #  end
-    #  dotnet.trigger.after :up do |trigger|
-    #    trigger.name = "vagrant-fsnotify"
-    #    trigger.run = { inline: "bash -c '(vagrant fsnotify dotnet) > /dev/null 2>&1 &' " }
-    #  end
-    #  dotnet.trigger.after :halt, :destroy do |trigger|
-    #    trigger.name = "fsnotify: restore host max_user_watches limit"
-    #    trigger.run = { inline: "bash ./set-inotify.sh dotnet stop" }
-    #  end
-    #  dotnet.trigger.after :halt, :destroy do |trigger|
-    #    trigger.name = "kill vagrant-fsnotify dotnet"
-    #    trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify dotnet'" }
-    #    trigger.exit_codes = [ 0, 1 ]
-    #  end
-    #end
   end
 
   ############################################################################################
