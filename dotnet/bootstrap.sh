@@ -275,12 +275,21 @@ function System_nginxSetup()
     sed -i '/access_log/d' /etc/nginx/nginx.conf
     sed -i '/error_log/d' /etc/nginx/nginx.conf
 
+    # nginx config.
     cp -f /vagrant/dotnet/etc/nginx/conf.d/* /etc/nginx/conf.d/
     chmod 644 /etc/nginx/conf.d/*
 
     cp -f /vagrant/dotnet/etc/nginx/sites-enabled/reverse /etc/nginx/sites-enabled/
     chmod 644 /etc/nginx/sites-enabled/*
 
+    # nginx service.
+    cp -f /vagrant/dotnet/etc/systemd/system/nginx.service /etc/systemd/system/
+    chmod 644 /etc/systemd/system/nginx.service
+
+    cp -f /vagrant/dotnet/usr/bin/nginx.sh /usr/bin/nginx.sh
+    chmod 755 /usr/bin/nginx.sh
+
+    systemctl daemon-reload
     systemctl restart nginx
 }
 
