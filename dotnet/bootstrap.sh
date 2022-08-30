@@ -31,24 +31,18 @@ function System()
 function System_run()
 {
     if [ "$ACTION" == "install" ]; then
-        if System_checkEnvironment; then
-            printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Bullseye..."
+        printf "\n* Installing system...\n"
 
-            System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
-            System_sshConfig
-            System_proxySet "$PROXY"
-            System_installDependencies
-            System_syslogngInstall
-            System_mtaSetup
-            System_consulAgentInstall
-            System_dotnetInstall
-            System_dotnetStartDaemon
-            System_nginxSetup
-        else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
-            exit 1
-        fi
+        System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
+        System_sshConfig
+        System_proxySet "$PROXY"
+        System_installDependencies
+        System_syslogngInstall
+        System_mtaSetup
+        System_consulAgentInstall
+        System_dotnetInstall
+        System_dotnetStartDaemon
+        System_nginxSetup
     else
         exit 1
     fi
@@ -57,21 +51,6 @@ function System_run()
 # ##################################################################################################################################################
 # Private static
 # ##################################################################################################################################################
-
-function System_checkEnvironment()
-{
-    if [ -f /etc/os-release ]; then
-        if ! grep -qi 'bullseye' /etc/os-release; then
-            return 1
-        fi
-    else
-        return 1
-    fi
-
-    return 0
-}
-
-
 
 function System_rootPasswordConfig()
 {

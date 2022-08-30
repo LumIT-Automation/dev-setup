@@ -131,7 +131,7 @@ Vagrant.configure("2") do |config|
         trigger.run = { inline: "bash ./set-inotify.sh uif start" }
       end
       uif.trigger.after :up do |trigger|
-        trigger.name = "vagrant-fsnotify"
+        trigger.name = "vagrant-fsnotify-uif"
         trigger.run = { inline: "bash -c '(vagrant fsnotify uif) > /dev/null 2>&1 &' " }
       end
       uif.trigger.after :halt, :destroy do |trigger|
@@ -139,7 +139,7 @@ Vagrant.configure("2") do |config|
         trigger.run = { inline: "bash ./set-inotify.sh uif stop" }
       end
       uif.trigger.after :halt, :destroy do |trigger|
-        trigger.name = "kill vagrant-fsnotify uif"
+        trigger.name = "kill vagrant-fsnotify-uif"
         trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uif'" }
         trigger.exit_codes = [ 0, 1 ]
       end
@@ -206,7 +206,7 @@ Vagrant.configure("2") do |config|
         trigger.run = { inline: "bash ./set-inotify.sh uifng start" }
       end
       uifng.trigger.after :up do |trigger|
-        trigger.name = "vagrant-fsnotify"
+        trigger.name = "vagrant-fsnotify-uifng"
         trigger.run = { inline: "bash -c '(vagrant fsnotify uifng) > /dev/null 2>&1 &' " }
       end
       uifng.trigger.after :halt, :destroy do |trigger|
@@ -214,7 +214,7 @@ Vagrant.configure("2") do |config|
         trigger.run = { inline: "bash ./set-inotify.sh uifng stop" }
       end
       uifng.trigger.after :halt, :destroy do |trigger|
-        trigger.name = "kill vagrant-fsnotify uifng"
+        trigger.name = "kill vagrant-fsnotify-uifng"
         trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uifng'" }
         trigger.exit_codes = [ 0, 1 ]
       end
@@ -916,7 +916,7 @@ Vagrant.configure("2") do |config|
     # Synced folders.
 
     if OS.linux?
-      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_version: 4
+      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # se these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
     end
 
     # Alternative debian mirror.
@@ -928,6 +928,27 @@ Vagrant.configure("2") do |config|
     dotnet.vm.provision "shell" do |s|
       s.path = "dotnet/bootstrap.sh"
       s.args = ["--action", "install"]
+    end
+
+    # Triggers.
+    if OS.linux?
+      dotnet.trigger.before :up do |trigger|
+        trigger.name = "fsnotify: increase host max_user_watches limit"
+        trigger.run = { inline: "bash ./set-inotify.sh dotnet start" }
+      end
+      dotnet.trigger.after :up do |trigger|
+        trigger.name = "vagrant-fsnotify-dotnet"
+        trigger.run = { inline: "bash -c '(vagrant fsnotify dotnet) > /dev/null 2>&1 &' " }
+      end
+      dotnet.trigger.after :halt, :destroy do |trigger|
+        trigger.name = "fsnotify: restore host max_user_watches limit"
+        trigger.run = { inline: "bash ./set-inotify.sh dotnet stop" }
+      end
+      dotnet.trigger.after :halt, :destroy do |trigger|
+        trigger.name = "kill vagrant-fsnotify-dotnet"
+        trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify dotnet'" }
+        trigger.exit_codes = [ 0, 1 ]
+      end
     end
   end
 
