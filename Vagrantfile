@@ -54,17 +54,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     revp.vm.box = "debian/buster64"
     revp.vm.box_version = "10.20210409.1"
 
     # Network.
-
     revp.vm.network :private_network, ip: "10.0.111.10"
     revp.vm.hostname = "revp"
 
     # Synced folders.
-
     if OS.linux?
       revp.vm.synced_folder "../revp", "/var/reverse_proxy", type: "nfs", fsnotify: true
     end
@@ -98,17 +95,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     uif.vm.box = "debian/buster64"
     uif.vm.box_version = "10.20210409.1"
 
     # Network.
-
     uif.vm.network :private_network, ip: "10.0.111.11"
     uif.vm.hostname = "uif"
 
     # Synced folders.
-
     if OS.linux?
       uif.vm.synced_folder "../ui-frontend", "/var/www/ui-frontend", type: "nfs", fsnotify: true
     end
@@ -173,17 +167,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     uifng.vm.box = "debian/buster64"
     uifng.vm.box_version = "10.20210409.1"
 
     # Network.
-
     uifng.vm.network :private_network, ip: "10.0.111.13"
     uifng.vm.hostname = "uifng"
 
     # Synced folders.
-
     if OS.linux?
       uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "nfs", fsnotify: true
     end
@@ -238,17 +229,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     uib.vm.box = "debian/buster64"
     uib.vm.box_version = "10.20210409.1"
 
     # Network.
-
     uib.vm.network :private_network, ip: "10.0.111.12"
     uib.vm.hostname = "uib"
 
     # Synced folders.
-
     if OS.linux?
       uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs"
     end
@@ -293,7 +281,6 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://vagrantcloud.com/search.
 
@@ -301,7 +288,6 @@ Vagrant.configure("2") do |config|
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     # Create a forwarded port mapping which allows access to a specific port
     # within the machine from a port on the host machine. In the example below,
     # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -320,7 +306,6 @@ Vagrant.configure("2") do |config|
     api.vm.hostname = "apicisconx"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-cisconx", "/var/www/api", type: "nfs"
     end
@@ -361,17 +346,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/buster64"
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.21"
     api.vm.hostname = "apiinfoblox"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-infoblox", "/var/www/api", type: "nfs"
     end
@@ -416,17 +398,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/buster64"
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.22"
     api.vm.hostname = "apif5"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs"
     end
@@ -471,17 +450,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/buster64"
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.24"
     api.vm.hostname = "api-cisco-switch"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-cisco-switch", "/var/www/api", type: "nfs"
     end
@@ -529,17 +505,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/buster64"
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.23"
     api.vm.hostname = "apifortinetdb"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-fortinetdb", "/var/www/api", type: "nfs", nfs_version: 4
     end
@@ -578,17 +551,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/buster64"
     api.vm.box_version = "10.20210409.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.25"
     api.vm.hostname = "apivmware"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-vmware", "/var/www/api", type: "nfs"
     end
@@ -633,17 +603,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     api.vm.box = "debian/bullseye64"
     #api.vm.box_version = "11.20220328.1"
 
     # Network.
-
     api.vm.network :private_network, ip: "10.0.111.26"
     api.vm.hostname = "apicheckpoint"
 
     # Synced folders.
-
     if OS.linux?
       api.vm.synced_folder "../api-checkpoint", "/var/www/api", type: "nfs", nfs_version: 4
     end
@@ -688,17 +655,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     aaa.vm.box = "debian/buster64"
     aaa.vm.box_version = "10.20210409.1"
 
     # Network.
-
     aaa.vm.network :private_network, ip: "10.0.111.100"
     aaa.vm.hostname = "aaa"
 
     # Synced folders.
-
     if OS.linux?
       aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", fsnotify: true
     end
@@ -737,12 +701,10 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     udb.vm.box = "debian/buster64"
     udb.vm.box_version = "10.20210409.1"
 
     # Network.
-
     udb.vm.network :private_network, ip: "10.0.111.110"
     udb.vm.network :private_network, ip: "10.0.111.111"
     udb.vm.hostname = "ad"
@@ -781,17 +743,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     hostsystem.vm.box = "debian/bullseye64"
     # hostsystem.vm.box_version = ""
 
     # Network.
-
     hostsystem.vm.network :private_network, ip: "10.0.111.253"
     hostsystem.vm.hostname = "hostsystem"
 
     # Synced folders.
-
     if OS.linux?
       hostsystem.vm.synced_folder "../log", "/var/syslog-ng", type: "nfs", nfs_version: 4
       hostsystem.vm.synced_folder "../smtp", "/var/smtp", type: "nfs", nfs_version: 4
@@ -861,17 +820,14 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     dns.vm.box = "debian/buster64"
     dns.vm.box_version = "10.20210409.1"
 
     # Network.
-
     dns.vm.network :private_network, ip: "10.0.111.254"
     dns.vm.hostname = "dns"
 
     # Synced folders.
-
     if OS.linux?
       dns.vm.synced_folder "../dns", "/var/consul", type: "nfs"
     end
@@ -905,16 +861,13 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     dotnet.vm.box = "debian/bullseye64"
 
     # Network.
-
     dotnet.vm.network :private_network, ip: "10.0.111.30"
     dotnet.vm.hostname = "dotnet"
 
     # Synced folders.
-
     if OS.linux?
       dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # se these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
     end
@@ -977,7 +930,6 @@ Vagrant.configure("2") do |config|
     centos8.vm.box = "centos/8"
 
     # Network.
-
     centos8.vm.network :private_network, ip: "10.0.111.201"
     centos8.vm.hostname = "centos8"
 
@@ -1020,11 +972,9 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-
     empty.vm.box = "debian/bullseye64"
 
     # Network.
-
     empty.vm.network :private_network, ip: "10.0.111.202"
     empty.vm.hostname = "deb11"
 
@@ -1067,4 +1017,3 @@ Vagrant.configure("2") do |config|
   end
 
 end
-
