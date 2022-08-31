@@ -623,7 +623,7 @@ Vagrant.configure("2") do |config|
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      api.vm.provision "file", source: "api-checkpoint/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -820,8 +820,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    dns.vm.box = "debian/buster64"
-    dns.vm.box_version = "10.20210409.1"
+    dns.vm.box =  "debian/bullseye64"
+    # dns.vm.box_version = "11.20220328.1"
 
     # Network.
     dns.vm.network :private_network, ip: "10.0.111.254"
@@ -829,12 +829,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      dns.vm.synced_folder "../dns", "/var/consul", type: "nfs"
+      dns.vm.synced_folder "../dns", "/var/consul", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      dns.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      dns.vm.provision "file", source: "dns/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
