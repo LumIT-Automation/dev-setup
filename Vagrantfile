@@ -63,7 +63,7 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      revp.vm.synced_folder "../revp", "/var/reverse_proxy", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true
+      api.vm.synced_folder "../revp", "/var/reverse-proxy", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
