@@ -54,8 +54,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    revp.vm.box = "debian/buster64"
-    revp.vm.box_version = "10.20210409.1"
+    revp.vm.box =  "debian/bullseye64"
+    # revp.vm.box_version = "11.20220328.1"
 
     # Network.
     revp.vm.network :private_network, ip: "10.0.111.10"
@@ -63,12 +63,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      revp.vm.synced_folder "../revp", "/var/reverse_proxy", type: "nfs", fsnotify: true
+      api.vm.synced_folder "../revp", "/var/reverse-proxy", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      revp.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      revp.vm.provision "file", source: "revp/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -77,6 +77,8 @@ Vagrant.configure("2") do |config|
       s.args = ["--action", "install"]
     end
   end
+
+
 
   ############################################################################################
   # UI FRONTEND
