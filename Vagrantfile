@@ -229,8 +229,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    uib.vm.box = "debian/buster64"
-    uib.vm.box_version = "10.20210409.1"
+    uib.vm.box =  "debian/bullseye64"
+    # uib.vm.box_version = "11.20220328.1"
 
     # Network.
     uib.vm.network :private_network, ip: "10.0.111.12"
@@ -238,12 +238,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs"
+      uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      uib.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      uib.vm.provision "file", source: "uib/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -252,16 +252,6 @@ Vagrant.configure("2") do |config|
       s.args = ["--action", "install"]
     end
   end
-
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
 
   ############################################################################################
   # API CiscoNX
