@@ -869,7 +869,7 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # se these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
+      dotnet.vm.synced_folder "../dotnet", "/var/www/dotnet", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # use these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
     end
 
     # Alternative debian mirror.
