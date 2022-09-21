@@ -28,9 +28,10 @@ function System_run()
 {
     if [ "$ACTION" == "run" ]; then
         if System_checkEnvironment; then
-            printf "\n* Configuting system...\n"
+            printf "\n* Configuring system...\n"
 
             System_mariadbRestore
+            System_sqliteDbRestore
         else
             echo "A Debian Buster operating system is required for the installation. Aborting."
             exit 1
@@ -61,7 +62,7 @@ function System_checkEnvironment()
 
 System_mariadbRestore()
 {
-    printf "\n* Restoring the database from its SQL dump...\n"
+    printf "\n* Restoring the MySQL database from its SQL dump...\n"
 
     mysql -e 'DROP DATABASE IF EXISTS `api`;'
     mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
@@ -76,6 +77,23 @@ System_mariadbRestore()
 }
 
 
+
+System_sqliteDbRestore()
+{
+    printf "\n* Restoring the sqlite database from main SQL dump...\n"
+
+    # Removing sqlite database file, first.
+    if [ -f /var/lib/f5.sqlite ]; then
+        rm -f /var/lib/f5.sqlite
+    fi
+
+    # Importing MysQL dump into sqlite database file.
+    bash /var/www/api/mysql2sqlite.sh api | sqlite3 /var/lib/f5.sqlite
+
+    if [ $? -eq 0 ]; then
+        chown www-data:www-data /var/lib/f5.sqlite
+    fi
+}
 
 # ##################################################################################################################################################
 # Main

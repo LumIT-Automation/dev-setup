@@ -42,7 +42,6 @@ function System_run()
             System_pythonSetup
             System_syslogngInstall
             System_mtaSetup
-            # System_sqlitedbSetup
             System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             # System_mariadbRestore -> performed by db-bootstrap.sh
@@ -162,6 +161,7 @@ EOF
     apt install -y php7.3-mysql php7.3-mbstring # php and php for mysql.
     apt install -y libapache2-mod-php7.3 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
+    apt install -y sqlite3
     apt install -y rpm # for building rh packages.
 
     apt clean
@@ -190,13 +190,6 @@ function System_pythonSetup()
 
     pip install --upgrade pip
     pip install -r /var/www/api/api/pip.requirements # pip install requirements.
-}
-
-
-
-function System_sqlitedbSetup()
-{
-    bash /vagrant/api-f5/old/create_f5_sqlite_db.sh
 }
 
 
