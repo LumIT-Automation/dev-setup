@@ -645,8 +645,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    aaa.vm.box = "debian/buster64"
-    aaa.vm.box_version = "10.20210409.1"
+    aaa.vm.box =  "debian/bullseye64"
+    # aaa.vm.box_version = "11.20220328.1"
 
     # Network.
     aaa.vm.network :private_network, ip: "10.0.111.100"
@@ -654,12 +654,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", fsnotify: true
+      aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      aaa.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      aaa.vm.provision "file", source: "aaa/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
