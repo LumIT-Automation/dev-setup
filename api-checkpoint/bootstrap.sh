@@ -65,7 +65,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'bullseye' /etc/os-release; then
             return 1
         fi
     else
