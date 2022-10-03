@@ -251,6 +251,10 @@ Vagrant.configure("2") do |config|
       s.path = "uib/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+    uib.vm.provision "db", type: "shell" do |s|
+      s.path = "uib/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
   end
 
   ############################################################################################
