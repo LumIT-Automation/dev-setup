@@ -28,12 +28,11 @@ function System_run()
 {
     if [ "$ACTION" == "run" ]; then
         if System_checkEnvironment; then
-            printf "\n* Configuring system...\n"
+            printf "\n* Configuting system...\n"
 
             System_mariadbRestore
-            System_sqliteDbRestore
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -48,7 +47,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -q 'bullseye' /etc/os-release; then
             return 1
         fi
     else
@@ -62,38 +61,21 @@ function System_checkEnvironment()
 
 System_mariadbRestore()
 {
-    printf "\n* Restoring the MySQL database from its SQL dump...\n"
+    printf "\n* Restoring the database from its SQL dump...\n"
 
-    mysql -e 'DROP DATABASE IF EXISTS `api`;'
-    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
+    mysql -e 'DROP DATABASE IF EXISTS `uib`;'
+    mysql -e 'CREATE DATABASE `uib` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+    mysql -e "GRANT USAGE ON *.* TO 'uib'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+    mysql -e "GRANT ALL privileges ON *.* TO 'uib'@'%';"
 
-    mysql api < /var/www/api/f5/sql/f5.schema.sql
-    mysql api < /var/www/api/f5/sql/f5.data.sql
-    if [ -f /var/www/api/f5/sql/f5.data-development.sql ]; then
-        mysql api < /var/www/api/f5/sql/f5.data-development.sql
+    mysql uib < /var/www/ui-backend/ui_backend/sql/uib.schema.sql
+    mysql uib < /var/www/ui-backend/ui_backend/sql/uib.data.sql
+    if [ -f /var/www/ui-backend/ui_backend/sql/uib.data-development.sql ]; then
+        mysql uib < /var/www/ui-backend/ui_backend/sql/uib.data-development.sql
     fi
 }
 
 
-
-System_sqliteDbRestore()
-{
-    printf "\n* Restoring the sqlite database from main SQL dump...\n"
-
-    # Removing sqlite database file, first.
-    if [ -f /var/lib/f5.sqlite ]; then
-        rm -f /var/lib/f5.sqlite
-    fi
-
-    # Importing MysQL dump into sqlite database file.
-    bash /var/www/api/mysql2sqlite.sh api | sqlite3 /var/lib/f5.sqlite
-
-    if [ $? -eq 0 ]; then
-        chown www-data:www-data /var/lib/f5.sqlite
-    fi
-}
 
 # ##################################################################################################################################################
 # Main
@@ -133,3 +115,4 @@ else
 fi
 
 exit 0
+

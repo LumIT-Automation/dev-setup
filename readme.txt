@@ -5,15 +5,23 @@ An Active Directory/Radius node is created for the user authentication as well.
 
 Requirements:
     - Linux host as development machine (tested on modern Debian and Ubuntu OS; any other should work)
-    - VirtualBox 
-        From version 6.1.28 of virtualbox can be necessary edit the file /etc/vbox/networks.conf:
-            command: echo '* 10.0.0.0/8' >> /etc/vbox/networks.conf
     - Vagrant
+        Use own repo's builds -> https://www.vagrantup.com/downloads
+            wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/vagrant-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            apt update
+            apt install vagrant
+
         Plugins (user-installed):
         vagrant plugin install vagrant-reload
         vagrant plugin install vagrant-env
         vagrant plugin install vagrant-fsnotify
         vagrant plugin install vagrant-disksize
+    - VirtualBox
+        On Ubuntu 20+:
+            apt install virtualbox virtualbox-dkms virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+        From version 6.1.28 of virtualbox can be necessary edit the file /etc/vbox/networks.conf (it's well specified by Vagrant):
+            command: echo '* 10.0.0.0/8' > /etc/vbox/networks.conf
 
     cd /path/to/projectHome
 	git clone all projects

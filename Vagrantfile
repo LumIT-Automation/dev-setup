@@ -55,7 +55,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     revp.vm.box =  "debian/bullseye64"
-    # revp.vm.box_version = "11.20220328.1"
+    revp.vm.box_version = "11.20220912.1"
 
     # Network.
     revp.vm.network :private_network, ip: "10.0.111.10"
@@ -230,7 +230,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     uib.vm.box =  "debian/bullseye64"
-    # uib.vm.box_version = "11.20220328.1"
+    uib.vm.box_version = "11.20220912.1"
 
     # Network.
     uib.vm.network :private_network, ip: "10.0.111.12"
@@ -250,6 +250,10 @@ Vagrant.configure("2") do |config|
     uib.vm.provision "shell" do |s|
       s.path = "uib/bootstrap.sh"
       s.args = ["--action", "install"]
+    end
+    uib.vm.provision "db", type: "shell" do |s|
+      s.path = "uib/db-bootstrap.sh"
+      s.args = ["--action", "run"]
     end
   end
 
@@ -594,7 +598,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220328.1"
+    api.vm.box_version = "11.20220912.1"
 
     # Network.
     api.vm.network :private_network, ip: "10.0.111.26"
@@ -645,8 +649,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    aaa.vm.box = "debian/buster64"
-    aaa.vm.box_version = "10.20210409.1"
+    aaa.vm.box =  "debian/bullseye64"
+    aaa.vm.box_version = "11.20220912.1"
 
     # Network.
     aaa.vm.network :private_network, ip: "10.0.111.100"
@@ -654,12 +658,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", fsnotify: true
+      aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", nfs_version: 4
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      aaa.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      aaa.vm.provision "file", source: "aaa/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -734,7 +738,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     hostsystem.vm.box = "debian/bullseye64"
-    # hostsystem.vm.box_version = ""
+    hostsystem.vm.box_version = "11.20220912.1"
 
     # Network.
     hostsystem.vm.network :private_network, ip: "10.0.111.253"
@@ -811,7 +815,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     dns.vm.box =  "debian/bullseye64"
-    # dns.vm.box_version = "11.20220328.1"
+    dns.vm.box_version = "11.20220912.1"
 
     # Network.
     dns.vm.network :private_network, ip: "10.0.111.254"
@@ -852,6 +856,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     dotnet.vm.box = "debian/bullseye64"
+    dotnet.vm.box_version = "11.20220912.1"
 
     # Network.
     dotnet.vm.network :private_network, ip: "10.0.111.30"
@@ -963,6 +968,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     empty.vm.box = "debian/bullseye64"
+    empty.vm.box_version = "11.20220912.1"
 
     # Network.
     empty.vm.network :private_network, ip: "10.0.111.202"

@@ -42,7 +42,7 @@ function System_run()
             System_pythonSetup
             System_syslogngInstall
             System_mtaSetup
-            #System_mariadbSetup "$DATABASE_USER_PASSWORD"
+            System_mariadbSetup "$DATABASE_USER_PASSWORD"
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             System_redisSetup
@@ -63,7 +63,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'bullseye' /etc/os-release; then
             return 1
         fi
     else
@@ -153,8 +153,8 @@ EOF
     apt install -y wget git unzip net-tools dos2unix dnsutils curl screen vim # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.    
-    #apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
-    #apt install -y php7.4-mysql php7.4-mbstring # php and php for mysql.
+    apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
+    apt install -y php7.4-mysql php7.4-mbstring # php and php for mysql.
     apt install -y libapache2-mod-php7.4 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
     apt install -y rpm # for building rh packages.
@@ -206,19 +206,19 @@ function System_mariadbSetup()
     chmod 644 /etc/systemd/system/mariadb.service
     ln -s /etc/systemd/system/mariadb.service /etc/systemd/system/mysql.service
     ln -s /etc/systemd/system/mariadb.service /etc/systemd/system/mysqld.service
-
+    
     sed -i -e 's/bind-address /# bind-address /' /etc/mysql/mariadb.conf.d/50-server.cnf
-
+    
     systemctl daemon-reload
     systemctl restart mariadb
 
     if mysql -e "exit" >/dev/null 2>&1; then
         if [ "$(mysql --vertical -e "SELECT User FROM mysql.user WHERE User = 'uib';" | tail -1 | awk '{print $2}')" == "" ]; then
             # User uib not present: create.
-            mysql -e "CREATE USER 'uib'@'localhost' IDENTIFIED BY '$databaseUserPassword';"
+            mysql -e "CREATE USER 'uib'@'%' IDENTIFIED BY '$databaseUserPassword';"
         else
             # Update user's password.
-            mysql -e "SET PASSWORD FOR 'uib'@'localhost' = PASSWORD('$databaseUserPassword');"
+            mysql -e "SET PASSWORD FOR 'uib'@'%' = PASSWORD('$databaseUserPassword');"
         fi
     else
         echo "MariaDB error: shell access disabled."
@@ -232,44 +232,44 @@ function System_apacheSetup()
 {
     printf "\n* Setting up Apache...\n"
 
-    #cd /tmp
+    cd /tmp
 
     # /var/www/ui-backend is mounted by Vagrant (share), here lays the Django stub project.
-    #if [ ! -d /var/www/ui-backend ]; then
-    #    echo "/var/www/ui-backend does not exist, check your Vagrant setup."
-    #    exit 1
-    #fi
+    if [ ! -d /var/www/ui-backend ]; then
+        echo "/var/www/ui-backend does not exist, check your Vagrant setup."
+        exit 1
+    fi
 
     # Copy phpMyAdmin files.
-    #if [ ! -f phpMyAdmin-5.1.3-all-languages.zip ]; then
-    #    wget https://files.phpmyadmin.net/phpMyAdmin/5.1.3/phpMyAdmin-5.1.3-all-languages.zip
-    #fi
+    if [ ! -f phpMyAdmin-5.1.3-all-languages.zip ]; then
+        wget https://files.phpmyadmin.net/phpMyAdmin/5.1.3/phpMyAdmin-5.1.3-all-languages.zip
+    fi
 
-    #unzip phpMyAdmin-5.1.3-all-languages.zip >/dev/null
+    unzip phpMyAdmin-5.1.3-all-languages.zip >/dev/null
 
-    #if [ -d /var/www/myadmin ]; then
-    #    if [ -d /tmp/myadmin ]; then
-    #        rm -Rf /tmp/myadmin
-    #    fi
-    #    mv /var/www/myadmin /tmp/myadmin
-    #
-    #    echo "I've found a /var/www/myadmin folder, which I moved to /tmp/."
-    # fi
-    # mv phpMyAdmin-5.1.3-all-languages /var/www/myadmin
-    # chown -R www-data:www-data /var/www/myadmin    
+    if [ -d /var/www/myadmin ]; then
+        if [ -d /tmp/myadmin ]; then
+            rm -Rf /tmp/myadmin
+        fi
+        mv /var/www/myadmin /tmp/myadmin
+    
+        echo "I've found a /var/www/myadmin folder, which I moved to /tmp/."
+    fi
+    mv phpMyAdmin-5.1.3-all-languages /var/www/myadmin
+    chown -R www-data:www-data /var/www/myadmin    
 
     # Configure phpMyAdmin for direct login.
-    # sed -i "s/\$cfg\['Servers'\]\[\$i\]\['auth_type'\].*/\$cfg\['Servers'\]\[\$i\]\['auth_type'\] = 'config';/g" /var/www/myadmin/libraries/config.default.php
-    # sed -i "s/\$cfg\['Servers'\]\[\$i\]\['user'\].*/\$cfg\['Servers'\]\[\$i\]\['user'\] = 'uib';/g" /var/www/myadmin/libraries/config.default.php
-    # sed -i "s/\$cfg\['Servers'\]\[\$i\]\['password'\].*/\$cfg\['Servers'\]\[\$i\]\['password'\] = '$2';/g" /var/www/myadmin/libraries/config.default.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['auth_type'\].*/\$cfg\['Servers'\]\[\$i\]\['auth_type'\] = 'config';/g" /var/www/myadmin/libraries/config.default.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['user'\].*/\$cfg\['Servers'\]\[\$i\]\['user'\] = 'uib';/g" /var/www/myadmin/libraries/config.default.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['password'\].*/\$cfg\['Servers'\]\[\$i\]\['password'\] = '$2';/g" /var/www/myadmin/libraries/config.default.php
 
     # Setup the Django project virtual host.
     cp -f /vagrant/uib/etc/apache2/sites-available/001-django.conf /etc/apache2/sites-available/001-django.conf
     chmod 644 /etc/apache2/sites-available/001-django.conf
 
     # Setup the phpMyAdmin virtual host on port 8300.
-    # cp -f /vagrant/uib/etc/apache2/sites-available/001-mysql.conf /etc/apache2/sites-available/001-mysql.conf
-    # chmod 644 /etc/apache2/sites-available/001-mysql.conf
+    cp -f /vagrant/uib/etc/apache2/sites-available/001-mysql.conf /etc/apache2/sites-available/001-mysql.conf
+    chmod 644 /etc/apache2/sites-available/001-mysql.conf
 
     # This is a trick in order for Apache not to need to be reloaded at every .py modification.
     if ! grep -q "MaxRequestsPerChild" /etc/apache2/apache2.conf; then
@@ -285,13 +285,13 @@ function System_apacheSetup()
 
     a2query -s 000-default && a2dissite 000-default # disable default Apache site, only if enabled.
     
-    # if ! grep -q '^Listen 8300$' /etc/apache2/ports.conf; then
-        # echo "Listen 8300" >> /etc/apache2/ports.conf
-    # fi
+    if ! grep -q '^Listen 8300$' /etc/apache2/ports.conf; then
+        echo "Listen 8300" >> /etc/apache2/ports.conf
+    fi
       
     # Setup Apache config files for its virtualhosts. 
     a2ensite 001-django
-    # a2ensite 001-mysql
+    a2ensite 001-mysql
     a2query -s 000-default && a2dissite 000-default # disable default site, only if enabled.
 
     systemctl restart apache2
