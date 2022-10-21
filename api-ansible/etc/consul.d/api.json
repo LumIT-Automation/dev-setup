@@ -1,0 +1,18 @@
+{
+  "service": {
+    "id": "api-checkpoint",
+    "name": "api-checkpoint",
+    "tags": [
+      "api-checkpoint"
+    ],
+    "port": 80
+  },
+  "check": {
+    "id": "api-checkpoint",
+    "name": "HTTP API",
+    "http": "http://127.0.0.1/api/?consul-check",
+    "method": "GET",
+    "interval": "60s",
+    "timeout": "2s"
+  }
+}

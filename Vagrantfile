@@ -632,6 +632,58 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
+  # API ANSIBLE
+  ############################################################################################
+
+  config.vm.define :apiansible do |api|
+    api.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+    end
+
+    api.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    api.vm.box = "debian/bullseye64"
+    #api.vm.box_version = "11.20220912.1"
+
+    # Network.
+    api.vm.network :private_network, ip: "10.0.111.27"
+    api.vm.hostname = "apiansible"
+
+    # Synced folders.
+    if OS.linux?
+      api.vm.synced_folder "../api-ansible", "/var/www/api", type: "nfs", nfs_version: 4
+    end
+
+    # Set VPN credentials.
+    #api.vm.provision "shell" do |s|
+    #  s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
+    #  s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
+    #end
+
+    # Alternative debian mirror.
+    if File.exist?("sources.list")
+      api.vm.provision "file", source: "api-ansible/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    api.vm.provision "shell" do |s|
+      s.path = "api-ansible/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    api.vm.provision "db", type: "shell" do |s|
+      s.path = "api-ansible/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+  end
+
+  ############################################################################################
   # AAA
   ############################################################################################
 
