@@ -556,6 +556,7 @@ $consulIpLastN                  PTR     ${hostNameLsConsul}.${domainLf}.
     systemctl start slapd 
     systemctl restart bind9
     systemctl start samba-ad-dc
+    cd
 }
 
 
@@ -581,13 +582,16 @@ function System_freeradiusInstall()
     mysql -uroot -p$rootPassword -e 'CREATE DATABASE `radius` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
     mysql -uroot -p$rootPassword -e "grant all on radius.* to 'radius'@'127.0.0.1' identified by 'radius';"
     mysql -uroot -p$rootPassword -e "grant all on radius.* to 'radius'@'localhost' identified by 'radius';"
-    set -vx
-    # daloRADIUS
-    wget http://liquidtelecom.dl.sourceforge.net/project/daloradius/daloradius/daloradius0.9-9/daloradius-0.9-9.tar.gz
-    tar -xzf daloradius-0.9-9.tar.gz
-    mv daloradius-0.9-9 /var/www/html/daloradius
-    chown -R www-data:www-data /var/www/html/daloradius
     
+    # daloRADIUS
+    wget https://github.com/lirantal/daloradius/archive/refs/tags/1.3.tar.gz
+    tar xzf 1.3.tar.gz
+    mv daloradius-1.3 /var/www/html/daloradius
+    chown -R www-data:www-data /var/www/html/daloradius
+    chmod -R 644 /var/www/html/daloradius
+    chmod -R +X /var/www/html/daloradius
+
+    cp /var/www/html/daloradius/library/daloradius.conf.php.sample /var/www/html/daloradius/library/daloradius.conf.php
     sed -i "s/^\$configValues\['CONFIG_DB_ENGINE'\].*/\$configValues\['CONFIG_DB_ENGINE'\] = 'mysqli';/g" /var/www/html/daloradius/library/daloradius.conf.php
     sed -i "s/^\$configValues\['CONFIG_DB_USER'\].*/\$configValues\['CONFIG_DB_USER'\] = 'radius';/g" /var/www/html/daloradius/library/daloradius.conf.php
     sed -i "s/^\$configValues\['CONFIG_DB_PASS'\].*/\$configValues\['CONFIG_DB_PASS'\] = 'radius';/g" /var/www/html/daloradius/library/daloradius.conf.php
@@ -598,7 +602,6 @@ function System_freeradiusInstall()
     mysql -uroot -p$rootPassword radius < /home/vagrant/radius.sql    
     
     # Clients configuration.
-    
     cat >>/etc/freeradius/3.0/clients.conf<<EOF
     
 client automation {
