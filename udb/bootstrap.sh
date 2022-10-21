@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing packages...\n"
-            echo "This script requires a fresh-installation of Debian Buster..."
+            echo "This script requires a fresh-installation of Debian Bullseye ..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -41,10 +41,9 @@ function System_run()
             System_installDependencies
             System_ldapInstall
             System_sambaInstall
-            System_mariadbSetup "$DATABASE_ROOT_PASSWORD"
             System_freeradiusInstall "$DATABASE_ROOT_PASSWORD"
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -59,7 +58,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -qi 'bullseye' /etc/os-release; then
             return 1
         fi
     else
@@ -144,8 +143,9 @@ EOF
 
     apt install -y wget git unzip net-tools dos2unix # base.
     apt install -y mariadb-server
-    apt install -y php7.3-mysql php7.3-gd php7.3-mbstring php7.3-curl php7.3-xml php7.3-mail php-pear; pear install DB
-    apt install -y libapache2-mod-php7.3
+    apt install -y php7.4-mysql php7.4-mbstring 
+    apt install -y php7.4-gd php7.4-curl php7.4-xml php-mail php-pear; pear install DB
+    apt install -y libapache2-mod-php7.4
     apt clean
 }
 
@@ -244,11 +244,11 @@ EOF
 function System_sambaInstall()
 {
     apt update
-    apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade
     apt clean
     
-    apt -y install /home/vagrant/samba_4.13.2-1_amd64.deb
+    #apt -y install /home/vagrant/samba_4.13.2-1_amd64.deb
+    apt -y install samba winbind
     
     # set the needed variables.
     domainLs=lab
@@ -280,8 +280,8 @@ function System_sambaInstall()
     myPtrNet=${myNetArray[2]}.${myNetArray[1]}.${myNetArray[0]}.in-addr.arpa
     
     # set /etc/hosts
-    # remove the previus entry.
-    sed -i "/${hostName}\t/d" /etc/hosts
+    # remove the previous entry.
+    sed -i "/${hostNameLs}\s/d" /etc/hosts
     
     # set the new entries
     echo "$ipAddr $hostNameLf $hostNameLs" >> /etc/hosts
@@ -339,12 +339,18 @@ EOF
     MyAdminPassword=Password01
     userPassword=password
     
+    systemctl stop slapd # by default slapd and samba cannot run toghether (same tcp port).
+    systemctl unmask samba-ad-dc
+    systemctl enable samba-ad-dc
+    systemctl stop smbd
+    systemctl stop nmbd
+    systemctl mask smbd
+    systemctl mask nmbd
+
     # create the ad domain.
     samba-tool domain provision --use-rfc2307 --base-schema=2012_R2 --realm=${domainUf} --dns-backend=BIND9_FLATFILE --domain=${domainUs} --server-role=dc --adminpass=$MyAdminPassword
-   
     
-    systemctl stop slapd # by default slapd and samba cannot run toghether (same tcp port).
-    systemctl start samba
+    systemctl start samba-ad-dc
 
     # Allow simple passwords.
     samba-tool domain passwordsettings pso create pso_pwd_simple 1 --complexity=off --history-length=0 --min-pwd-age=0 --max-pwd-age=0 --min-pwd-length=1
@@ -523,7 +529,7 @@ $consulIpLastN                  PTR     ${hostNameLsConsul}.${domainLf}.
     systemctl start bind9
     
     # set localhost as primary dns server for this host (via systemd-network and systemd-resolved).
-    echo -e "nameserver 127.0.0.1\nsearch lab.local" >> /etc/resolv.conf
+    sed -i -e "/search /d" -e "1 i\search lab.local\nnameserver 127.0.0.1" /etc/resolv.conf
     
     # Modify the network config files to maintain the local dns at the next reboot.
     cd /etc/systemd/network
@@ -544,35 +550,14 @@ $consulIpLastN                  PTR     ${hostNameLsConsul}.${domainLf}.
 
     systemctl daemon-reload
 
-    systemctl stop samba
-    systemctl enable samba
+    systemctl stop winbind
+    systemctl stop samba-ad-dc
+
     systemctl start slapd 
     systemctl restart bind9
-    systemctl start samba
+    systemctl start samba-ad-dc
 }
 
-
-function System_mariadbSetup()
-{
-    printf "\n* Setting up MariaDB: root/root...\n"
-
-    rootPassword=$1
-
-    # mariadb is directly reachable by command line by root: disable the plugin and change root password.
-    if mysql -e "exit" >/dev/null 2>&1; then
-        echo -e "\n\n$rootPassword\n$rootPassword\n\n\n\n\n" | mysql_secure_installation 2>/dev/null
-        mysql -e "use mysql; update user set plugin='' where User='root'; flush privileges;" 2>/dev/null || true
-
-    # mariadb is reachable with the root/root account: change root password (and make sure the plugin is disabled).
-    elif mysql -uroot -p$rootPassword -e "use mysql; update user set plugin='' where User='root'; flush privileges;"; then
-        echo "Database already configured, skipping."
-
-    # mariadb has been configured differently.
-    else
-        echo "MariaDB password is unknown to me; it muse be: root."
-        exit 1
-    fi
-}
 
 
 function System_freeradiusInstall()
@@ -585,24 +570,18 @@ function System_freeradiusInstall()
     rootPassword=$1
 
     apt -y install freeradius freeradius-mysql freeradius-utils
+    cp /etc/freeradius/3.0/mods-available/sql /etc/freeradius/3.0/mods-available/sql.orig
+    mv /home/vagrant/freeradius-mod-sql /etc/freeradius/3.0/mods-available/sql
     ln -s /etc/freeradius/3.0/mods-available/sql /etc/freeradius/3.0/mods-enabled
-    sed -i -r -e 's@(dialect\s+=)@#\1@' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r '/dialect\s+=/a dialect = "mysql"' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r -e 's/.*radius_db\s+=.*/radius_db = "radius"/' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r -e 's/.*login\s+=.*/login = "radius"/' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r -e 's/.*password\s+=.*/password = "radius"/' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r -e 's/.*read_clients\s+=.*/read_clients = "yes"/' /etc/freeradius/3.0/mods-enabled/sql
-    sed -i -r -e 's/.*driver\s+=.*/driver = "rlm_sql_mysql"/' /etc/freeradius/3.0/mods-enabled/sql            
 
     chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
     chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 
-    mysql -uroot -p$1 -e 'DROP DATABASE IF EXISTS `radius`;'
-    mysql -uroot -p$1 -e 'CREATE DATABASE `radius` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
-    mysql -uroot -p$1 -e "grant all on radius.* to 'radius'@'127.0.0.1' identified by 'radius';"
-    mysql -uroot -p$1 -e "grant all on radius.* to 'radius'@'localhost' identified by 'radius';"
-    #mysql -uroot -p$1 radius < /etc/freeradius/3.0/mods-config/sql/main/mysql/schema.sql # now in radius.sql.
-
+    mysql -uroot -p$rootPassword -e 'DROP DATABASE IF EXISTS `radius`;'
+    mysql -uroot -p$rootPassword -e 'CREATE DATABASE `radius` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+    mysql -uroot -p$rootPassword -e "grant all on radius.* to 'radius'@'127.0.0.1' identified by 'radius';"
+    mysql -uroot -p$rootPassword -e "grant all on radius.* to 'radius'@'localhost' identified by 'radius';"
+    set -vx
     # daloRADIUS
     wget http://liquidtelecom.dl.sourceforge.net/project/daloradius/daloradius/daloradius0.9-9/daloradius-0.9-9.tar.gz
     tar -xzf daloradius-0.9-9.tar.gz
@@ -610,12 +589,13 @@ function System_freeradiusInstall()
     chown -R www-data:www-data /var/www/html/daloradius
     
     sed -i "s/^\$configValues\['CONFIG_DB_ENGINE'\].*/\$configValues\['CONFIG_DB_ENGINE'\] = 'mysqli';/g" /var/www/html/daloradius/library/daloradius.conf.php
-    sed -i "s/^\$configValues\['CONFIG_DB_PASS'\].*/\$configValues\['CONFIG_DB_PASS'\] = 'root';/g" /var/www/html/daloradius/library/daloradius.conf.php
+    sed -i "s/^\$configValues\['CONFIG_DB_USER'\].*/\$configValues\['CONFIG_DB_USER'\] = 'radius';/g" /var/www/html/daloradius/library/daloradius.conf.php
+    sed -i "s/^\$configValues\['CONFIG_DB_PASS'\].*/\$configValues\['CONFIG_DB_PASS'\] = 'radius';/g" /var/www/html/daloradius/library/daloradius.conf.php
     
     #mysql -uroot -p$1 radius < /var/www/html/daloradius/contrib/db/fr2-mysql-daloradius-and-freeradius.sql # now in radius.sql. 
     #mysql -uroot -p$1 radius < /var/www/html/daloradius/contrib/db/mysql-daloradius.sql # now in radius.sql.
     
-    mysql -uroot -p$1 radius < /home/vagrant/radius.sql    
+    mysql -uroot -p$rootPassword radius < /home/vagrant/radius.sql    
     
     # Clients configuration.
     

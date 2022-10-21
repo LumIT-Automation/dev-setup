@@ -695,8 +695,7 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    udb.vm.box = "debian/buster64"
-    udb.vm.box_version = "10.20210409.1"
+    udb.vm.box =  "debian/bullseye64"
 
     # Network.
     udb.vm.network :private_network, ip: "10.0.111.110"
@@ -704,7 +703,7 @@ Vagrant.configure("2") do |config|
     udb.vm.hostname = "ad"
 
     # Provision.
-    udb.vm.provision "file", source: "udb/samba_4.13.2-1_amd64.deb", destination: "samba_4.13.2-1_amd64.deb"
+    udb.vm.provision "file", source: "udb/freeradius-mod-sql", destination: "freeradius-mod-sql"
     udb.vm.provision "file", source: "udb/radius.sql", destination: "radius.sql"
 
     # Alternative debian mirror.
