@@ -205,7 +205,7 @@ function System_mariadbSetup()
     cp -f /vagrant/api-f5/etc/mysql/mariadb.conf.d/99-log.cnf /etc/mysql/mariadb.conf.d
     chmod 644 /etc/mysql/mariadb.conf.d/*cnf
 
-    cp /lib/systemd/system/mariadb.service /etc/systemd/system
+    cp /lib/systemd/system/mariadb.service /etc/systemd/system/
     # By default /etc/systemd/system/mysql.service and mysqld.service are symlink to /lib/systemd/system/mariadb.service.
     sed -i -r -e '/^\[Service\]$/a StandardOutput=syslog\nStandardError=syslog\nSyslogFacility=daemon\nSyslogLevel=warning\nSyslogIdentifier=mysql' /etc/systemd/system/mariadb.service # this one replaces the symlink with a new file.
     chmod 644 /etc/systemd/system/mariadb.service

@@ -11,7 +11,7 @@ RemainAfterExit=no
 Restart=always
 RestartSec=10
 KillMode=process
-ExecStart=pip install -r /var/www/aaa/aaa/pip.requirements
+ExecStart=pip install --upgrade pip; pip install -r /var/www/aaa/aaa/pip.requirements
 
 StandardOutput=syslog
 StandardError=syslog
