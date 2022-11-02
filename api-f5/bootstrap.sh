@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Buster..."
+            echo "This script requires a fresh-installation of Debian Bullseye..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -50,7 +50,7 @@ function System_run()
             System_vpnSupplicantSetup
             System_pipInstallDaemon_api
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -65,7 +65,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
             return 1
         fi
     else
@@ -158,8 +158,8 @@ EOF
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
-    apt install -y php7.3-mysql php7.3-mbstring # php and php for mysql.
-    apt install -y libapache2-mod-php7.3 libapache2-mod-wsgi-py3 # apache for php and python.
+    apt install -y php7.4-mysql php7.4-mbstring # php and php for mysql.
+    apt install -y libapache2-mod-php7.4 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
     apt install -y sqlite3
     apt install -y rpm # for building rh packages.
@@ -173,7 +173,7 @@ function System_pythonSetup()
 {
     printf "\n* Installing pip dependencies...\n"
 	
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
     update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 # best practice for simply creating a symlink.
 
     # pip Requirements files are used to hold the result from pip freeze for the purpose of achieving repeatable installations.
@@ -205,17 +205,17 @@ function System_mariadbSetup()
     cp -f /vagrant/api-f5/etc/mysql/mariadb.conf.d/99-log.cnf /etc/mysql/mariadb.conf.d
     chmod 644 /etc/mysql/mariadb.conf.d/*cnf
 
+    cp /lib/systemd/system/mariadb.service /etc/systemd/system
     # By default /etc/systemd/system/mysql.service and mysqld.service are symlink to /lib/systemd/system/mariadb.service.
-    sed -i -r -e '/^\[Service\]$/a StandardOutput=syslog\nStandardError=syslog\nSyslogFacility=daemon\nSyslogLevel=warning\nSyslogIdentifier=mysql' /etc/systemd/system/mysql.service # this one replaces the symlink with a new file.
-    chmod 644 /etc/systemd/system/mysql.service
-    rm -f /etc/systemd/system/mysqld.service
-    ln -s /etc/systemd/system/mysql.service /etc/systemd/system/mysqld.service
-    ln -s /etc/systemd/system/mysql.service /etc/systemd/system/mariadb.service
+    sed -i -r -e '/^\[Service\]$/a StandardOutput=syslog\nStandardError=syslog\nSyslogFacility=daemon\nSyslogLevel=warning\nSyslogIdentifier=mysql' /etc/systemd/system/mariadb.service # this one replaces the symlink with a new file.
+    chmod 644 /etc/systemd/system/mariadb.service
+    ln -s /etc/systemd/system/mariadb.service /etc/systemd/system/mysql.service
+    ln -s /etc/systemd/system/mariadb.service /etc/systemd/system/mysqld.service
 
     sed -i -e 's/bind-address /# bind-address /' /etc/mysql/mariadb.conf.d/50-server.cnf
 
     systemctl daemon-reload
-    systemctl restart mysql
+    systemctl restart mariadb
 
     if mysql -e "exit" >/dev/null 2>&1; then
         if [ "$(mysql --vertical -e "SELECT User FROM mysql.user WHERE User = 'api';" | tail -1 | awk '{print $2}')" == "" ]; then
@@ -246,11 +246,11 @@ function System_apacheSetup()
     fi
 
     # Copy phpMyAdmin files.
-    if [ ! -f phpMyAdmin-5.0.2-all-languages.zip ]; then
-        wget https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.zip
+    if [ ! -f phpMyAdmin-5.1.3-all-languages.zip ]; then
+        wget https://files.phpmyadmin.net/phpMyAdmin/5.1.3/phpMyAdmin-5.1.3-all-languages.zip
     fi
 
-    unzip phpMyAdmin-5.0.2-all-languages.zip >/dev/null
+    unzip phpMyAdmin-5.1.3-all-languages.zip >/dev/null
 
     if [ -d /var/www/myadmin ]; then
         if [ -d /tmp/myadmin ]; then
@@ -260,7 +260,7 @@ function System_apacheSetup()
 
         echo "I've found a /var/www/myadmin folder, which I moved to /tmp/."
     fi
-    mv phpMyAdmin-5.0.2-all-languages /var/www/myadmin
+    mv phpMyAdmin-5.1.3-all-languages /var/www/myadmin
     chown -R www-data:www-data /var/www/myadmin
 
     # Configure phpMyAdmin for direct login.

@@ -33,7 +33,7 @@ function System_run()
             System_mariadbRestore
             System_sqliteDbRestore
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -48,7 +48,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
             return 1
         fi
     else
