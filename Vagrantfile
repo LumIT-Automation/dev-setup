@@ -393,7 +393,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     api.vm.box = "debian/bullseye64"
-    api.vm.box_version = "11.20220912.1"
+    #api.vm.box_version = "11.20220912.1"
 
     # Network.
     api.vm.network :private_network, ip: "10.0.111.22"
