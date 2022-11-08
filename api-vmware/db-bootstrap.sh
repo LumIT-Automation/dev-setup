@@ -32,7 +32,7 @@ function System_run()
 
             System_mariadbRestore
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -47,7 +47,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
             return 1
         fi
     else
@@ -61,16 +61,16 @@ function System_checkEnvironment()
 
 System_mariadbRestore()
 {
-    printf "\n* Restoring the database from its SQL dump...\n"
-
-    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
+    printf "\n* Restoring the MySQL database from its SQL dump...\n"
 
     mysql -e 'DROP DATABASE IF EXISTS `api`;'
     mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
 
     mysql -e 'DROP DATABASE IF EXISTS `stage2`;'
     mysql -e 'CREATE DATABASE `stage2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+
+    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
     mysql api < /var/www/api/vmware/sql/vmware.schema.sql
     mysql api < /var/www/api/vmware/sql/vmware.data.sql
@@ -79,8 +79,6 @@ System_mariadbRestore()
     fi
     mysql stage2 < /var/www/api/vmware/sql/stage2.schema.sql
 }
-
-
 
 # ##################################################################################################################################################
 # Main

@@ -341,7 +341,7 @@ Vagrant.configure("2") do |config|
 
     # OS.
     api.vm.box = "debian/buster64"
-    api.vm.box_version = "10.20210409.1"
+    #api.vm.box_version = "10.20210409.1"
 
     # Network.
     api.vm.network :private_network, ip: "10.0.111.21"
@@ -545,8 +545,8 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    api.vm.box = "debian/buster64"
-    api.vm.box_version = "10.20210409.1"
+    api.vm.box = "debian/bullseye64"
+    #api.vm.box_version = "11.20220912.1"
 
     # Network.
     api.vm.network :private_network, ip: "10.0.111.25"
@@ -554,7 +554,7 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      api.vm.synced_folder "../api-vmware", "/var/www/api", type: "nfs"
+      api.vm.synced_folder "../api-vmware", "/var/www/api", type: "nfs", nfs_version: 4
     end
 
     # Set VPN credentials.
@@ -565,7 +565,7 @@ Vagrant.configure("2") do |config|
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      api.vm.provision "file", source: "api-vmware/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.

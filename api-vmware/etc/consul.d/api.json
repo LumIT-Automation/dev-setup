@@ -3,7 +3,7 @@
     "id": "api-vmware",
     "name": "api-vmware",
     "tags": [
-      "api-f5"
+      "api-vmware"
     ],
     "port": 80
   },
