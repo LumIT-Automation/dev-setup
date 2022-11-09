@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 function System()
 {
@@ -39,6 +39,7 @@ function System_run()
             System_sshConfig
             System_proxySet "$PROXY"
             System_installDependencies
+            System_networkManager
             System_ldapInstall
             System_sambaInstall
             System_freeradiusInstall "$DATABASE_ROOT_PASSWORD"
@@ -102,6 +103,36 @@ function System_proxySet()
     export http_proxy=$1
     export https_proxy=$1
 }
+
+
+
+function System_networkManager()
+{
+    set -vx
+    dns=`grep nameserver /etc/resolv.conf | head -n1 | awk '{print $2}'`
+    domainName=`dnsdomainname`
+    apt install network-manager -y
+
+    nmcli c add connection.type 802-3-ethernet con-name eth0 ifname eth0
+    nmcli c modify eth0 ipv4.dns "127.0.0.1 $dns"
+    nmcli c modify eth0 ipv4.dns-search $domainName
+    nmcli c modify eth0 ipv4.ignore-auto-dns yes
+    
+    nmcli c add connection.type 802-3-ethernet con-name eth1 ifname eth1
+    nmcli c modify eth1 ipv4.addresses 10.0.111.110/24
+    nmcli connection modify eth1 ipv4.method manual
+    
+    
+    nmcli c add connection.type 802-3-ethernet con-name eth2 ifname eth2
+    nmcli c modify eth2 ipv4.addresses 10.0.111.111/24
+    nmcli connection modify eth2 ipv4.method manual
+    
+    sed -i -e '/iface lo inet loopback/,/-1/d' /etc/network/interfaces
+    sed -i -e '$ a\iface lo inet loopback' /etc/network/interfaces
+    systemctl restart networking
+    systemctl restart NetworkManager
+}
+
 
 
 function System_installDependencies()
