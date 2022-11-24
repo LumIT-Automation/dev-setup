@@ -108,7 +108,6 @@ function System_proxySet()
 
 function System_networkManager()
 {
-    set -vx
     dns=`grep nameserver /etc/resolv.conf | head -n1 | awk '{print $2}'`
     domainName=`dnsdomainname`
     apt install network-manager -y
@@ -413,6 +412,7 @@ EOF
     samba-tool group add groupStaff
     samba-tool group add groupAdmin
 
+
     samba-tool group addmembers groupRequired userRo1
     samba-tool group addmembers groupRequired userRo2
     samba-tool group addmembers groupRequired userYN
@@ -433,6 +433,32 @@ EOF
     samba-tool group addmembers groupGranPa groupAdmin
     samba-tool group addmembers groupGranPa groupStaff
     samba-tool group addmembers groupGranPa groupReadOnly
+
+    # create a user that will have a token of a long size.
+    samba-tool user create lUser $userPassword
+    samba-tool user setexpiry lUser --noexpiry
+    samba-tool group add gruppoDalNomeLungoLungo.MaLuuuuuuungoMaLuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuungo.AhPensaviFosseFinito.EInveceNoPercheHaUnNomeLuuuuuuuuuuuuuuuuuuuuuuuuuuuuungggggggggoooooooooooooooooooooooo
+    for n in `seq 1 20`; do
+        samba-tool group add gruppoDalNomePiuttostoLungoInutileFastidiosoEDannosoNumero${n}
+    done
+    for n in `seq 1 20`; do
+        samba-tool group add gruppoConUnAltroNomeAlquantoEstesoRecanteFastidioEInutilmenteNocivoNumero${n}
+    done
+    for n in `seq 1 20`; do
+        samba-tool group add altroGruppoNonUtileMoltoFastidiosoEDiLunghezzaInconsuetaPerPoterRecareDanno${n}
+    done
+    samba-tool group addmembers gruppoDalNomeLungoLungo.MaLuuuuuuungoMaLuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuungo.AhPensaviFosseFinito.EInveceNoPercheHaUnNomeLuuuuuuuuuuuuuuuuuuuuuuuuuuuuungggggggggoooooooooooooooooooooooo lUser
+    for n in `seq 1 20`; do
+        samba-tool group addmembers gruppoDalNomePiuttostoLungoInutileFastidiosoEDannosoNumero${n} lUser
+    done
+    for n in `seq 1 20`; do
+        samba-tool group addmembers gruppoConUnAltroNomeAlquantoEstesoRecanteFastidioEInutilmenteNocivoNumero${n} lUser
+    done
+    for n in `seq 1 20`; do
+        samba-tool group addmembers altroGruppoNonUtileMoltoFastidiosoEDiLunghezzaInconsuetaPerPoterRecareDanno${n} lUser
+    done
+    samba-tool group addmembers groupGranPa gruppoDalNomePiuttostoLungoInutileFastidiosoEDannosoNumero1
+
 
     # Create a user to query the AD ldap server and get the token for the users.
     samba-tool user create adToken $userPassword
