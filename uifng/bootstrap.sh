@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Buster..."
+            echo "This script requires a fresh-installation of Debian Bullseye ..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -45,7 +45,7 @@ function System_run()
             System_yarnInstallDaemon
             System_yarnStartDaemon
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -60,7 +60,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'Debian GNU/Linux 10 (buster)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
             return 1
         fi
     else

@@ -167,8 +167,7 @@ Vagrant.configure("2") do |config|
     end
 
     # OS.
-    uifng.vm.box = "debian/buster64"
-    uifng.vm.box_version = "10.20210409.1"
+    uifng.vm.box =  "debian/bullseye64"
 
     # Network.
     uifng.vm.network :private_network, ip: "10.0.111.13"
@@ -176,12 +175,12 @@ Vagrant.configure("2") do |config|
 
     # Synced folders.
     if OS.linux?
-      uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "nfs", fsnotify: true
+      uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # use these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      uifng.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      uifng.vm.provision "file", source: "uifng/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
