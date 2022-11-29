@@ -349,6 +349,9 @@ System_syslogngInstall()
 
         # Add the include directive in the right place.
         sed -i -e '/# Log paths/i # Include all config files in \/etc\/syslog-ng\/conf.d\/\n########################\n@include "\/etc\/syslog-ng\/conf.d\/*.conf"\n\n\n########################' syslog-ng.conf
+
+        # Increase the message size up to 10 Mb (devel environment only).
+        sed -i -z -r -e 's#(options \{[^}]+)(\};)#\1\t  log_msg_size(10485760);\n\2#' syslog-ng.conf
     fi
 
     # Add syslog.host entry in /etc/hosts (remote logger).

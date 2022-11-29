@@ -411,7 +411,7 @@ Vagrant.configure("2") do |config|
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      api.vm.provision "file", source: "api-f5/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
