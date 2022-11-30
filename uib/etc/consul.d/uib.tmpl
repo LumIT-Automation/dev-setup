@@ -9,3 +9,12 @@
 {{ range service "api-f5" }}
   api-f5: {{ .Address }}:{{ .Port }};
 {{ end }}
+
+{{ range service "api-vmware" }}
+  api-vmware: {{ .Address }}:{{ .Port }};
+{{ end }}
+
+{{ range service "api-checkpoint" }}
+  api-checkpoint: {{ .Address }}:{{ .Port }};
+{{ end }}
+
