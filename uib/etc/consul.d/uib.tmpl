@@ -1,20 +1,5 @@
-{{ range service "api-cisconx" }}
-  api-cisconx: {{ .Address }}:{{ .Port }};
+{{ range services }}
+    {{ range service .Name }}
+        {{ .Address }}:{{ .Port }};
+    {{ end }}
 {{ end }}
-
-{{ range service "api-infoblox" }}
-  api-infoblox: {{ .Address }}:{{ .Port }};
-{{ end }}
-
-{{ range service "api-f5" }}
-  api-f5: {{ .Address }}:{{ .Port }};
-{{ end }}
-
-{{ range service "api-vmware" }}
-  api-vmware: {{ .Address }}:{{ .Port }};
-{{ end }}
-
-{{ range service "api-checkpoint" }}
-  api-checkpoint: {{ .Address }}:{{ .Port }};
-{{ end }}
-

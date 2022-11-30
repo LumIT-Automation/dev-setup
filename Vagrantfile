@@ -766,7 +766,6 @@ Vagrant.configure("2") do |config|
       s.path = "udb/bootstrap.sh"
       s.args = ["--action", "install"]
     end
-
   end
 
   ############################################################################################
