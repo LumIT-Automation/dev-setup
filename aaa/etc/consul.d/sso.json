@@ -13,7 +13,7 @@
     "http": "http://127.0.0.1/api/?consul-check",
     "method": "GET",
     "interval": "60s",
-    "timeout": "2s"
+    "timeout": "5s"
   },
   "enable_syslog": true,
   "log_level": "info"
