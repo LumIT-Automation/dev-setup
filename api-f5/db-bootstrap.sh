@@ -31,7 +31,7 @@ function System_run()
             printf "\n* Configuring system...\n"
 
             System_mariadbRestore
-            System_sqliteDbRestore
+            #System_sqliteDbRestore
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
