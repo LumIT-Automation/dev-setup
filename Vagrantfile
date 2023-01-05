@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("revp/sources.list")
       revp.vm.provision "file", source: "revp/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -179,7 +179,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("uifng/sources.list")
       uifng.vm.provision "file", source: "uifng/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -241,7 +241,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("uib/sources.list")
       uib.vm.provision "file", source: "uib/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -303,15 +303,9 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-cisconx", "/var/www/api", type: "nfs"
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\" \"#{ENV['openconnect_vpn_username']}\" \"#{ENV['openconnect_vpn_password']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\nopenconnect_vpn_username=${6}\nopenconnect_vpn_password=${7}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    if File.exist?("api-cisconx/sources.list")
+      api.vm.provision "file", source: "api-cisconx/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -351,14 +345,8 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-infoblox", "/var/www/api", type: "nfs", nfs_version: 4
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("api-infoblox/sources.list")
       api.vm.provision "file", source: "api-infoblox/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -403,14 +391,8 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_version: 4
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("api-f5/sources.list")
       api.vm.provision "file", source: "api-f5/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -455,15 +437,9 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-cisco-switch", "/var/www/api", type: "nfs"
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    if File.exist?("api-cisco-switch/sources.list")
+      api.vm.provision "file", source: "api-cisco-switch/sources.list", destination: "/tmp/sources.list"
     end
     if File.exist?("api-cisco-switch/switch-config.txt")
       api.vm.provision "file", source: "api-cisco-switch/switch-config.txt", destination: "/tmp/switch-config.txt"
@@ -511,8 +487,8 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      api.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    if File.exist?("api-fortinetdb/sources.list")
+      api.vm.provision "file", source: "api-fortinetdb/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
@@ -556,14 +532,8 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-vmware", "/var/www/api", type: "nfs", nfs_version: 4
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("api-vmware/sources.list")
       api.vm.provision "file", source: "api-vmware/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -608,14 +578,8 @@ Vagrant.configure("2") do |config|
       api.vm.synced_folder "../api-checkpoint", "/var/www/api", type: "nfs", nfs_version: 4
     end
 
-    # Set VPN credentials.
-    api.vm.provision "shell" do |s|
-      s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-      s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    end
-
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("api-checkpoint/sources.list")
       api.vm.provision "file", source: "api-checkpoint/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -667,7 +631,7 @@ Vagrant.configure("2") do |config|
     #end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("api-ansible/sources.list")
       api.vm.provision "file", source: "api-ansible/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -713,7 +677,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("aaa/sources.list")
       aaa.vm.provision "file", source: "aaa/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -758,8 +722,8 @@ Vagrant.configure("2") do |config|
     udb.vm.provision "file", source: "udb/radius.sql", destination: "radius.sql"
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      udb.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    if File.exist?("udb/sources.list")
+      udb.vm.provision "file", source: "udb/sources.list", destination: "/tmp/sources.list"
     end
 
     udb.vm.provision "shell" do |s|
@@ -800,8 +764,8 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      hostsystem.vm.provision "file", source: "deb11/sources.list", destination: "/tmp/sources.list"
+    if File.exist?("hostsystem/sources.list")
+      hostsystem.vm.provision "file", source: "hostsystem/sources.list", destination: "/tmp/sources.list"
     end
 
     # Copy syslog-ng config files from container repos.
@@ -876,7 +840,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
+    if File.exist?("dns/sources.list")
       dns.vm.provision "file", source: "dns/sources.list", destination: "/tmp/sources.list"
     end
 
@@ -917,8 +881,8 @@ Vagrant.configure("2") do |config|
     end
 
     # Alternative debian mirror.
-    if File.exist?("sources.list")
-      dotnet.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+    if File.exist?("dotnet/sources.list")
+      dotnet.vm.provision "file", source: "dotnet/sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.

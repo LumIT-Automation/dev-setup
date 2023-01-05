@@ -47,7 +47,6 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_celeryStart
-            System_vpnSupplicantSetup
             System_pipInstallDaemon_api
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
@@ -154,7 +153,6 @@ EOF
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
     apt install -y wget git unzip net-tools dnsutils dos2unix curl # base.
-    apt install -y openfortivpn # lumit VPN specific.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
@@ -371,36 +369,6 @@ System_mtaSetup()
     serverAddress="10.0.111.253"
     sed -r -i '/ mta$/d' /etc/hosts
     echo "$serverAddress    mta" >> /etc/hosts
-}
-
-
-
-System_vpnSupplicantSetup()
-{
-    printf "\n* Setting up Systemd service for LumIT VPN...\n"
-
-    if [ -f /tmp/.vpn.env ]; then
-        # Openfortivpn config.
-        mkdir -p /etc/openfortivpn
-        mv /tmp/.vpn.env /etc/openfortivpn/config
-        chmod 400 /etc/openfortivpn/config
-
-        sed -i 's/lumit_vpn_//g' /etc/openfortivpn/config
-        sed -i 's/trusted_cert/trusted-cert/g' /etc/openfortivpn/config
-
-        # Systemd VPN service.
-        cp -f /vagrant/api-vmware/etc/systemd/system/lumitvpn.service /etc/systemd/system/lumitvpn.service
-        chmod 644 /etc/systemd/system/lumitvpn.service
-
-        cp -f /vagrant/api-vmware/sbin/lumitvpn.sh /sbin/lumitvpn.sh
-        chmod 755 /sbin/lumitvpn.sh
-
-        systemctl daemon-reload
-        systemctl enable lumitvpn
-        systemctl restart lumitvpn
-    else
-        echo "bootstrap.sh -> $0 - Error: .vpn.env missing."
-    fi
 }
 
 

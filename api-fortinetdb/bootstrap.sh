@@ -45,7 +45,6 @@ function System_run()
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             System_consulAgentInstall
             #System_redisSetup
-            #System_lumitVpnSupplicantSetup
             System_pipInstallDaemon_api
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
@@ -148,7 +147,6 @@ EOF
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade
 
     apt install -y wget git unzip net-tools dnsutils dos2unix curl vim mc # base.
-    apt install -y openfortivpn # lumit VPN specific.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).

@@ -48,7 +48,7 @@ function System_run()
             System_redisSetup
             System_towerCliInstall
             System_squidSetup
-            System_lumitVpnSupplicantSetup
+            # System_lumitVpnSupplicantSetup
             System_pipInstallDaemon_api
             System_celeryStart
         else
@@ -122,7 +122,7 @@ function System_installDependencies()
     printf "\n* Preparing the environment: removing the cdrom entry in apt/sources.list, if present...\n"
     printf "\n* Installing system dependencies...\n"
 	
-    systemctl stop openconnect_vpn >/dev/null 2>&1 || true
+    #systemctl stop openconnect_vpn >/dev/null 2>&1 || true
 
     if [ -r /tmp/sources.list ]; then
         cp -f /tmp/sources.list /etc/apt/sources.list
@@ -158,8 +158,8 @@ EOF
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
     apt install -y wget git unzip net-tools dnsutils dos2unix curl # base.
-    apt install -y openfortivpn # lumit VPN specific.
-    apt install -y openconnect
+    #apt install -y openfortivpn # lumit VPN specific.
+    #apt install -y openconnect
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
@@ -177,7 +177,7 @@ function System_pythonSetup()
 {
     printf "\n* Installing pip dependencies for Django, plus for tower-cli...\n"
 	
-    systemctl stop openconnect_vpn >/dev/null 2>&1 || true
+    #systemctl stop openconnect_vpn >/dev/null 2>&1 || true
 
     update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
     update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 # best practice for simply creating a sumlink.
