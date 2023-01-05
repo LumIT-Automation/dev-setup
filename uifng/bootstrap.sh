@@ -229,7 +229,7 @@ System_yarnInstallDaemon()
 {
     printf "\n* Install yarn and setting up Systemd service for refresh yarn installation if needed...\n"
 
-    curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    curl -sL https://deb.nodesource.com/setup_14.x | bash -
     apt install -y nodejs
 
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
