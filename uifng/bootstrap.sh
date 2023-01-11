@@ -43,7 +43,6 @@ function System_run()
             System_mtaSetup
             System_consulAgentInstall
             System_yarnInstallDaemon
-            System_yarnStartDaemon
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
@@ -147,7 +146,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dos2unix dnsutils curl screen # base.
+    apt install -y wget git unzip net-tools dos2unix dnsutils curl screen vim # base.
     apt install -y rpm # for building rh packages.
     apt clean
 }
@@ -229,43 +228,15 @@ System_yarnInstallDaemon()
 {
     printf "\n* Install yarn and setting up Systemd service for refresh yarn installation if needed...\n"
 
-    curl -sL https://deb.nodesource.com/setup_14.x | bash -
-    apt install -y nodejs
-
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+    curl -sL https://deb.nodesource.com/setup_18.x | bash -
     apt update
-    apt install -y --no-install-recommends yarn
-
+    apt install -y nodejs
     apt clean
 
     # First installation.
     cd /var/www/ui-frontend-ng
-    yarn install > /home/vagrant/yarn.log 2>&1
-
-    # Setup a Systemd Yarn install service unit.
-    cp -f /vagrant/uifng/etc/systemd/system/yarn_install.service /etc/systemd/system/yarn_install.service
-    chmod 644 /etc/systemd/system/yarn_install.service
-
-    # Setup a Systemd Yarn install service watchdog unit.
-    cp -f /vagrant/uifng/etc/systemd/system/yarn_install.path /etc/systemd/system/yarn_install.path
-    chmod 644 /etc/systemd/system/yarn_install.path
-
-    systemctl daemon-reload
-    systemctl enable systemd-networkd.service systemd-networkd-wait-online.service
-
-    systemctl enable yarn_install.path
-    systemctl enable yarn_install.service
-
-    systemctl start yarn_install.path
-}
-
-
-
-System_yarnStartDaemon()
-{
-    printf "\n* Setting up Yarn service for installing dependencies and starting development server...\n"
-    su - vagrant -c 'yarn config set cache-folder /home/vagrant/.cache/yarn'
+    corepack enable
+    corepack prepare yarn@stable --activate
 
     # Wrapper script (systemd seems having issues with fgetty/yarn start).
     cp -f /vagrant/uifng/usr/bin/yarn.sh /usr/bin/yarn.sh
@@ -274,12 +245,6 @@ System_yarnStartDaemon()
     # Run yarn start from systemd.
     cp -f /vagrant/uifng/etc/systemd/system/yarn.service /etc/systemd/system/yarn.service
     chmod 644 /etc/systemd/system/yarn.service
-
-    systemctl daemon-reload
-    systemctl enable systemd-networkd.service systemd-networkd-wait-online.service
-
-    systemctl enable yarn.service
-    systemctl restart yarn.service
 }
 
 # ##################################################################################################################################################

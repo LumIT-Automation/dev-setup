@@ -188,6 +188,10 @@ Vagrant.configure("2") do |config|
       s.path = "uifng/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+    uifng.vm.provision "yarn", type: "shell" do |s|
+      s.path = "uifng/yarn-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
 
     # Triggers.
     if OS.linux?
