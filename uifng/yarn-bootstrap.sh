@@ -71,14 +71,10 @@ System_yarnSetup()
 
     su - vagrant -c 'export NODE_OPTIONS=--openssl-legacy-provider
         cd /var/www/ui-frontend-ng
-        yarn set version berry
-        yarn install
-        sleep 1
-        yarn start &'
+        npm install'
 
     systemctl daemon-reload
 
-    /usr/bin/yarn.sh stop
     systemctl enable yarn.service
     systemctl start yarn.service
 }
@@ -86,7 +82,6 @@ System_yarnSetup()
 # ##################################################################################################################################################
 # Main
 # ##################################################################################################################################################
-
 
 ACTION=""
 
@@ -122,4 +117,3 @@ else
 fi
 
 exit 0
-

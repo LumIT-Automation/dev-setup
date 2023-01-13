@@ -226,23 +226,18 @@ function System_consulAgentInstall()
 
 System_yarnInstallDaemon()
 {
-    printf "\n* Install yarn and setting up Systemd service for refresh yarn installation if needed...\n"
+    printf "\n* Install NodeJS and setting up Systemd service...\n"
 
     curl -sL https://deb.nodesource.com/setup_18.x | bash -
     apt update
     apt install -y nodejs
     apt clean
 
-    # First installation.
-    cd /var/www/ui-frontend-ng
-    corepack enable
-    corepack prepare yarn@stable --activate
-
     # Wrapper script (systemd seems having issues with fgetty/yarn start).
     cp -f /vagrant/uifng/usr/bin/yarn.sh /usr/bin/yarn.sh
     chmod 755 /usr/bin/yarn.sh
 
-    # Run yarn start from systemd.
+    # Run node start from systemd.
     cp -f /vagrant/uifng/etc/systemd/system/yarn.service /etc/systemd/system/yarn.service
     chmod 644 /etc/systemd/system/yarn.service
 }

@@ -2,7 +2,7 @@
 
 function start() {
     cd /var/www/ui-frontend-ng
-    setsid bash -c 'exec su - vagrant -c "export NODE_OPTIONS=--openssl-legacy-provider && cd /var/www/ui-frontend-ng && yarn start | logger -t yarn" <> /dev/tty2 >&0 2>&1' >> /home/vagrant/yarn.log & # attach yarn to tty2; otherwise it is killed by Systemd.
+    setsid bash -c 'exec su - vagrant -c "export NODE_OPTIONS=--openssl-legacy-provider && cd /var/www/ui-frontend-ng && npm start | logger -t npm" <> /dev/tty2 >&0 2>&1' >> /home/vagrant/npm.log & # attach yarn to tty2; otherwise it is killed by Systemd.
 }
 
 function stop() {
