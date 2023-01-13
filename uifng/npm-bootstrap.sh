@@ -35,7 +35,7 @@ function System_run()
             printf "\n* Installing system...\n"
             echo "This script requires a fresh-installation of Debian Bullseye ..."
 
-            System_yarnSetup
+            System_npmSetup
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
@@ -64,10 +64,10 @@ function System_checkEnvironment()
 
 
 
-System_yarnSetup()
+System_npmSetup()
 {
-    printf "\n* Setting up Yarn service for installing dependencies and starting development server...\n"
-    if not grep -q "openssl-legacy-provider" /home/vagrant/.bashrc; then
+    printf "\n* Setting up Npm service for installing dependencies and starting development server...\n"
+    if ! grep -q "openssl-legacy-provider" /home/vagrant/.bashrc; then
         echo -e "\nexport NODE_OPTIONS=--openssl-legacy-provider" >> /home/vagrant/.bashrc
     fi
 
@@ -77,8 +77,8 @@ System_yarnSetup()
 
     systemctl daemon-reload
 
-    systemctl enable yarn.service
-    systemctl start yarn.service
+    systemctl enable npm.service
+    systemctl start npm.service
 }
 
 # ##################################################################################################################################################

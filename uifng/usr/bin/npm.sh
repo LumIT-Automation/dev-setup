@@ -2,11 +2,11 @@
 
 function start() {
     cd /var/www/ui-frontend-ng
-    setsid bash -c 'exec su - vagrant -c "export NODE_OPTIONS=--openssl-legacy-provider && cd /var/www/ui-frontend-ng && npm start | logger -t npm" <> /dev/tty2 >&0 2>&1' >> /home/vagrant/npm.log & # attach yarn to tty2; otherwise it is killed by Systemd.
+    setsid bash -c 'exec su - vagrant -c "export NODE_OPTIONS=--openssl-legacy-provider && cd /var/www/ui-frontend-ng && npm start | logger -t npm" <> /dev/tty2 >&0 2>&1' >> /home/vagrant/npm.log & # attach npm to tty2; otherwise it is killed by Systemd.
 }
 
 function stop() {
-    PS=$(ps axu|grep -P 'node|react|yarn' | grep -Pv 'grep|yarn.sh' | awk '{print $2}')
+    PS=$(ps axu|grep -P 'node|react|npm' | grep -Pv 'grep|npm.sh' | awk '{print $2}')
     if [ -n "$PS" ]; then
         kill $PS
     fi

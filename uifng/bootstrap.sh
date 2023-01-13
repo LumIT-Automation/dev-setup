@@ -42,7 +42,7 @@ function System_run()
             System_syslogngInstall
             System_mtaSetup
             System_consulAgentInstall
-            System_yarnInstallDaemon
+            System_npmInstallDaemon
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
@@ -224,7 +224,7 @@ function System_consulAgentInstall()
 
 
 
-System_yarnInstallDaemon()
+System_npmInstallDaemon()
 {
     printf "\n* Install NodeJS and setting up Systemd service...\n"
 
@@ -233,13 +233,13 @@ System_yarnInstallDaemon()
     apt install -y nodejs
     apt clean
 
-    # Wrapper script (systemd seems having issues with fgetty/yarn start).
-    cp -f /vagrant/uifng/usr/bin/yarn.sh /usr/bin/yarn.sh
-    chmod 755 /usr/bin/yarn.sh
+    # Wrapper script (systemd seems having issues with fgetty/npm start).
+    cp -f /vagrant/uifng/usr/bin/npm.sh /usr/bin/npm.sh
+    chmod 755 /usr/bin/npm.sh
 
     # Run node start from systemd.
-    cp -f /vagrant/uifng/etc/systemd/system/yarn.service /etc/systemd/system/yarn.service
-    chmod 644 /etc/systemd/system/yarn.service
+    cp -f /vagrant/uifng/etc/systemd/system/npm.service /etc/systemd/system/npm.service
+    chmod 644 /etc/systemd/system/npm.service
 }
 
 # ##################################################################################################################################################
