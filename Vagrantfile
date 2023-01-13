@@ -79,62 +79,61 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # UI FRONTEND
+  # UI FRONTEND OLD GEN
   ############################################################################################
 
-  config.vm.define :uif do |uif|
-    uif.vm.provider "virtualbox" do |vb|
+  config.vm.define :uifoldg do |uifoldg|
+    uifoldg.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "2048"
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
-    uif.vm.provider "libvirt" do |libvrt|
+    uifoldg.vm.provider "libvirt" do |libvrt|
       libvrt.memory = "1536"
       libvrt.cpus = 2
     end
 
     # OS.
-    uif.vm.box = "debian/buster64"
-    uif.vm.box_version = "10.20210409.1"
+    uifoldg.vm.box = "debian/buster64"
 
     # Network.
-    uif.vm.network :private_network, ip: "10.0.111.11"
-    uif.vm.hostname = "uif"
+    uifoldg.vm.network :private_network, ip: "10.0.111.11"
+    uifoldg.vm.hostname = "uifoldg"
 
     # Synced folders.
     if OS.linux?
-      uif.vm.synced_folder "../ui-frontend", "/var/www/ui-frontend", type: "nfs", fsnotify: true
+      uifoldg.vm.synced_folder "../ui-frontend.oldg", "/var/www/ui-frontend", type: "nfs", fsnotify: true
     end
 
     # Alternative debian mirror.
     if File.exist?("sources.list")
-      uif.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
+      uifoldg.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
     end
 
     # Provision.
-    uif.vm.provision "shell" do |s|
-      s.path = "uif/bootstrap.sh"
+    uifoldg.vm.provision "shell" do |s|
+      s.path = "uifoldg/bootstrap.sh"
       s.args = ["--action", "install"]
     end
 
     # Triggers.
     if OS.linux?
-      uif.trigger.before :up do |trigger|
+      uifoldg.trigger.before :up do |trigger|
         trigger.name = "fsnotify: increase host max_user_watches limit"
-        trigger.run = { inline: "bash ./set-inotify.sh uif start" }
+        trigger.run = { inline: "bash ./set-inotify.sh uifoldg start" }
       end
-      uif.trigger.after :up do |trigger|
-        trigger.name = "vagrant-fsnotify-uif"
-        trigger.run = { inline: "bash -c '(vagrant fsnotify uif) > /dev/null 2>&1 &' " }
+      uifoldg.trigger.after :up do |trigger|
+        trigger.name = "vagrant-fsnotify-uifoldg"
+        trigger.run = { inline: "bash -c '(vagrant fsnotify uifoldg) > /dev/null 2>&1 &' " }
       end
-      uif.trigger.after :halt, :destroy do |trigger|
+      uifoldg.trigger.after :halt, :destroy do |trigger|
         trigger.name = "fsnotify: restore host max_user_watches limit"
-        trigger.run = { inline: "bash ./set-inotify.sh uif stop" }
+        trigger.run = { inline: "bash ./set-inotify.sh uifoldg stop" }
       end
-      uif.trigger.after :halt, :destroy do |trigger|
-        trigger.name = "kill vagrant-fsnotify-uif"
-        trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uif'" }
+      uifoldg.trigger.after :halt, :destroy do |trigger|
+        trigger.name = "kill vagrant-fsnotify-uifoldg"
+        trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uifoldg'" }
         trigger.exit_codes = [ 0, 1 ]
       end
     end

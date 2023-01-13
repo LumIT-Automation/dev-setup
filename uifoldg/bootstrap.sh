@@ -179,7 +179,7 @@ System_syslogngInstall()
     echo "$serverAddress        syslog.host" >> /etc/hosts
 
     # syslog-ng config files.
-    cp -f /vagrant/uif/etc/syslog-ng/conf.d/*conf /etc/syslog-ng/conf.d/
+    cp -f /vagrant/uifoldg/etc/syslog-ng/conf.d/*conf /etc/syslog-ng/conf.d/
     chmod 644 /etc/syslog-ng/conf.d/*conf
 
     mkdir -p /var/log/automation
@@ -195,15 +195,15 @@ function System_consulAgentInstall()
     apt install -y consul
 
     # Expose Consul ui service.
-    cp -f /vagrant/uif/etc/consul.d/ui-frontend.json /etc/consul.d/ui-frontend.json
+    cp -f /vagrant/uifoldg/etc/consul.d/ui-frontend.json /etc/consul.d/ui-frontend.json
     chmod 644 /etc/consul.d/ui-frontend.json
 
     # Setup a Systemd Consul service unit.
     # Consul will bind to the source IP address which has route to Consul server agent.
-    cp -f /vagrant/uif/usr/bin/consul.sh /usr/bin/consul.sh
+    cp -f /vagrant/uifoldg/usr/bin/consul.sh /usr/bin/consul.sh
     chmod 755 /usr/bin/consul.sh
 
-    cp -f /vagrant/uif/etc/systemd/system/consul.service /etc/systemd/system/consul.service
+    cp -f /vagrant/uifoldg/etc/systemd/system/consul.service /etc/systemd/system/consul.service
     chmod 644 /etc/systemd/system/consul.service
 
     systemctl daemon-reload
@@ -232,11 +232,11 @@ System_yarnInstallDaemon()
     yarn install > /home/vagrant/yarn.log 2>&1
 
     # Setup a Systemd Yarn install service unit.
-    cp -f /vagrant/uif/etc/systemd/system/yarn_install.service /etc/systemd/system/yarn_install.service
+    cp -f /vagrant/uifoldg/etc/systemd/system/yarn_install.service /etc/systemd/system/yarn_install.service
     chmod 644 /etc/systemd/system/yarn_install.service
 
     # Setup a Systemd Yarn install service watchdog unit.
-    cp -f /vagrant/uif/etc/systemd/system/yarn_install.path /etc/systemd/system/yarn_install.path
+    cp -f /vagrant/uifoldg/etc/systemd/system/yarn_install.path /etc/systemd/system/yarn_install.path
     chmod 644 /etc/systemd/system/yarn_install.path
 
     systemctl daemon-reload
@@ -256,11 +256,11 @@ System_yarnStartDaemon()
     su - vagrant -c 'yarn config set cache-folder /home/vagrant/.cache/yarn'
 
     # Wrapper script (systemd seems having issues with fgetty/yarn start).
-    cp -f /vagrant/uif/usr/bin/yarn.sh /usr/bin/yarn.sh
+    cp -f /vagrant/uifoldg/usr/bin/yarn.sh /usr/bin/yarn.sh
     chmod 755 /usr/bin/yarn.sh
 
     # Run yarn start from systemd.
-    cp -f /vagrant/uif/etc/systemd/system/yarn.service /etc/systemd/system/yarn.service
+    cp -f /vagrant/uifoldg/etc/systemd/system/yarn.service /etc/systemd/system/yarn.service
     chmod 644 /etc/systemd/system/yarn.service
 
     systemctl daemon-reload

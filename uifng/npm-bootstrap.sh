@@ -15,10 +15,6 @@ function System()
 
     # Properties list.
     ACTION="$ACTION"
-    PROXY="$PROXY"
-
-    DATABASE_ROOT_PASSWORD="root"
-    SYSTEM_USERS_PASSWORD="Password01!"
 }
 
 # ##################################################################################################################################################
