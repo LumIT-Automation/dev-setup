@@ -67,7 +67,9 @@ function System_checkEnvironment()
 System_yarnSetup()
 {
     printf "\n* Setting up Yarn service for installing dependencies and starting development server...\n"
-    echo -e "\nexport NODE_OPTIONS=--openssl-legacy-provider" >> /home/vagrant/.bashrc
+    if not grep -q "openssl-legacy-provider" /home/vagrant/.bashrc; then
+        echo -e "\nexport NODE_OPTIONS=--openssl-legacy-provider" >> /home/vagrant/.bashrc
+    fi
 
     su - vagrant -c 'export NODE_OPTIONS=--openssl-legacy-provider
         cd /var/www/ui-frontend-ng
