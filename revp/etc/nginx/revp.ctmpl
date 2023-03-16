@@ -52,6 +52,8 @@ server {
 
   location /backend {
     proxy_pass http://uib;
+    proxy_connect_timeout 300;
+    proxy_read_timeout 300;
   }
 
   index index.html index.htm index.nginx-debian.html;
