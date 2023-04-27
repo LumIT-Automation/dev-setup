@@ -451,7 +451,7 @@ Vagrant.configure("2") do |config|
       s.args = ["--action", "install"]
     end
     api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-f5/db-bootstrap.sh"
+      s.path = "api-collaboration/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
