@@ -411,6 +411,52 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
+  # API Collaboration
+  ############################################################################################
+
+  config.vm.define :apicollaboration do |api|
+    api.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+    end
+
+    api.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    api.vm.box = "debian/bullseye64"
+    #api.vm.box_version = "11.20220912.1"
+
+    # Network.
+    api.vm.network :private_network, ip: "10.0.111.28"
+    api.vm.hostname = "apicollaboration"
+
+    # Synced folders.
+    if OS.linux?
+      api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "nfs", nfs_version: 4
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("api-collaboration/sources.list")
+      api.vm.provision "file", source: "api-collaboration/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    api.vm.provision "shell" do |s|
+      s.path = "api-collaboration/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    api.vm.provision "db", type: "shell" do |s|
+      s.path = "api-f5/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+  end
+
+  ############################################################################################
   # API Cisco-switch
   ############################################################################################
 
