@@ -1,23 +1,19 @@
 # Development nodes:
 	revp            10.0.111.10
 
-	uif             10.0.111.11
 	uifng           10.0.111.13
 
 	uib             10.0.111.12
 
-	api cisconx     10.0.111.20
 	api infoblox    10.0.111.21
 	api f5          10.0.111.22
 	api fortinetdb  10.0.111.23
+	api vmware      10.0.111.25
+	api checkpoint  10.0.111.26
+	api collab.     10.0.111.28
 
-	aaa             10.0.111.100
-	udb             10.0.111.110
+	aaa (sso)       10.0.111.100
+	udb             10.0.111.110 + 10.0.111.111
 
 	log + smtp      10.0.111.253
 	dns             10.0.111.254
-
-
-# Test nodes:
-    centos8         10.0.111.201
-	deb11           10.0.111.202

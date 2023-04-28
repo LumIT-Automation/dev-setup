@@ -79,77 +79,6 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # UI FRONTEND OLD GEN
-  ############################################################################################
-
-  config.vm.define :uifoldg do |uifoldg|
-    uifoldg.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "2048"
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    end
-
-    uifoldg.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1536"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    uifoldg.vm.box = "debian/buster64"
-
-    # Network.
-    uifoldg.vm.network :private_network, ip: "10.0.111.11"
-    uifoldg.vm.hostname = "uifoldg"
-
-    # Synced folders.
-    if OS.linux?
-      uifoldg.vm.synced_folder "../ui-frontend.oldg", "/var/www/ui-frontend", type: "nfs", fsnotify: true
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("sources.list")
-      uifoldg.vm.provision "file", source: "sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    uifoldg.vm.provision "shell" do |s|
-      s.path = "uifoldg/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-
-    # Triggers.
-    if OS.linux?
-      uifoldg.trigger.before :up do |trigger|
-        trigger.name = "fsnotify: increase host max_user_watches limit"
-        trigger.run = { inline: "bash ./set-inotify.sh uifoldg start" }
-      end
-      uifoldg.trigger.after :up do |trigger|
-        trigger.name = "vagrant-fsnotify-uifoldg"
-        trigger.run = { inline: "bash -c '(vagrant fsnotify uifoldg) > /dev/null 2>&1 &' " }
-      end
-      uifoldg.trigger.after :halt, :destroy do |trigger|
-        trigger.name = "fsnotify: restore host max_user_watches limit"
-        trigger.run = { inline: "bash ./set-inotify.sh uifoldg stop" }
-      end
-      uifoldg.trigger.after :halt, :destroy do |trigger|
-        trigger.name = "kill vagrant-fsnotify-uifoldg"
-        trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uifoldg'" }
-        trigger.exit_codes = [ 0, 1 ]
-      end
-    end
-  end
-
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
-
-  ############################################################################################
   # UI FRONTEND NEXT-GENERATION
   ############################################################################################
 
@@ -260,65 +189,6 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # API CiscoNX
-  ############################################################################################
-
-  config.vm.define :apicisconx do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    # Every Vagrant development environment requires a box. You can search for
-    # boxes at https://vagrantcloud.com/search.
-
-    api.vm.box = "debian/buster64"
-    # api.vm.box_version = "10.20210409.1"
-
-    # Network.
-    # Create a forwarded port mapping which allows access to a specific port
-    # within the machine from a port on the host machine. In the example below,
-    # accessing "localhost:8080" will access port 80 on the guest machine.
-    # NOTE: This will enable public access to the opened port
-
-    # Create a forwarded port mapping which allows access to a specific port
-    # within the machine from a port on the host machine and only allow access
-    # via 127.0.0.1 to disable public access
-    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-    # Create a private network, which allows host-only access to the machine
-    # using a specific IP.
-    # config.vm.network "private_network", ip: "192.168.33.10"
-
-    api.vm.network :private_network, ip: "10.0.111.20"
-    api.vm.hostname = "apicisconx"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-cisconx", "/var/www/api", type: "nfs"
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-cisconx/sources.list")
-      api.vm.provision "file", source: "api-cisconx/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-cisconx/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-  end
-
-  ############################################################################################
   # API Infoblox
   ############################################################################################
 
@@ -406,101 +276,6 @@ Vagrant.configure("2") do |config|
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-f5/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API Collaboration
-  ############################################################################################
-
-  config.vm.define :apicollaboration do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.28"
-    api.vm.hostname = "apicollaboration"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-collaboration/sources.list")
-      api.vm.provision "file", source: "api-collaboration/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-collaboration/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-collaboration/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API Cisco-switch
-  ############################################################################################
-
-  config.vm.define :apiciscoswitch do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/buster64"
-    # api.vm.box_version = "10.20210409.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.24"
-    api.vm.hostname = "api-cisco-switch"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-cisco-switch", "/var/www/api", type: "nfs"
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-cisco-switch/sources.list")
-      api.vm.provision "file", source: "api-cisco-switch/sources.list", destination: "/tmp/sources.list"
-    end
-    if File.exist?("api-cisco-switch/switch-config.txt")
-      api.vm.provision "file", source: "api-cisco-switch/switch-config.txt", destination: "/tmp/switch-config.txt"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-cisco-switch/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-cisco-switch/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
@@ -691,6 +466,52 @@ Vagrant.configure("2") do |config|
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-ansible/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+  end
+
+  ############################################################################################
+  # API Collaboration
+  ############################################################################################
+
+  config.vm.define :apicollaboration do |api|
+    api.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+    end
+
+    api.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    api.vm.box = "debian/bullseye64"
+    #api.vm.box_version = "11.20220912.1"
+
+    # Network.
+    api.vm.network :private_network, ip: "10.0.111.28"
+    api.vm.hostname = "apicollaboration"
+
+    # Synced folders.
+    if OS.linux?
+      api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "nfs", nfs_version: 4
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("api-collaboration/sources.list")
+      api.vm.provision "file", source: "api-collaboration/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    api.vm.provision "shell" do |s|
+      s.path = "api-collaboration/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    api.vm.provision "db", type: "shell" do |s|
+      s.path = "api-collaboration/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
