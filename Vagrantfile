@@ -36,6 +36,10 @@ Vagrant.configure("2") do |config|
 
   config.env.enable # enable vagrant-env(.env).
 
+  Dir.glob('./vagrantfile-*') do |vagrantApiFile|
+    eval File.read(vagrantApiFile)
+  end
+
   ############################################################################################
   # REVERSE PROXY, TLS OFFLOAD: NGINX
   ############################################################################################
@@ -189,98 +193,6 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # API Infoblox
-  ############################################################################################
-
-  config.vm.define :apiinfoblox do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "10.20210409.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.21"
-    api.vm.hostname = "apiinfoblox"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-infoblox", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-infoblox/sources.list")
-      api.vm.provision "file", source: "api-infoblox/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-infoblox/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-infoblox/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API F5
-  ############################################################################################
-
-  config.vm.define :apif5 do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.22"
-    api.vm.hostname = "apif5"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-f5/sources.list")
-      api.vm.provision "file", source: "api-f5/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-f5/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-f5/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
   # API Fortinetdb
   ############################################################################################
 
@@ -322,98 +234,6 @@ Vagrant.configure("2") do |config|
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-fortinetdb/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API Vmware
-  ############################################################################################
-
-  config.vm.define :apivmware do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.25"
-    api.vm.hostname = "apivmware"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-vmware", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-vmware/sources.list")
-      api.vm.provision "file", source: "api-vmware/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-vmware/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-vmware/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API CHECKPOINT
-  ############################################################################################
-
-  config.vm.define :apicheckpoint do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    # api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.26"
-    api.vm.hostname = "apicheckpoint"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-checkpoint", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-checkpoint/sources.list")
-      api.vm.provision "file", source: "api-checkpoint/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-checkpoint/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-checkpoint/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
@@ -466,52 +286,6 @@ Vagrant.configure("2") do |config|
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-ansible/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API Collaboration
-  ############################################################################################
-
-  config.vm.define :apicollaboration do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.28"
-    api.vm.hostname = "apicollaboration"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-collaboration/sources.list")
-      api.vm.provision "file", source: "api-collaboration/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-collaboration/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-collaboration/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
