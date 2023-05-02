@@ -1,0 +1,32 @@
+  ############################################################################################
+  # Empty Debian 11 vm
+  ############################################################################################
+
+  config.vm.define :deb11 do |empty|
+    empty.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    empty.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "2048"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    empty.vm.box = "debian/bullseye64"
+    #empty.vm.box_version = "11.20220912.1"
+
+    # Network.
+    empty.vm.network :private_network, ip: "10.0.111.202"
+    empty.vm.hostname = "deb11"
+
+    # Provision.
+    empty.vm.provision "shell" do |s|
+      s.path = "deb11/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
+
