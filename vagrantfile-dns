@@ -1,0 +1,42 @@
+  ############################################################################################
+  # DNS: Consul server // service discovery
+  ############################################################################################
+
+  config.vm.define :dns do |dns|
+    dns.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "512"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    dns.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "512"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    dns.vm.box =  "debian/bullseye64"
+    #dns.vm.box_version = "11.20220912.1"
+
+    # Network.
+    dns.vm.network :private_network, ip: "10.0.111.254"
+    dns.vm.hostname = "dns"
+
+    # Synced folders.
+    if OS.linux?
+      dns.vm.synced_folder "../dns", "/var/consul", type: "nfs", nfs_version: 4
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("dns/sources.list")
+      dns.vm.provision "file", source: "dns/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    dns.vm.provision "shell" do |s|
+      s.path = "dns/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
+

@@ -1,0 +1,42 @@
+  ############################################################################################
+  # REVERSE PROXY, TLS OFFLOAD: NGINX
+  ############################################################################################
+
+  config.vm.define :revp do |revp|
+    revp.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "512"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    revp.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "512"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    revp.vm.box =  "debian/bullseye64"
+    #revp.vm.box_version = "11.20220912.1"
+
+    # Network.
+    revp.vm.network :private_network, ip: "10.0.111.10"
+    revp.vm.hostname = "revp"
+
+    # Synced folders.
+    if OS.linux?
+      revp.vm.synced_folder "../revp", "/var/reverse-proxy", type: "nfs", nfs_version: 4
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("revp/sources.list")
+      revp.vm.provision "file", source: "revp/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    revp.vm.provision "shell" do |s|
+      s.path = "revp/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
+

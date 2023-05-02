@@ -41,48 +41,6 @@ Vagrant.configure("2") do |config|
   end
 
   ############################################################################################
-  # REVERSE PROXY, TLS OFFLOAD: NGINX
-  ############################################################################################
-
-  config.vm.define :revp do |revp|
-    revp.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "512"
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    end
-
-    revp.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "512"
-      libvrt.cpus = 1
-    end
-
-    # OS.
-    revp.vm.box =  "debian/bullseye64"
-    #revp.vm.box_version = "11.20220912.1"
-
-    # Network.
-    revp.vm.network :private_network, ip: "10.0.111.10"
-    revp.vm.hostname = "revp"
-
-    # Synced folders.
-    if OS.linux?
-      revp.vm.synced_folder "../revp", "/var/reverse-proxy", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("revp/sources.list")
-      revp.vm.provision "file", source: "revp/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    revp.vm.provision "shell" do |s|
-      s.path = "revp/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-  end
-
-  ############################################################################################
   # UI FRONTEND NEXT-GENERATION
   ############################################################################################
 
@@ -188,104 +146,6 @@ Vagrant.configure("2") do |config|
     end
     uib.vm.provision "db", type: "shell" do |s|
       s.path = "uib/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API Fortinetdb
-  ############################################################################################
-
-  config.vm.define :apifortinetdb do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/buster64"
-    # api.vm.box_version = "10.20210409.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.23"
-    api.vm.hostname = "apifortinetdb"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-fortinetdb", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("api-fortinetdb/sources.list")
-      api.vm.provision "file", source: "api-fortinetdb/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-fortinetdb/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-fortinetdb/db-bootstrap.sh"
-      s.args = ["--action", "run"]
-    end
-  end
-
-  ############################################################################################
-  # API ANSIBLE
-  ############################################################################################
-
-  config.vm.define :apiansible do |api|
-    api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "1024"
-      vb.cpus = 2
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
-    end
-
-    api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
-      libvrt.cpus = 2
-    end
-
-    # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
-
-    # Network.
-    api.vm.network :private_network, ip: "10.0.111.27"
-    api.vm.hostname = "apiansible"
-
-    # Synced folders.
-    if OS.linux?
-      api.vm.synced_folder "../api-ansible", "/var/www/api", type: "nfs", nfs_version: 4
-    end
-
-    # Set VPN credentials.
-    #api.vm.provision "shell" do |s|
-    #  s.args = "\"#{ENV['lumit_vpn_username']}\" \"#{ENV['lumit_vpn_password']}\" \"#{ENV['lumit_vpn_host']}\" \"#{ENV['lumit_vpn_port']}\" \"#{ENV['lumit_vpn_trusted_cert']}\""
-    #  s.inline = "echo -e \"lumit_vpn_username=${1}\nlumit_vpn_password=${2}\nlumit_vpn_host=${3}\nlumit_vpn_port=${4}\nlumit_vpn_trusted_cert=${5}\" > /tmp/.vpn.env"
-    #end
-
-    # Alternative debian mirror.
-    if File.exist?("api-ansible/sources.list")
-      api.vm.provision "file", source: "api-ansible/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    api.vm.provision "shell" do |s|
-      s.path = "api-ansible/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-    api.vm.provision "db", type: "shell" do |s|
-      s.path = "api-ansible/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
   end
@@ -449,48 +309,6 @@ Vagrant.configure("2") do |config|
     # Provision.
     hostsystem.vm.provision "shell" do |s|
       s.path = "hostsystem/bootstrap.sh"
-      s.args = ["--action", "install"]
-    end
-  end
-
-  ############################################################################################
-  # DNS: Consul server // service discovery
-  ############################################################################################
-
-  config.vm.define :dns do |dns|
-    dns.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "512"
-      vb.cpus = 1
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    end
-
-    dns.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "512"
-      libvrt.cpus = 1
-    end
-
-    # OS.
-    dns.vm.box =  "debian/bullseye64"
-    #dns.vm.box_version = "11.20220912.1"
-
-    # Network.
-    dns.vm.network :private_network, ip: "10.0.111.254"
-    dns.vm.hostname = "dns"
-
-    # Synced folders.
-    if OS.linux?
-      dns.vm.synced_folder "../dns", "/var/consul", type: "nfs", nfs_version: 4
-    end
-
-    # Alternative debian mirror.
-    if File.exist?("dns/sources.list")
-      dns.vm.provision "file", source: "dns/sources.list", destination: "/tmp/sources.list"
-    end
-
-    # Provision.
-    dns.vm.provision "shell" do |s|
-      s.path = "dns/bootstrap.sh"
       s.args = ["--action", "install"]
     end
   end
