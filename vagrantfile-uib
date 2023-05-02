@@ -1,0 +1,45 @@
+  ############################################################################################
+  # UI BACKEND
+  ############################################################################################
+
+  config.vm.define :uib do |uib|
+    uib.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    uib.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    uib.vm.box =  "debian/bullseye64"
+    #uib.vm.box_version = "11.20220912.1"
+
+    # Network.
+    uib.vm.network :private_network, ip: "10.0.111.12"
+    uib.vm.hostname = "uib"
+
+    # Synced folders.
+    if OS.linux?
+      uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs", nfs_version: 4
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("uib/sources.list")
+      uib.vm.provision "file", source: "uib/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    uib.vm.provision "shell" do |s|
+      s.path = "uib/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    uib.vm.provision "db", type: "shell" do |s|
+      s.path = "uib/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+  end
+

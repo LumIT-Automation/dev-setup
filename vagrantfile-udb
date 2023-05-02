@@ -1,0 +1,40 @@
+  ############################################################################################
+  # User Database - UDB
+  ############################################################################################
+
+  config.vm.define :udb do |udb|
+    udb.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    udb.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    udb.vm.box =  "debian/bullseye64"
+
+    # Network.
+    udb.vm.network :private_network, ip: "10.0.111.110"
+    udb.vm.network :private_network, ip: "10.0.111.111"
+    udb.vm.hostname = "ad"
+
+    # Provision.
+    udb.vm.provision "file", source: "udb/freeradius-mod-sql", destination: "freeradius-mod-sql"
+    udb.vm.provision "file", source: "udb/radius.sql", destination: "radius.sql"
+
+    # Alternative debian mirror.
+    if File.exist?("udb/sources.list")
+      udb.vm.provision "file", source: "udb/sources.list", destination: "/tmp/sources.list"
+    end
+
+    udb.vm.provision "shell" do |s|
+      s.path = "udb/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
+

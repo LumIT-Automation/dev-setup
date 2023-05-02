@@ -1,0 +1,65 @@
+  ############################################################################################
+  # UI FRONTEND NEXT-GENERATION
+  ############################################################################################
+
+  config.vm.define :uifng do |uifng|
+    uifng.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "4096"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    uifng.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "4096"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    uifng.vm.box =  "debian/bullseye64"
+
+    # Network.
+    uifng.vm.network :private_network, ip: "10.0.111.13"
+    uifng.vm.hostname = "uifng"
+
+    # Synced folders.
+    if OS.linux?
+      uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # use these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
+    end
+
+    # Alternative debian mirror.
+    if File.exist?("uifng/sources.list")
+      uifng.vm.provision "file", source: "uifng/sources.list", destination: "/tmp/sources.list"
+    end
+
+    # Provision.
+    uifng.vm.provision "shell" do |s|
+      s.path = "uifng/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+    uifng.vm.provision "npm", type: "shell" do |s|
+      s.path = "uifng/npm-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+
+    # Triggers.
+    if OS.linux?
+      uifng.trigger.before :up do |trigger|
+        trigger.name = "fsnotify: increase host max_user_watches limit"
+        trigger.run = { inline: "bash ./set-inotify.sh uifng start" }
+      end
+      uifng.trigger.after :up do |trigger|
+        trigger.name = "vagrant-fsnotify-uifng"
+        trigger.run = { inline: "bash -c '(vagrant fsnotify uifng) > /dev/null 2>&1 &' " }
+      end
+      uifng.trigger.after :halt, :destroy do |trigger|
+        trigger.name = "fsnotify: restore host max_user_watches limit"
+        trigger.run = { inline: "bash ./set-inotify.sh uifng stop" }
+      end
+      uifng.trigger.after :halt, :destroy do |trigger|
+        trigger.name = "kill vagrant-fsnotify-uifng"
+        trigger.run = { inline: "pkill -f '/usr/bin/vagrant fsnotify uifng'" }
+        trigger.exit_codes = [ 0, 1 ]
+      end
+    end
+  end
+
