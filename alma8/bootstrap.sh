@@ -31,14 +31,14 @@ function System_run()
 {
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
-            echo "This script requires a fresh-installation of Centos 8..."
+            echo "This script requires a fresh-installation of Almalinux 8..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
             System_proxySet "$PROXY"
             System_installDependencies            
         else
-            echo "A Centos 8 operating system is required for the installation. Aborting."
+            echo "An Almalinux 8 operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -53,7 +53,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'CentOS-8' /etc/os-release; then
+        if ! grep -q 'AlmaLinux-8' /etc/os-release; then
             return 1
         fi
     else

@@ -1,47 +1,47 @@
   ############################################################################################
-  # Empty Centos8 vm
+  # Empty Almalinux8 vm
   ############################################################################################
 
-  config.vm.define :centos8 do |centos8|
-    centos8.vm.provider "virtualbox" do |vb|
+  config.vm.define :alma8 do |alma8|
+    alma8.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "1024"
       vb.cpus = 1
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 
       if Vagrant.has_plugin?("vagrant-disksize")
-        centos8.disksize.size = "20GB"
+        alma8.disksize.size = "20GB"
       end
     end
 
-    centos8.vm.provider "libvirt" do |libvrt|
+    alma8.vm.provider "libvirt" do |libvrt|
       libvrt.memory = "1024"
       libvrt.cpus = 1
     end
 
     # OS.
-    centos8.vm.box = "centos/8"
+    alma8.vm.box = "almalinux/8"
 
     # Network.
-    centos8.vm.network :private_network, ip: "10.0.111.201"
-    centos8.vm.hostname = "centos8"
+    alma8.vm.network :private_network, ip: "10.0.111.201"
+    alma8.vm.hostname = "alma8"
 
     # Provision.
-    centos8.vm.provision "shell" do |s|
-      s.path = "centos8/bootstrap.sh"
+    alma8.vm.provision "shell" do |s|
+      s.path = "alma8/bootstrap.sh"
       s.args = ["--action", "install"]
     end
 
     # Triggers.
     # Use a script to expand the vdisk with libvirtd.
     #if ! Vagrant.has_plugin?("vagrant-disksize")
-    #  centos8.trigger.after :up do |trigger|
+    #  alma8.trigger.after :up do |trigger|
     #    trigger.info = "Expanding disk..."
-    #    trigger.run = {inline: "sudo resize_libvirtd.sh centos8 5 > /tmp/res.log"}
+    #    trigger.run = {inline: "sudo resize_libvirtd.sh alma8 5 > /tmp/res.log"}
     #  end
     #end
 
-    centos8.trigger.after :up do |trigger|
+    alma8.trigger.after :up do |trigger|
       trigger.info = "Expanding filesystem..."
       trigger.run_remote = {inline: "diskDevice=`fdisk -l| grep 'Disk /dev' | awk '{print $2}' | sed 's/://'`; printf 'd\nn\n\n\n\n\nw\n' | fdisk $diskDevice; sync; xfs_growfs ${diskDevice}1"}
     end
