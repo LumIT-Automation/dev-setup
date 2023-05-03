@@ -48,6 +48,7 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_api
+            System_ciscoAxlSetup
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
