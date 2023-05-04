@@ -411,7 +411,7 @@ System_redisSetup() {
 
 System_ciscoAxlSetup()
 {
-    if [ ! -d mkdir /var/www/.cache ]; then
+    if [ ! -d /var/www/.cache ]; then
         mkdir /var/www/.cache
     fi
 
