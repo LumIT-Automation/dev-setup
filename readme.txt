@@ -8,9 +8,9 @@ Requirements:
     - Vagrant
         Use own repo's builds -> https://www.vagrantup.com/downloads
             wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/vagrant-archive-keyring.gpg
-            echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-            apt update
-            apt install vagrant
+            sudo echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt update
+            sudo apt install vagrant
 
         Plugins (user-installed):
         vagrant plugin install vagrant-reload
@@ -19,9 +19,9 @@ Requirements:
         vagrant plugin install vagrant-disksize
     - VirtualBox
         On Ubuntu 20+:
-            apt install virtualbox virtualbox-dkms virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
-        From version 6.1.28 of virtualbox can be necessary edit the file /etc/vbox/networks.conf (it's well specified by Vagrant):
-            command: echo '* 10.0.0.0/8' > /etc/vbox/networks.conf
+            sudo apt install -y virtualbox virtualbox-dkms virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+        From VirtualBox 6.1.28 editing the file /etc/vbox/networks.conf is needed:
+            sudo echo '* 10.0.0.0/8' > /etc/vbox/networks.conf
 
     cd /path/to/projectHome
 	git clone all projects
