@@ -27,6 +27,9 @@
     if OS.linux?
       aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      aaa.vm.synced_folder "../aaa", "/var/www/aaa", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("aaa/sources.list")

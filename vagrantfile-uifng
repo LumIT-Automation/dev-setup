@@ -25,6 +25,9 @@
     if OS.linux?
       uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "nfs", nfs_udp: false, nfs_version: 3, fsnotify: true, :mount_options => ["nolock" ] # use these options for fsnotify to properly work (nfs_version v3). Also, nolock on NFS v3. https://github.com/dotnet/runtime/issues/48757
     end
+    if OS.windows?
+      uifng.vm.synced_folder "../ui-frontend-ng", "/var/www/ui-frontend-ng", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("uifng/sources.list")

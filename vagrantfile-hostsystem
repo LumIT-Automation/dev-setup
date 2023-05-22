@@ -28,6 +28,10 @@
       hostsystem.vm.synced_folder "../log", "/var/syslog-ng", type: "nfs", nfs_version: 4
       hostsystem.vm.synced_folder "../smtp", "/var/smtp", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      hostsystem.vm.synced_folder "../log", "/var/syslog-ng", type: "smb"
+      hostsystem.vm.synced_folder "../smtp", "/var/smtp", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("hostsystem/sources.list")

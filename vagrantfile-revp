@@ -27,6 +27,9 @@
     if OS.linux?
       revp.vm.synced_folder "../revp", "/var/reverse-proxy", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      revp.vm.synced_folder "../revp", "/var/reverse-proxy", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("revp/sources.list")

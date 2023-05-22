@@ -75,7 +75,7 @@ System_mariadbRestore()
     echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin@automation.local', 'admin@automation.local', 'password')" | python manage.py shell
 
     # Workflow service user.
-    workFlowPwd=$(cat /var/www/aaa/aaa/settings_workflow.py | awk -F'=' '/WORKFLOW_SECRET/ {print $2}' | sed 's/[ "]//g')
+    workFlowPwd=$(cat /var/www/aaa/aaa/settings_workflow.py | grep -oP '(?<=SECRET = ").*(?=")')
     echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('workflow@automation.local', 'workflow@automation.local', '$workFlowPwd')" | python manage.py shell
 }
 

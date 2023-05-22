@@ -26,6 +26,9 @@
     if OS.linux?
       uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("uib/sources.list")

@@ -27,6 +27,9 @@
     if OS.linux?
       dns.vm.synced_folder "../dns", "/var/consul", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      dns.vm.synced_folder "../dns", "/var/consul", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("dns/sources.list")

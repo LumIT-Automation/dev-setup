@@ -27,6 +27,9 @@
     if OS.linux?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      api.vm.synced_folder "../api-f5", "/var/www/api", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("api-f5/sources.list")

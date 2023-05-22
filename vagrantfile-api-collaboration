@@ -27,6 +27,9 @@
     if OS.linux?
       api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "nfs", nfs_version: 4
     end
+    if OS.windows?
+      api.vm.synced_folder "../api-collaboration", "/var/www/api", type: "smb"
+    end
 
     # Alternative debian mirror.
     if File.exist?("api-collaboration/sources.list")
