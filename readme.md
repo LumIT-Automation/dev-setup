@@ -107,8 +107,11 @@ First development run:
 A Postman collection in saved within any api-* project and within aaa (the Single Sign On, otherwise called sso) in order to directly insist upon each producer node. For postman, save the JWT token in the environment before doing any REST call. JWT validity expires in one day.
 Import postman collections and environment from codebases' folders.
 
+
+
 **Notes**
-    The SMTP relay has to be configured via the .env file (see .env-example).
+
+The SMTP relay has to be configured via the .env file (see .env-example).
     
 Update code-base: only a git pull is needed
 
