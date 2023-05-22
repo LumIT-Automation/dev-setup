@@ -4,42 +4,40 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
 An Active Directory/Radius node is created for the user authentication as well.
 
 Requirements:
-    - Linux host as development machine (tested on modern Debian and Ubuntu OS; any other should work)
-    - Vagrant
-        Use own repo's builds -> https://www.vagrantup.com/downloads
+LINUX
+^^^^^
+- Linux host as development machine (tested on modern Debian and Ubuntu OS; any other should work)
+- Vagrant
+        Use Vagrant repos, https://www.vagrantup.com/downloads
             wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/vagrant-archive-keyring.gpg
             sudo echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
             sudo apt update
             sudo apt install vagrant
 
         Plugins (user-installed):
-        vagrant plugin install vagrant-reload
-        vagrant plugin install vagrant-env
-        vagrant plugin install vagrant-fsnotify
-        vagrant plugin install vagrant-disksize
-    - VirtualBox
+            vagrant plugin install vagrant-reload
+            vagrant plugin install vagrant-env
+            vagrant plugin install vagrant-fsnotify
+            vagrant plugin install vagrant-disksize
+- VirtualBox
         On Ubuntu 20+:
             sudo apt install -y virtualbox virtualbox-dkms virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
         From VirtualBox 6.1.28 editing the file /etc/vbox/networks.conf is needed:
             sudo echo '* 10.0.0.0/8' > /etc/vbox/networks.conf
 
-    cd /path/to/projectHome
-	git clone all projects
+cd /path/to/projectHome
+git clone all projects
 
-	projectHome
-	 |-- dev-setup
-	 |-- api-*
-	 |-- ui-backend
-	 \-- ...
+projectHome
+    |-- dev-setup
+    |-- api-*
+    |-- ui-backend
+    \-- ...
 
-
-
-Development infrastructure:
-    cd dev-setup
-    # vagrant up
-    # Actually test nodes's creation can be skipped now. A minimal machines set can be run by (for example with F5 support only):
-    vagrant up udb aaa dns log revp uifng uib apif5
-        --> guests will mount the nfs share host-side, where related code is saved (all is automated by Vagrant)
+cd dev-setup
+# vagrant up
+vagrant up udb aaa dns log revp uifng uib apif5
+    --> guests will mount the nfs share host-side, where related code is saved (all is automated by Vagrant)
 	
     The first time, vagrant will create all the virtual machines, so it will take half of your life in time. Keep relaxed.
 
@@ -61,14 +59,36 @@ EOF
     vagrant halt
     vagrant up udb aaa dns log revp uifng uib apif5 # much faster than before eh!?
 
-    See the etc-host.txt file for development network topology.
 
-    See the directory-users.txt file for the configured valid users (development).
+WINDOWS
+^^^^^^^
+Install:
+    * git
+    * Vagrant    
+    * VirtualBox + extension pack (guest additions, download from site and double-click)
+    * Python 3.7+
+    * PyCharm Community
+    * Postman
+
+Admin CLI:
+vagrant plugin install --plugin-clean-sources --plugin-source https://rubygems.org vagrant-env
+
+cd path\to\Automation
+git clone https://github.com/LumIT-Automation/dev-setup.git
+And so for any aother node, for example: git clone https://github.com/LumIT-Automation/aaa.git
+
+cd path\to\Automation\dev-setup
+vagrant up aaa
+And so for any aother node, for example: vagrant up apicheckpoint
 
 
+Any OS
+^^^^^^
+See the etc-host.txt file for development network topology.
+See the directory-users.txt file for the configured valid users (development).
 
 First development run:
-    Once all nodes are created and running (with no previous presets),
+    Once all nodes are created and running,
         - browse to https://10.0.111.10/ to load the web GUI (it's located at the reverse proxy entry point URL);
         - use the superadmin login, admin@automation.local/password;
         - via the GUI you can: 
@@ -76,18 +96,11 @@ First development run:
 	    2) create the RBAC permissions on the assets: grant permissions to the authentication groups (the model is role to group on appliance's asset/"container", where a role is a collection of privileges). This way, you'll be able to login with any other user defined (see directory-users.txt), who will be granted the permissions you set for them. For example use the AD group cn=groupAdmin,cn=users,dc=lab,dc=local (which correspond to the user userAdmin).
          - All these actions can be of course directly performed via the api-* nodes' API (first get a JWT tokwn from the Single Sign On node).
 
-    A Postman collection in saved within any api-* project and within aaa (the Single Sign On, otherwise called sso) in order to directly insist upon each producer node. For postman, save the JWT token in the environment before doing any REST call. JWT validity expires in one day.
-
-
+A Postman collection in saved within any api-* project and within aaa (the Single Sign On, otherwise called sso) in order to directly insist upon each producer node. For postman, save the JWT token in the environment before doing any REST call. JWT validity expires in one day.
+Import postman collections and environment from codebases' folders.
 
 Notes:
-    The uif node will be deprecated in the near future: ignore it :)
-    The api-cisconx node is making use o AWX for its functioning; again, this will be deprecated soon.
-
-    A .env file can be setup basing on the .env-example in order to VPN connect to the appliance (for example F5); this is used by the core development team.
-    You can make use of it, if needed, of course in case modify to suit your needs.
-
-    The SMTP relay has to be configured via the .env file as well (see .env-example).
+    The SMTP relay has to be configured via the .env file (see .env-example).
     
     Update code-base: only a git pull is needed
 
