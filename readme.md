@@ -1,13 +1,12 @@
 **DEVELOPMENT INFRASTRUCTURE INFORMATION**
 
-A Vagrant virtual machine is set up and run for each node (a subnet where all nodes are placed is also pulled up by Vagrant). An Active Directory/Radius node can be run for the user authentication as well.
+A Vagrant virtual machine is set up and run for each node (a subnet where all nodes are placed is also pulled up by Vagrant). An Active Directory/Radius node can be run in order to mime Active Directory, LDAP, Radius user authentication as well.
 
-**Requirements**
-**LINUX**
-- Linux host as development machine (tested on modern Debian and Ubuntu OS; any other should work)
+**LINUX host requirements**
+- Tested on modern Debian and Ubuntu OS; any other should work
 - Vagrant
-        Use Vagrant repos, https://www.vagrantup.com/downloads
-           
+         
+      # Using Vagrant repos, https://www.vagrantup.com/downloads	 
       wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/vagrant-archive-keyring.gpg
       sudo echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
       sudo apt update
@@ -29,25 +28,24 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
 
 - Codebases and Vagrant vms
 
-      cd /path/to/projectHome
+      cd /path/to/ConcertoOrchestrationHome
       git clone all projects
 
       cd dev-setup
       #vagrant up
       vagrant up udb aaa dns log revp uifng uib apif5 ...
       
-    Guests will mount the nfs share host-side, where related code is saved (all is automated by Vagrant)
+    Guests will mount the host-side NFS share, where the codebase is saved.
 	
-    The first time, vagrant will create all the virtual machines, so it will take a huge amount of time time. Keep relaxed.
+    On the first run, Vagrant is going to create all the virtual machines, taking a huge amount of time time. Keep relaxed.
 
-    In order to avoid inserting the sudo password every time, use the following sudoers file.
-    Make sue sudo is installed and put in /etc/sudoers.d/vagrant (replace YOUR_USERNAME):
+    In order to avoid inserting the sudo password every time, use the following sudoers file. Make sue sudo is installed.
     
       cat > /etc/sudoers.d/vagrant<<EOF
       # Host alias specification
 
       # User alias specification
-      User_Alias VAGRANTERS = YOUR_USERNAME
+      User_Alias VAGRANTERS = YOUR_USERNAME # replace YOUR_USERNAME
 
       # Cmnd alias specification
       Cmnd_Alias VAGRANTSH = /usr/bin/chown 0\:0 /tmp/*, /usr/bin/mv -f /tmp/* /etc/exports, /usr/bin/systemctl start nfs-server.service, /usr/bin/systemctl stop nfs-server.service, /usr/bin/systemctl start libvirtd.service, /usr/bin/systemctl stop libvirtd.service, /usr/sbin/exportfs -ar, /usr/sbin/sysctl -w fs.inotify.max_user_watches=*
@@ -55,14 +53,9 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       VAGRANTERS ALL=(root) NOPASSWD: VAGRANTSH
       EOF
 
-    So, test your sudoer file and the vm set by bringing everything down and up again:
-    
-      vagrant halt
-      vagrant up udb aaa dns log revp uifng uib apif5 # much faster than before eh!?
 
 
-
-**WINDOWS**
+**WINDOWS host requirements**
 - Install:
     * git
     * Vagrant    
@@ -77,11 +70,11 @@ Admin CLI:
 
     cd path\to\Automation
     git clone https://github.com/LumIT-Automation/dev-setup.git
-And so for any other node, for example: git clone https://github.com/LumIT-Automation/aaa.git
+The same for any other node, for example: git clone https://github.com/LumIT-Automation/aaa.git
 
     cd path\to\Automation\dev-setup
     vagrant up aaa
-And so for any aother node, for example: vagrant up apicheckpoint
+The same for any other node, for example: vagrant up apicheckpoint
 
 
 
@@ -93,15 +86,13 @@ See the directory-users.txt file for the configured valid users (development).
 First development run:
     Once all nodes are created and running,
 
- 1. browse to https://10.0.111.10/ to load the web GUI (it's located at
-    the reverse proxy entry point URL);
-            - use the superadmin login, admin@automation.local/password;
-            - via the
-
- 2. GUI you can: 
+ 1. browse to https://10.0.111.10/ to load the web GUI (it's located at the reverse proxy entry point URL); use the superadmin login, admin@automation.local/password;
+            
+ 2. via GUI: 
  
-	        a) connect the platform to the appliances' assets (save their login information and check that the platform is able to fetch data with the superadmin user), 
-	        b) create the RBAC permissions on the assets: grant permissions to the authentication groups (the model is role to group on appliance's asset/"container", where a role is a collection of privileges). This way, you'll be able to login with any other user defined (see directory-users.txt), who will be granted the permissions you set for them. For example use the AD group cn=groupAdmin,cn=users,dc=lab,dc=local (which correspond to the user userAdmin).
+    a) connect the platform to the appliances' assets (save their login information and check that the platform is able to fetch data with the superadmin user), 
+    
+    b) create the RBAC permissions on the assets: grant permissions to the authentication groups (the model is role to group on appliance's asset/"container", where a role is a collection of privileges). This way, you'll be able to login with any other user defined (see directory-users.txt), who will be granted the permissions you set for them. For example use the AD group cn=groupAdmin,cn=users,dc=lab,dc=local (which correspond to the user userAdmin).
  4. All these actions can be of course directly performed via the api-* nodes' API (first get a JWT tokwn from the Single Sign On node).
 
 A Postman collection in saved within any api-* project and within aaa (the Single Sign On, otherwise called sso) in order to directly insist upon each producer node. For postman, save the JWT token in the environment before doing any REST call. JWT validity expires in one day.
@@ -121,7 +112,9 @@ Vagrant commands (optional node for commanding a single box):
     vagrant up node
     vagrant ssh node
 
-Update database (only) on an already-created vm: vagrant provision node --provision-with db # for nodes with SQL database.
+Update database (only) on an already-created vm: 
+
+    vagrant provision node --provision-with db # for nodes with SQL database.
 
 Destroy everything:
 
