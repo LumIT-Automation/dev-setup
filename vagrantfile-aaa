@@ -46,4 +46,3 @@
       s.args = ["--action", "run"]
     end
   end
-

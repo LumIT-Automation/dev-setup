@@ -46,4 +46,3 @@
       trigger.run_remote = {inline: "diskDevice=`fdisk -l| grep 'Disk /dev' | awk '{print $2}' | sed 's/://'`; printf 'd\nn\n\n\n\n\nw\n' | fdisk $diskDevice; sync; xfs_growfs ${diskDevice}1"}
     end
   end
-

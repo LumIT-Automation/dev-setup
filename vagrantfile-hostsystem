@@ -78,4 +78,3 @@
       s.args = ["--action", "install"]
     end
   end
-
