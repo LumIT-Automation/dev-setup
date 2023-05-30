@@ -1,4 +1,4 @@
-# Reverse proxy will resolve services' fqdns using the consul-template service - see /etc/consul.d/revp.consul-template.hcl.
+# Reverse proxy will resolve services' fqdns using the consul-template service - see /etc/consul.d/templates/revp.consul-template.hcl.
 # When a change in the Consul catalog is detected, the consul-template service rewrites the revp site with this template.
 
 upstream uif {
@@ -39,6 +39,8 @@ server {
   ssl_protocols TLSv1.2;
   ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
   ssl_prefer_server_ciphers on;
+
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
   location / {
     proxy_pass http://uif;
