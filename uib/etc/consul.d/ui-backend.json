@@ -7,12 +7,6 @@
     ],
     "port": 80
   },
-  "check": {
-    "id": "ui-backend",
-    "name": "HTTP API",
-    "http": "http://127.0.0.1/backend/?consul-check",
-    "method": "OPTIONS",
-    "interval": "60s",
-    "timeout": "5s"
-  }
+  "enable_syslog": true,
+  "log_level": "info"
 }
