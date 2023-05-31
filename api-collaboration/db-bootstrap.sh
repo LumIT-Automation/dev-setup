@@ -74,6 +74,16 @@ System_mariadbRestore()
     if [ -f /var/www/api/collaboration/sql/collaboration.data-development.sql ]; then
         mysql api < /var/www/api/collaboration/sql/collaboration.data-development.sql
     fi
+
+    mysql -e 'DROP DATABASE IF EXISTS `phone`;'
+    mysql -e 'CREATE DATABASE `phone` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
+
+    mysql phone < /var/www/api/collaboration/sql/phone.schema.sql
+    if [ -f /var/www/api/collaboration/sql/phone.data.sql ]; then
+        mysql phone < /var/www/api/collaboration/sql/phone.data.sql
+    fi
 }
 
 
