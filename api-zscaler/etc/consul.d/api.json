@@ -1,0 +1,12 @@
+{
+  "service": {
+    "id": "api-zscaler",
+    "name": "api-zscaler",
+    "tags": [
+      "api-zscaler"
+    ],
+    "port": 80
+  },
+  "enable_syslog": true,
+  "log_level": "info"
+}
