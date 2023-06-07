@@ -48,8 +48,7 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_api
-            System_chronySetup
-            System_ciscoAxlSetup
+            System_ntpSetup
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
@@ -154,7 +153,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dnsutils dos2unix curl vim # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl vim ntpdate # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
@@ -410,21 +409,28 @@ System_redisSetup() {
 
 
 
-System_chronySetup() {
-    apt install chrony -y
-    echo '23,53 * * * * /usr/bin/systemctl restart chrony' | crontab # wake up! 
+System_ntpSetup() {
+    echo -e '#!/bin/bash\n\n/usr/sbin/ntpdate -v pool.ntp.org > /var/log/ntpdate.log 2>&1' > /usr/sbin/ntpdate.sh
+    chmod 755 /usr/sbin/ntpdate.sh
+
+    cat << EOF > /etc/systemd/system/ntpdate.service
+[Unit]
+Description=run ntpdate
+
+[Service]
+ExecStart=/bin/bash /usr/sbin/ntpdate.sh
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+    systemctl daemon-reload
+    systemctl enable ntpdate.service
+    systemctl start ntpdate.service
 }
 
 
-
-System_ciscoAxlSetup()
-{
-    if [ ! -d /var/www/.cache ]; then
-        mkdir /var/www/.cache
-    fi
-
-    chown -R www-data:www-data /var/www/.cache/
-}
 
 # ##################################################################################################################################################
 # Main
