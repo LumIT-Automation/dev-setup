@@ -410,7 +410,7 @@ System_redisSetup() {
 
 
 System_ntpSetup() {
-    echo -e '#!/bin/bash\n\n/usr/sbin/ntpdate -v pool.ntp.org > /var/log/ntpdate.log 2>&1' > /usr/sbin/ntpdate.sh
+    echo -e '#!/bin/bash\n\nsleep 5\n/usr/sbin/ntpdate -v pool.ntp.org > /var/log/ntpdate.log 2>&1' > /usr/sbin/ntpdate.sh
     chmod 755 /usr/sbin/ntpdate.sh
 
     cat << EOF > /etc/systemd/system/ntpdate.service
@@ -428,6 +428,25 @@ EOF
     systemctl daemon-reload
     systemctl enable ntpdate.service
     systemctl start ntpdate.service
+
+
+    # Launch at resume after sleeping/hibernating/suspending
+    cat << EOF > /lib/systemd/system-sleep/ntpdate
+#!/bin/sh
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+case "\$1" in
+    post)
+        /usr/sbin/ntpdate.sh
+    ;;
+esac
+
+exit 0
+EOF
+
+    chmod 755 /lib/systemd/system-sleep/ntpdate
+
 }
 
 
