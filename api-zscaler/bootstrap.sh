@@ -48,6 +48,7 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_api
+            System_chronySetup
             System_ciscoAxlSetup
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
@@ -405,6 +406,13 @@ System_redisSetup() {
         sed -i -e '$a syslog-enabled yes' /etc/redis/redis.conf
         systemctl restart redis.service
     fi
+}
+
+
+
+System_chronySetup() {
+    apt install chrony -y
+    echo '23,53 * * * * /usr/bin/systemctl restart chrony' | crontab # wake up! 
 }
 
 
