@@ -11,7 +11,7 @@ RemainAfterExit=no
 Restart=always
 RestartSec=10
 KillMode=process
-ExecStart=pip install --upgrade pip; pip install -r /var/www/api/api/pip.requirements
+ExecStart=pip install --upgrade pip --break-system-packages; pip install -r /var/www/api/api/pip.requirements --break-system-packages
 
 StandardOutput=syslog
 StandardError=syslog
