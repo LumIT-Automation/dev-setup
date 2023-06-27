@@ -245,17 +245,17 @@ function System_apacheSetup()
     fi
 
     # Copy phpMyAdmin files.
-    if [ ! -f phpMyAdmin-5.2.1-all-languages.tar.gz ]; then
-        wget https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.tar.gz
+    if [ ! -f phpMyAdmin-5.1.4-all-languages.tar.gz ]; then
+        wget https://files.phpmyadmin.net/phpMyAdmin/5.1.4/phpMyAdmin-5.1.4-all-languages.tar.gz
     fi
 
-    tar xfz phpMyAdmin-5.2.1-all-languages.tar.gz
+    tar xfz phpMyAdmin-5.1.4-all-languages.tar.gz
 
     if [ -d /var/www/myadmin ]; then
         rm -fr /var/www/myadmin
     fi
 
-    mv phpMyAdmin-5.2.1-all-languages /var/www/myadmin
+    mv phpMyAdmin-5.1.4-all-languages /var/www/myadmin
     chown -R www-data:www-data /var/www/myadmin
 
     # Configure phpMyAdmin for direct login.
