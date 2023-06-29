@@ -12,12 +12,20 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       sudo apt update
       sudo apt install vagrant
 
-     Plugins (user-installed):
+     Plugins for virtualbox setup (user-installed):
      
       vagrant plugin install vagrant-reload
       vagrant plugin install vagrant-env
       vagrant plugin install vagrant-fsnotify
       vagrant plugin install vagrant-disksize
+      
+     Plugins for libvirtd setup (user-installed):
+
+      vagrant plugin install vagrant-libvirt
+      vagrant plugin install vagrant-reload
+      vagrant plugin install vagrant-env
+      vagrant plugin install vagrant-fsnotify
+
 - VirtualBox
         On Ubuntu 20+:
         
