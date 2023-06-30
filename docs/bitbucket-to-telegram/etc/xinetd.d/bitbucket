@@ -1,0 +1,11 @@
+service bitbucket
+{
+    bind = 127.0.0.1
+    port = 8080
+    socket_type = stream
+    protocol = tcp
+    wait = no
+    user = root
+    server = /usr/bin/bitbucket.webhooks.sh
+    type = unlisted
+}
