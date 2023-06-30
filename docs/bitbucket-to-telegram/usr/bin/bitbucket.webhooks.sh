@@ -13,9 +13,12 @@ repository="$(echo "$request" | jq .repository.name | sed 's/\"//g')"
 branch="$(echo "$request" | jq .changes[0].ref.displayId | sed 's/\"//g')"
 author="$(echo "$request" | jq .commits[0].author.name | sed 's/\"//g')"
 commit="$(echo "$request" | jq .commits[0].message | sed 's/\"//g')"
+commitId="$(echo "$request" | jq .commits[0].id | sed 's/\"//g')"
+url="http://bitbucket.lumit.it:7990/projects/DAI/repos/${repository}/commits/${commitId}"
 
 message="Push on ${repository} (${branch}) by ${author}
-Message: ${commit}"
+Message: ${commit}
+${url}"
 
 # Send message to Telegram A-Tram chat group.
 echo "$message" > /tmp/telegram.message
