@@ -397,12 +397,14 @@ EOF
     samba-tool user create userRo2 $userPassword
     samba-tool user create userYN $userPassword
     samba-tool user create userStaff $userPassword
+    samba-tool user create powerStaff $userPassword
     samba-tool user create userAdmin $userPassword
     
     samba-tool user setexpiry userRo1 --noexpiry
     samba-tool user setexpiry userRo2 --noexpiry
     samba-tool user setexpiry userYN --noexpiry
     samba-tool user setexpiry userStaff --noexpiry
+    samba-tool user setexpiry powerStaff --noexpiry
     samba-tool user setexpiry userAdmin --noexpiry
 
     # create the needed groups.
@@ -410,6 +412,7 @@ EOF
     samba-tool group add groupNotGranted    # This one is not allowed to login.
     samba-tool group add groupReadOnly
     samba-tool group add groupStaff
+    samba-tool group add groupPowerStaff
     samba-tool group add groupAdmin
 
 
@@ -417,6 +420,7 @@ EOF
     samba-tool group addmembers groupRequired userRo2
     samba-tool group addmembers groupRequired userYN
     samba-tool group addmembers groupRequired userStaff
+    samba-tool group addmembers groupRequired powerStaff
     samba-tool group addmembers groupRequired userAdmin
 
     samba-tool group addmembers groupNotGranted  userYN
@@ -426,11 +430,13 @@ EOF
     samba-tool group addmembers groupReadOnly userYN
 
     samba-tool group addmembers groupStaff userStaff
+    samba-tool group addmembers groupPowerStaff powerStaff
     samba-tool group addmembers groupAdmin userAdmin
 
     # Create a grandparent group that contains the users groups.
     samba-tool group add groupGranPa
     samba-tool group addmembers groupGranPa groupAdmin
+    samba-tool group addmembers groupGranPa groupPowerStaff
     samba-tool group addmembers groupGranPa groupStaff
     samba-tool group addmembers groupGranPa groupReadOnly
 
