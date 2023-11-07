@@ -151,7 +151,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dos2unix # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl vim ntpdate # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
@@ -159,7 +159,6 @@ EOF
     apt install -y libapache2-mod-php7.4 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y libldap2-dev libsasl2-dev # needed by django-auth-ldap.
     apt install -y ldap-utils # useful to check ldap connection.
-    apt install -y curl screen # base.
     apt install -y rpm # for building rh packages.
     apt clean
 }
