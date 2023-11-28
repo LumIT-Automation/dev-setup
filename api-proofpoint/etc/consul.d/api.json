@@ -1,0 +1,12 @@
+{
+  "service": {
+    "id": "api-proofpoint",
+    "name": "api-proofpoint",
+    "tags": [
+      "api-proofpoint"
+    ],
+    "port": 80
+  },
+  "enable_syslog": true,
+  "log_level": "info"
+}
