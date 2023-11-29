@@ -19,7 +19,7 @@
     #dotnet.vm.box_version = "11.20220912.1"
 
     # Network.
-    dotnet.vm.network :private_network, ip: "10.0.111.30"
+    dotnet.vm.network :private_network, ip: "10.0.111.41"
     dotnet.vm.hostname = "dotnet"
 
     # Synced folders.
