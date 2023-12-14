@@ -49,6 +49,7 @@ function System_run()
             System_redisSetup
             System_pipInstallDaemon_api
             System_ntpSetup
+            System_reportSetup
         else
             echo "A Debian Bullseye operating system is required for the installation. Aborting."
             exit 1
