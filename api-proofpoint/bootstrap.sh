@@ -452,7 +452,7 @@ EOF
 
 
 function System_reportSetup(){
-    mkdir -p /var/report
+    mkdir -p /var/report/storage
     cp -f /vagrant/api-proofpoint/var/report/default.png /var/report
 }
 
