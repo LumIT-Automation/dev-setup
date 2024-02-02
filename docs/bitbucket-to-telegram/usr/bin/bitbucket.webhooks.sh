@@ -18,7 +18,7 @@ url="http://bitbucket.lumit.it:7990/projects/DAI/repos/${repository}/commits/${c
 
 message="Push on ${repository} (${branch}) by ${author}
 Message: ${commit}
-${url}"
+Link: ${url}"
 
 # Send message to Telegram A-Tram chat group.
 echo "$message" > /tmp/telegram.message
