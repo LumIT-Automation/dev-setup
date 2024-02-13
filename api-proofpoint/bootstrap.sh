@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Bullseye..."
+            echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -51,7 +51,7 @@ function System_run()
             System_ntpSetup
             System_reportSetup
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -66,7 +66,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
@@ -154,12 +154,12 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dnsutils dos2unix curl vim ntpdate # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
-    apt install -y php7.4-mysql php7.4-mbstring # php and php for mysql.
-    apt install -y libapache2-mod-php7.4 libapache2-mod-wsgi-py3 # apache for php and python.
+    apt install -y php8.2-mysql php8.2-mbstring # php and php for mysql.
+    apt install -y libapache2-mod-php8.2 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
     apt install -y sqlite3
     apt install -y rpm # for building rh packages.
@@ -173,8 +173,7 @@ function System_pythonSetup()
 {
     printf "\n* Installing pip dependencies...\n"
 	
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
-    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 # best practice for simply creating a symlink.
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
 
     # pip Requirements files are used to hold the result from pip freeze for the purpose of achieving repeatable installations.
     # In this case, your requirement file contains a pinned version of everything that was installed when pip freeze was run.
@@ -188,8 +187,7 @@ function System_pythonSetup()
     # SomeProject[foo, bar]
     # SomeProject~=1.4.2
 
-    pip install --upgrade pip
-    pip install -r /var/www/api/api/pip.requirements # pip install requirements.
+    pip install --break-system-packages -r /var/www/api/api/pip.requirements # pip install requirements.
 }
 
 
@@ -246,21 +244,17 @@ function System_apacheSetup()
     fi
 
     # Copy phpMyAdmin files.
-    if [ ! -f phpMyAdmin-5.1.3-all-languages.zip ]; then
-        wget https://files.phpmyadmin.net/phpMyAdmin/5.1.3/phpMyAdmin-5.1.3-all-languages.zip
+    if [ ! -f phpMyAdmin-5.2.1-all-languages.zip ]; then
+        wget -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
     fi
 
-    unzip phpMyAdmin-5.1.3-all-languages.zip >/dev/null
+    unzip phpMyAdmin-5.2.1-all-languages.zip >/dev/null
 
     if [ -d /var/www/myadmin ]; then
-        if [ -d /tmp/myadmin ]; then
-            rm -Rf /tmp/myadmin
-        fi
-        mv /var/www/myadmin /tmp/myadmin
-
-        echo "I've found a /var/www/myadmin folder, which I moved to /tmp/."
+        rm -fr var/www/myadmin
     fi
-    mv phpMyAdmin-5.1.3-all-languages /var/www/myadmin
+
+    mv phpMyAdmin-5.2.1-all-languages /var/www/myadmin
     chown -R www-data:www-data /var/www/myadmin
 
     # Configure phpMyAdmin for direct login.
@@ -310,6 +304,9 @@ System_consulAgentInstall()
     printf "\n* Setting up the Consul agent...\n"
 
     # Install Consul.
+    wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    apt update
     apt install -y consul
 
     # Expose Consul api service.
@@ -396,7 +393,8 @@ System_pipInstallDaemon_api()
 
     systemctl enable pip_install_api.path
     systemctl enable pip_install_api.service
-    systemctl restart pip_install_api.path
+    systemctl stop pip_install_api.path
+    systemctl start pip_install_api.path
 }
 
 

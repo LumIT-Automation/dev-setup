@@ -5,19 +5,18 @@
   config.vm.define :apiproofpoint do |api|
     api.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.memory = "1024"
+      vb.memory = "2048"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
     end
 
     api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
+      libvrt.memory = "2048"
       libvrt.cpus = 2
     end
 
     # OS.
-    api.vm.box = "debian/bullseye64"
-    #api.vm.box_version = "11.20220912.1"
+    api.vm.box = "debian/bookworm64"
 
     # Network.
     api.vm.network :private_network, ip: "10.0.111.30"
