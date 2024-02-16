@@ -63,8 +63,12 @@ System_mariadbRestore()
 {
     printf "\n* Restoring the database from its SQL dump...\n"
 
+    pkgVer=`cat /var/www/ui-backend/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`
+    commit=`tail -1 /var/www/ui-backend/.git/logs/HEAD | awk '{print $2}'`
+
     mysql -e 'DROP DATABASE IF EXISTS `uib`;'
-    mysql -e 'CREATE DATABASE `uib` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+    mysql -e 'CREATE DATABASE `uib` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT ='"'"'pkgVersion='${pkgVer}' commit='${commit}"'"';'
+
     mysql -e "GRANT USAGE ON *.* TO 'uib'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'uib'@'%';"
 
