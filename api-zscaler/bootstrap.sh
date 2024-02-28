@@ -257,9 +257,10 @@ function System_apacheSetup()
     chown -R www-data:www-data /var/www/myadmin
 
     # Configure phpMyAdmin for direct login.
-    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['auth_type'\].*/\$cfg\['Servers'\]\[\$i\]\['auth_type'\] = 'config';/g" /var/www/myadmin/libraries/config.default.php
-    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['user'\].*/\$cfg\['Servers'\]\[\$i\]\['user'\] = 'api';/g" /var/www/myadmin/libraries/config.default.php
-    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['password'\].*/\$cfg\['Servers'\]\[\$i\]\['password'\] = '$2';/g" /var/www/myadmin/libraries/config.default.php
+    cp /var/www/myadmin/libraries/config.default.php /var/www/myadmin/config.inc.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['auth_type'\].*/\$cfg\['Servers'\]\[\$i\]\['auth_type'\] = 'config';/g" /var/www/myadmin/config.inc.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['user'\].*/\$cfg\['Servers'\]\[\$i\]\['user'\] = 'api';/g" /var/www/myadmin/config.inc.php
+    sed -i "s/\$cfg\['Servers'\]\[\$i\]\['password'\].*/\$cfg\['Servers'\]\[\$i\]\['password'\] = '$2';/g" /var/www/myadmin/config.inc.php
 
     # Setup the Django project virtual host.
     # Static content has been moved from rest_framework to static/ via the use of python manage.py collectstatic.
