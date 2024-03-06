@@ -32,7 +32,7 @@ function System_run()
 
             System_mariadbRestore
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -47,7 +47,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
@@ -63,14 +63,11 @@ System_mariadbRestore()
 {
     printf "\n* Restoring the MySQL database from its SQL dump...\n"
 
-    pkgVer=`cat /var/www/api/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`
-    commit=`tail -1 /var/www/api/.git/logs/HEAD | awk '{print $2}'`
-
     mysql -e 'DROP DATABASE IF EXISTS `api`;'
-    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT ='"'"'pkgVersion='${pkgVer}' commit='${commit}"'"';'
+    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
 
     mysql -e 'DROP DATABASE IF EXISTS `stage2`;'
-    mysql -e 'CREATE DATABASE `stage2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT ='"'"'pkgVersion='${pkgVer}' commit='${commit}"'"';'
+    mysql -e 'CREATE DATABASE `stage2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
 
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
@@ -81,7 +78,6 @@ System_mariadbRestore()
         mysql api < /var/www/api/vmware/sql/vmware.data-development.sql
     fi
     mysql stage2 < /var/www/api/vmware/sql/stage2.schema.sql
-    mysql stage2 < /var/www/api/vmware/sql/stage2.data.sql
 }
 
 # ##################################################################################################################################################
