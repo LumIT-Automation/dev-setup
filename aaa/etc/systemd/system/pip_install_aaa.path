@@ -1,7 +1,5 @@
 [Unit]
 Description=Monitor /var/www/aaa/aaa/pip.requirements for changes.
-After=systemd-networkd-wait-online.service
-Wants=systemd-networkd-wait-online.service
 Wants=pip_install.service
 
 [Path]

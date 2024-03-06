@@ -3,7 +3,7 @@
 set -e
 
 function start() {
-    /usr/bin/consul agent -enable-script-checks=true -bind=$(ip route get 10.0.111.254 | grep -oP "(?<=src\ ).*(?=\ uid)") -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/ -retry-join 10.0.111.254
+    /usr/bin/consul agent -enable-local-script-checks=true -bind=$(ip route get 10.0.111.254 | grep -oP "(?<=src\ ).*(?=\ uid)") -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/ -retry-join 10.0.111.254
 }
 
 function stop() {
@@ -38,8 +38,7 @@ case $1 in
             ;;
 
         restart)
-            stop
-            start
+            restart
             ;;
 
         *)
