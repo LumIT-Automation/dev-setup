@@ -4,7 +4,7 @@ set -e
 
 function start() {
     # Consul will bind to the source IP address which has route to Consul server agent.
-    /usr/bin/consul agent -enable-script-checks=true -bind=$(ip route get 10.0.111.254 | grep -oP "(?<=src\ ).*(?=\ uid)") -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/ -retry-join 10.0.111.254
+    /usr/bin/consul agent -enable-local-script-checks=true -bind=$(ip route get 10.0.111.254 | grep -oP "(?<=src\ ).*(?=\ uid)") -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/ -retry-join 10.0.111.254
 }
 
 function stop() {

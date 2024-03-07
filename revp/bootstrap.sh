@@ -31,7 +31,7 @@ function System_run()
 {
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
-            echo "This script requires a fresh-installation of Debian Bullseye ..."
+            echo "This script requires a fresh-installation of Debian Bookworm ..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -42,7 +42,7 @@ function System_run()
             System_consulAgentInstall
             System_nginxSetup
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -57,7 +57,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'bullseye' /etc/os-release; then
+        if ! grep -q 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
@@ -145,7 +145,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade
 
-    apt install -y wget curl git unzip net-tools dos2unix dnsutils # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim # base.
     apt install -y rpm # for building rh packages.
     apt clean
 }
@@ -157,11 +157,12 @@ function System_consulAgentInstall()
     printf "\n* Setting up the Consul agent...\n"
 
     # Install Consul and consul-template.
-    apt install -y consul
+    wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    apt update
 
-    # wget https://releases.hashicorp.com/consul-template/0.25.1/consul-template_0.25.1_linux_amd64.tgz
-    cp -f /vagrant/revp/usr/bin/consul-template /usr/bin/consul-template
-    chmod 755 /usr/bin/consul-template
+    apt install -y consul
+    apt install -y consul-template
 
     # Setup a Systemd Consul service unit.
     # Consul will bind to the source IP address which has route to Consul server agent.

@@ -16,7 +16,7 @@
     end
 
     # OS.
-    revp.vm.box =  "debian/bullseye64"
+    revp.vm.box =  "debian/bookworm64"
     #revp.vm.box_version = "11.20220912.1"
 
     # Network.
