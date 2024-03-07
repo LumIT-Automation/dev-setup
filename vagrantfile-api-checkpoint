@@ -16,7 +16,7 @@
     end
 
     # OS.
-    api.vm.box = "debian/bullseye64"
+    api.vm.box = "debian/bookworm64"
     # api.vm.box_version = "11.20220912.1"
 
     # Network.
