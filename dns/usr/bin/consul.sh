@@ -3,7 +3,7 @@
 set -e
 
 function start() {
-    /usr/bin/consul agent -server -enable-script-checks=true -bootstrap-expect=1 -bind=10.0.111.254 -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/
+    /usr/bin/consul agent -server -enable-local-script-checks=true -bootstrap-expect=1 -bind=10.0.111.254 -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/
 }
 
 function stop() {
@@ -34,8 +34,7 @@ case $1 in
             ;;
 
         restart)
-            stop
-            start
+            restart
             ;;
 
         *)
