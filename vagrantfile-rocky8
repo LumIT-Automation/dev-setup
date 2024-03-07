@@ -1,0 +1,48 @@
+  ############################################################################################
+  # Empty RockyLinux8 vm
+  ############################################################################################
+
+  config.vm.define :rocky8 do |rocky8|
+    rocky8.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+
+      if Vagrant.has_plugin?("vagrant-disksize")
+        rocky8.disksize.size = "20GB"
+      end
+    end
+
+    rocky8.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "1024"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    rocky8.vm.box = "generic/rocky8"
+
+    # Network.
+    rocky8.vm.network :private_network, ip: "10.0.111.204"
+    rocky8.vm.hostname = "rocky8"
+
+    # Provision.
+    rocky8.vm.provision "shell" do |s|
+      s.path = "rocky8/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+
+    # Triggers.
+    # Use a script to expand the vdisk with libvirtd.
+    #if ! Vagrant.has_plugin?("vagrant-disksize")
+    #  rocky8.trigger.after :up do |trigger|
+    #    trigger.info = "Expanding disk..."
+    #    trigger.run = {inline: "sudo resize_libvirtd.sh rocky8 5 > /tmp/res.log"}
+    #  end
+    #end
+
+    #rocky8.trigger.after :up do |trigger|
+    #  trigger.info = "Expanding filesystem..."
+    #  trigger.run_remote = {inline: "diskDevice=`fdisk -l| grep 'Disk /dev' | awk '{print $2}' | sed 's/://'`; printf 'd\nn\n\n\n\n\nw\n' | fdisk $diskDevice; sync; xfs_growfs ${diskDevice}1"}
+    #end
+  end
