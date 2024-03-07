@@ -15,7 +15,7 @@
     end
 
     # OS.
-    uib.vm.box =  "debian/bullseye64"
+    uib.vm.box =  "debian/bookworm64"
     #uib.vm.box_version = "11.20220912.1"
 
     # Network.

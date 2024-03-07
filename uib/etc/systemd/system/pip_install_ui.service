@@ -11,7 +11,7 @@ RemainAfterExit=no
 Restart=always
 RestartSec=10
 KillMode=process
-ExecStart=pip install --upgrade pip; pip install -r /var/www/ui-backend/backend/pip.requirements
+ExecStart=pip install --break-system-packages -r /var/www/ui-backend/backend/pip.requirements
 
 StandardOutput=syslog
 StandardError=syslog

@@ -1,7 +1,5 @@
 [Unit]
 Description=Monitor /var/www/ui-backend/backend/pip.requirements for changes.
-After=systemd-networkd-wait-online.service
-Wants=systemd-networkd-wait-online.service
 Wants=pip_install_ui.service
 
 [Path]
