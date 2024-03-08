@@ -16,8 +16,8 @@
     end
 
     # OS.
-    hostsystem.vm.box = "debian/bullseye64"
-    #hostsystem.vm.box_version = "11.20220912.1"
+
+    hostsystem.vm.box = "debian/bookworm64"
 
     # Network.
     hostsystem.vm.network :private_network, ip: "10.0.111.253"

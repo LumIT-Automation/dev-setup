@@ -41,7 +41,7 @@ function System_run()
             System_syslogngInstall
             System_postfixConfig
         else
-            echo "A Debian Buster operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -56,7 +56,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -q 'bullseye' /etc/os-release; then
+        if ! grep -q 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
