@@ -19,7 +19,7 @@
     empty.vm.box = "debian/bookworm64"
 
     # Network.
-    empty.vm.network :private_network, ip: "10.0.111.204"
+    empty.vm.network :private_network, ip: "10.0.111.205"
     empty.vm.hostname = "deb12"
 
     # Provision.
