@@ -1,0 +1,30 @@
+  ############################################################################################
+  # Empty Debian 12 vm
+  ############################################################################################
+
+  config.vm.define :deb12 do |empty|
+    empty.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+
+    empty.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "2048"
+      libvrt.cpus = 1
+    end
+
+    # OS.
+    empty.vm.box = "debian/bookworm64"
+
+    # Network.
+    empty.vm.network :private_network, ip: "10.0.111.204"
+    empty.vm.hostname = "deb12"
+
+    # Provision.
+    empty.vm.provision "shell" do |s|
+      s.path = "deb11/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
