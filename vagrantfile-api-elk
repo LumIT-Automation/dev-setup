@@ -1,0 +1,30 @@
+  ############################################################################################
+  # ELK
+  ############################################################################################
+
+  config.vm.define :elk do |elk|
+    elk.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+    end
+
+    elk.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "2048"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    elk.vm.box = "debian/bookworm64"
+
+    # Network.
+    elk.vm.network :private_network, ip: "10.0.111.200"
+    elk.vm.hostname = "elk"
+
+    # Provision.
+    elk.vm.provision "shell" do |s|
+      s.path = "elk/bootstrap.sh"
+      s.args = ["--action", "install"]
+    end
+  end
