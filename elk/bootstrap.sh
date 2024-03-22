@@ -18,7 +18,7 @@ function System()
     PROXY="$PROXY"
 
     SYSTEM_USERS_PASSWORD="Password01!"
-    ELASTICSEARCH_ADMIN_PASSWORD="Password01!"
+    ELASTIC_ADMIN_PASSWORD="Password01!"
 }
 
 # ##################################################################################################################################################
@@ -39,8 +39,9 @@ function System_run()
             System_sshConfig
             System_proxySet "$PROXY"
             System_installDependencies
-            System_ElasticSearchInstall "$SYSTEM_USERS_PASSWORD"
             System_consulAgentInstall
+            System_ElasticSearchInstall "$ELASTIC_ADMIN_PASSWORD"
+            System_KibanaInstall "$ELASTIC_ADMIN_PASSWORD"
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -170,6 +171,28 @@ System_ElasticSearchInstall()
 
     # Testing the installation.
     curl --cacert /etc/elasticsearch/certs/http_ca.crt -u elastic:$1 https://localhost:9200
+}
+
+
+
+System_KibanaInstall()
+{
+    printf "\n* Installing and configuring Kibana...\n"
+
+    apt install -y kibana
+
+    sed -i 's/#server.port:.*/server.port: 8000/g' /etc/kibana/kibana.yml
+    sed -i 's/#server.host.*/server.host: 0.0.0.0/g' /etc/kibana/kibana.yml
+
+    systemctl daemon-reload
+    systemctl enable kibana.service
+    systemctl start kibana.service
+
+    # Couple with ElasticSearch (programmatically).
+    /usr/share/kibana/bin/kibana-setup --enrollment-token "$(/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana)"
+    systemctl restart kibana.service
+
+    echo "Kibana interface is listening on 10.0.111.200:8000."
 }
 
 

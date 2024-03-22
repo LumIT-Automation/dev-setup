@@ -5,13 +5,13 @@
   config.vm.define :elk do |elk|
     elk.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.memory = "2048"
+      vb.memory = "3072"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
     end
 
     elk.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "2048"
+      libvrt.memory = "3072"
       libvrt.cpus = 2
     end
 
