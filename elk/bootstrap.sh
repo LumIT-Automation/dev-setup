@@ -155,22 +155,53 @@ EOF
 
 System_ElasticSearchInstall()
 {
-    printf "\n* Installing ElasticSearch...\n"
+    superadminPassword="$1"
+
+    printf "\n* Installing and configuring ElasticSearch...\n"
 
     wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
     echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
     apt update
     apt install -y elasticsearch
 
+    # Configure network.
+    address=$(ip a | grep 'inet ' | tail -1 | grep -oP '(?<=inet ).*(?=/)')
+    sed -i "s/#network.host:.*/network.host: $address/g" /etc/elasticsearch/elasticsearch.yml
+    sed -i "s/#http.port.*/http.port: 9200/g" /etc/elasticsearch/elasticsearch.yml
+
     systemctl daemon-reload
     systemctl enable elasticsearch.service
     systemctl restart elasticsearch.service
 
     # Setup a superadmin password.
-    printf "y\n$1\n$1\n" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -i
+    printf "y\n$superadminPassword\n$superadminPassword\n" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -i
 
     # Testing the installation.
-    curl --cacert /etc/elasticsearch/certs/http_ca.crt -u elastic:$1 https://localhost:9200
+    curl --cacert /etc/elasticsearch/certs/http_ca.crt -u elastic:$superadminPassword https://localhost:9200
+
+    # Create an API key.
+    apiKey=$(curl -u elastic:$superadminPassword --cacert /etc/elasticsearch/certs/http_ca.crt --location --request POST 'https://localhost:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw '{
+    "name": "concerto",
+    "role_descriptors": {
+      "concerto_rw": {
+        "cluster": ["monitor"],
+        "index": [
+          {
+            "names": ["zscaler"],
+            "privileges": ["create_index", "write", "read", "manage", "all"]
+          }
+        ]
+      }
+    }
+  }')
+
+  echo "API KEY: $apiKey"
+
+  # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html
+
+  # from elasticsearch import Elasticsearch
+  # client = Elasticsearch("https://10.0.111.200:9200", api_key=("RWdadY4B_iERa8NlOREH", "jxzJ114fQumwniWfRHS9iQ"), verify_certs=False)
+  # client.indices.create(index="zscaler")
 }
 
 
@@ -192,7 +223,8 @@ System_KibanaInstall()
     /usr/share/kibana/bin/kibana-setup --enrollment-token "$(/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana)"
     systemctl restart kibana.service
 
-    echo "Kibana interface is listening on 10.0.111.200:8000."
+    echo "Kibana interface is listening on http://10.0.111.200:8000"
+    echo "ElasticSearch superadmin user: elastic with password: $1"
 }
 
 
