@@ -183,7 +183,7 @@ System_ElasticSearchInstall()
     apiKey=$(curl -u elastic:$superadminPassword --cacert /etc/elasticsearch/certs/http_ca.crt --location --request POST 'https://localhost:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw '{
     "name": "concerto",
     "role_descriptors": {
-      "concerto_rw": {
+      "apiZscaler": {
         "cluster": ["monitor"],
         "index": [
           {
@@ -196,12 +196,6 @@ System_ElasticSearchInstall()
   }')
 
   echo "API KEY: $apiKey"
-
-  # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html
-
-  # from elasticsearch import Elasticsearch
-  # client = Elasticsearch("https://10.0.111.200:9200", api_key=("RWdadY4B_iERa8NlOREH", "jxzJ114fQumwniWfRHS9iQ"), verify_certs=False)
-  # client.indices.create(index="zscaler")
 }
 
 
