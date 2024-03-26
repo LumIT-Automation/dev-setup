@@ -178,24 +178,6 @@ System_ElasticSearchInstall()
 
     # Testing the installation.
     curl --cacert /etc/elasticsearch/certs/http_ca.crt -u elastic:$superadminPassword https://localhost:9200
-
-    # Create an API key.
-    apiKey=$(curl -u elastic:$superadminPassword --cacert /etc/elasticsearch/certs/http_ca.crt --location --request POST 'https://localhost:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw '{
-    "name": "concerto",
-    "role_descriptors": {
-      "apiZscaler": {
-        "cluster": ["monitor"],
-        "index": [
-          {
-            "names": ["zscaler"],
-            "privileges": ["create_index", "write", "read", "manage", "all"]
-          }
-        ]
-      }
-    }
-  }')
-
-  echo "API KEY: $apiKey"
 }
 
 

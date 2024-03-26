@@ -47,4 +47,8 @@
       s.path = "api-zscaler/db-bootstrap.sh"
       s.args = ["--action", "run"]
     end
+    api.vm.provision "elasticSearch", type: "shell" do |s|
+      s.path = "api-zscaler/elasticSearch-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
   end
