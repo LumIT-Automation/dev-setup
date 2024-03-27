@@ -27,4 +27,6 @@
       s.path = "elk/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+
+    elk.vm.post_up_message = "#######################################################################\nKibana interface is listening on http://10.0.111.200:8000\n#######################################################################"
   end
