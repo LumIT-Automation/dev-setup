@@ -1,11 +1,11 @@
 {
   "service": {
-    "id": "api-zscaler",
-    "name": "api-zscaler",
+    "id": "elk",
+    "name": "elk",
     "tags": [
-      "api-zscaler"
+      "elk"
     ],
-    "port": 80
+    "port": 9200
   },
   "enable_syslog": true,
   "log_level": "info"
