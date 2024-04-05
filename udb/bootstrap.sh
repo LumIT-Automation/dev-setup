@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing packages...\n"
-            echo "This script requires a fresh-installation of Debian Bullseye ..."
+            echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -44,7 +44,7 @@ function System_run()
             System_sambaInstall
             System_freeradiusInstall "$DATABASE_ROOT_PASSWORD"
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -59,7 +59,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'bullseye' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
@@ -171,11 +171,12 @@ EOF
     
     # DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dos2unix # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim # base.
     apt install -y mariadb-server
-    apt install -y php7.4-mysql php7.4-mbstring 
-    apt install -y php7.4-gd php7.4-curl php7.4-xml php-mail php-pear; pear install DB
-    apt install -y libapache2-mod-php7.4
+    apt install -y php8.2-mysql php8.2-mbstring # php and php for mysql.
+    apt install -y libapache2-mod-php8.2 libapache2-mod-wsgi-py3 # apache for php and python.
+    apt install -y php-gd php-curl php-xml php-mail php-pear; pear install DB
+    apt install -y libapache2-mod-php
     apt clean
 }
 
