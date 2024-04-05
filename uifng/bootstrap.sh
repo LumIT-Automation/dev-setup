@@ -33,7 +33,7 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Bullseye ..."
+            echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -44,7 +44,7 @@ function System_run()
             System_consulAgentInstall
             System_npmInstallDaemon
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -59,7 +59,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
@@ -146,6 +146,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
+    apt install -y ca-certificates gnupg
     apt install -y wget git unzip net-tools dos2unix dnsutils curl screen vim # base.
     apt install -y rpm # for building rh packages.
     apt clean
@@ -203,6 +204,9 @@ function System_consulAgentInstall()
 {
     printf "\n* Setting up Consul agent...\n"
 
+     wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    apt update
     apt install -y consul
 
     # Expose Consul ui service.
@@ -227,8 +231,10 @@ function System_consulAgentInstall()
 System_npmInstallDaemon()
 {
     printf "\n* Install NodeJS and setting up Systemd service...\n"
+    NODE_MAJOR=20
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-    curl -sL https://deb.nodesource.com/setup_18.x | bash -
     apt update
     apt install -y nodejs
     apt clean

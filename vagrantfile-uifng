@@ -15,7 +15,7 @@
     end
 
     # OS.
-    uifng.vm.box =  "debian/bullseye64"
+    uifng.vm.box =  "debian/bookworm64"
 
     # Network.
     uifng.vm.network :private_network, ip: "10.0.111.13"

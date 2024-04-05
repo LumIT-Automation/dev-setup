@@ -29,11 +29,11 @@ function System_run()
     if [ "$ACTION" == "run" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Bullseye ..."
+            echo "This script requires a fresh-installation of Debian Bookworm ..."
 
             System_npmSetup
         else
-            echo "A Debian Bullseye operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -48,7 +48,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 11 (bullseye)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
             return 1
         fi
     else
