@@ -28,7 +28,7 @@ function System_run()
 {
     if [ "$ACTION" == "run" ]; then
         if System_checkEnvironment; then
-            printf "\n* Installing system...\n"
+            printf "\n* Bootstrapping npm...\n"
             echo "This script requires a fresh-installation of Debian Bookworm ..."
 
             System_npmSetup
@@ -67,9 +67,12 @@ System_npmSetup()
         echo -e "\nexport NODE_OPTIONS=--openssl-legacy-provider" >> /home/vagrant/.bashrc
     fi
 
-    su - vagrant -c 'export NODE_OPTIONS=--openssl-legacy-provider
-        cd /var/www/ui-frontend-ng
-        npm install'
+    # With pnpm. Use if network problems on VirtualBox.
+    #npm install -g pnpm
+    #su - vagrant -c 'export NODE_OPTIONS=--openssl-legacy-provider; cd /var/www/ui-frontend-ng; pnpm install'
+
+    # With npm.
+    su - vagrant -c 'export NODE_OPTIONS=--openssl-legacy-provider; cd /var/www/ui-frontend-ng; npm install'
 
     systemctl daemon-reload
 

@@ -240,7 +240,7 @@ function System_apacheSetup()
 
     # Copy phpMyAdmin files.
     if [ ! -f phpMyAdmin-5.2.1-all-languages.zip ]; then
-        wget -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
+        wget --no-check-certificate -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
     fi
 
     unzip phpMyAdmin-5.2.1-all-languages.zip >/dev/null
