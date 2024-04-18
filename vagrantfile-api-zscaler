@@ -8,6 +8,7 @@
       vb.memory = "2048"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
+      api.vm.network "forwarded_port", guest: 80, host: 8080 # work in a remote vm.
     end
 
     api.vm.provider "libvirt" do |libvrt|
