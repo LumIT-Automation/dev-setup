@@ -67,14 +67,103 @@ System_elasticSearchConnection()
     apt install -y jq
 
     # Create an API key.
-    apiKey=$(curl -u elastic:$1 --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request POST 'https://10.0.111.200:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw '{
+    password="$1"
+    apiKey=$(curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request POST 'https://10.0.111.200:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw '{
       "name": "concerto",
       "role_descriptors": {
         "apiZscaler": {
           "cluster": ["monitor"],
           "index": [
             {
-              "names": ["zscaler"],
+              "names": ["zia-users"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-user-groups"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-departments"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-locations"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-location-groups"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-cloud-applications"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-devices"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-device-groups"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-rule-labels"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-policies-firewall"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-admin-audit-log"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-web-insights-log"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-url-category"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-url-categories"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-url-filtering-rule"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-url-filtering-rules"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-file-type-rules"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-ssl-inspection-rules"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-audit-ssl-inspection"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-categories-report"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-categories-assessment"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-rule-filtering-rules-assessment"],
+              "privileges": ["create_index", "write", "read", "manage", "all"]
+            },
+            {
+              "names": ["zia-categories-lookup-urls"],
               "privileges": ["create_index", "write", "read", "manage", "all"]
             }
           ]
