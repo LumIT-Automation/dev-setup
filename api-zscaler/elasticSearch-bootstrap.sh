@@ -102,6 +102,9 @@ ELASTICSEARCH_URL = "https://10.0.111.200:9200"
 ELASTICSEARCH_TLS_VERIFY = False
 ELASTICSEARCH_APIKEY = ($ID, $KEY)
 EOF
+
+    # Kibana:
+    # curl -u elastic:$password --insecure -X GET 'http://10.0.111.200:8000/api/saved_objects/_find?type=dashboard'
 }
 
 # ##################################################################################################################################################
