@@ -69,6 +69,9 @@ System_elasticSearchConnection()
     # Create an API key.
     password="$1"
 
+    # Delete all ZIA indexes.
+    curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request GET 'https://10.0.111.200:9200/_cat/indices' | awk '{print $3}' | grep zia- | xargs -I {} curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request DELETE "https://10.0.111.200:9200/{}"
+
     # Create indexes, one for ZIA controller.
     indexes=$(cat /var/www/api/zscaler/ziaUrls.py | grep -oP "(?<=name=\').*(?=\')" | xargs -I {} echo "{\"names\": [\"{}\"],\"privileges\": [\"create_index\", \"write\", \"read\", \"manage\", \"all\"]},")
     indexes=${indexes::-1}
