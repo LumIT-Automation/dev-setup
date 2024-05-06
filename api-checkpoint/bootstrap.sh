@@ -409,6 +409,10 @@ System_swaggerConverter() {
     tar fxz postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
     cp postman2openapi-1.2.1-x86_64-unknown-linux-musl/postman2openapi /usr/local/bin
     chmod 755 /usr/local/bin/postman2openapi
+    cd -
+    mkdir -p /var/www/api/doc
+    cp /var/www/api/checkpoint/docs/api-checkpoint.postman_collection.json /var/www/api/doc
+    postman2openapi -f yaml /var/www/api/checkpoint/docs/api-checkpoint.postman_collection.json > /var/www/api/doc/swagger.yaml
 }
 
 # ##################################################################################################################################################
