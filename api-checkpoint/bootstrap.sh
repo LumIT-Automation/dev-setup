@@ -411,7 +411,7 @@ System_swaggerConverter() {
     chmod 755 /usr/local/bin/postman2openapi
     cd -
     mkdir -p /var/www/api/doc
-    cp /var/www/api/checkpoint/docs/api-checkpoint.postman_collection.json /var/www/api/doc
+    cp /var/www/api/checkpoint/docs/api-checkpoint.postman_collection.json /var/www/api/doc/postman.json
     postman2openapi -f yaml /var/www/api/checkpoint/docs/api-checkpoint.postman_collection.json > /var/www/api/doc/swagger.yaml
 }
 
