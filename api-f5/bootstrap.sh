@@ -412,7 +412,9 @@ System_swaggerConverter() {
     tar fxz postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
     cp postman2openapi-1.2.1-x86_64-unknown-linux-musl/postman2openapi /usr/local/bin
     chmod 755 /usr/local/bin/postman2openapi
-    postman2openapi -f yaml /var/www/api/doc/postman.json > /var/www/api/doc/swagger.yaml
+    postman2openapi -f yaml /var/www/api/doc/postman.json > /var/www/api/doc/swagger0.yaml
+    python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger0.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/f5/F5Urls.py
+    rm -f /var/www/api/doc/swagger0.yaml
 }
 
 # ##################################################################################################################################################
