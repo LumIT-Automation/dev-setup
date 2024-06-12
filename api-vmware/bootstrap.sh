@@ -428,7 +428,7 @@ System_swaggerConverter() {
     chmod 755 /usr/local/bin/postman2openapi
     postman2openapi -f yaml /var/www/api/doc/postman.json > /var/www/api/doc/swagger0.yaml
     python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger0.yaml -o /var/www/api/doc/swagger1.yaml -u /var/www/api/vmware/VMwareUrls.py
-    python /var/www/api/doc/openapi-stage2-fix.py -i /var/www/api/doc/swagger1.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/vmware/Stage2Urls.py
+    python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger1.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/vmware/Stage2Urls.py
     rm -f /var/www/api/doc/swagger0.yaml /var/www/api/doc/swagger1.yaml
 }
 
