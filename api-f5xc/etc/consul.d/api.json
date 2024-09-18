@@ -1,0 +1,12 @@
+{
+  "service": {
+    "id": "api-f5xc",
+    "name": "api-f5xc",
+    "tags": [
+      "api-f5xc"
+    ],
+    "port": 80
+  },
+  "enable_syslog": true,
+  "log_level": "info"
+}

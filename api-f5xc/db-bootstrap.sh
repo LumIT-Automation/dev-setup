@@ -15,8 +15,6 @@ function System()
 
     # Properties list.
     ACTION="$ACTION"
-
-    ELASTIC_ADMIN_PASSWORD="Password01!"
 }
 
 # ##################################################################################################################################################
@@ -31,7 +29,8 @@ function System_run()
     if [ "$ACTION" == "run" ]; then
         if System_checkEnvironment; then
             printf "\n* Configuring system...\n"
-            System_elasticSearchConnection "$ELASTIC_ADMIN_PASSWORD"
+
+            System_mariadbRestore
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -60,53 +59,20 @@ function System_checkEnvironment()
 
 
 
-System_elasticSearchConnection()
+System_mariadbRestore()
 {
-    printf "\n* Creating connection to ElasticSearch...\n"
+    printf "\n* Restoring the MySQL database from its SQL dump...\n"
 
-    apt install -y jq
+    mysql -e 'DROP DATABASE IF EXISTS `api`;'
+    mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
+    mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+    mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
-    # Create an API key.
-    password="$1"
-
-    # Delete all ZIA indexes.
-    curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request GET 'https://10.0.111.200:9200/_cat/indices' | awk '{print $3}' | grep zia- | xargs -I {} curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request DELETE "https://10.0.111.200:9200/{}"
-
-    # Create indexes, one for each ZIA controller.
-    indexes=$(cat /var/www/api/zscaler/ziaUrls.py | grep -oP "(?<=name=\').*(?=\')" | xargs -I {} echo "{\"names\": [\"{}\"],\"privileges\": [\"create_index\", \"write\", \"read\", \"manage\", \"all\"]},")
-    indexes=${indexes::-1}
-
-    set -vx
-
-    apiKey=$(curl -u elastic:$password --cacert /etc/elasticsearch/certs/http_ca.crt --insecure --location --request POST 'https://10.0.111.200:9200/_security/api_key' --header 'Content-Type: application/json' --data-raw "{
-      \"name\": \"concerto\",
-      \"role_descriptors\": {
-        \"apiZscaler\": {
-          \"cluster\": [\"monitor\"],
-          \"index\": [
-            $indexes
-          ]
-        }
-      }
-    }") || true
-
-    set +vx
-
-    echo "API KEY: $apiKey"
-    ID="$(echo $apiKey | jq '.["id"]')"
-    KEY="$(echo $apiKey | jq '.["api_key"]')"
-
-    [ -z $ID ] && ID="\"\""
-    [ -z $KEY ] && KEY="\"\""
-
-    cat > /var/www/api/api/settings_elasticSearch.py<<EOF
-ELASTICSEARCH_URL = "https://10.0.111.200:9200"
-ELASTICSEARCH_TLS_VERIFY = False
-ELASTICSEARCH_APIKEY = ($ID, $KEY)
-EOF
-
-    # Kibana:
-    # curl -u elastic:$password --insecure -X GET 'http://10.0.111.200:8000/api/saved_objects/_find?type=dashboard'
+    mysql api < /var/www/api/f5xc/sql/f5.schema.sql
+    mysql api < /var/www/api/f5xc/sql/f5.data.sql
+    if [ -f /var/www/api/f5xc/sql/f5.data-development.sql ]; then
+        mysql api < /var/www/api/f5xc/sql/f5.data-development.sql
+    fi
 }
 
 # ##################################################################################################################################################
