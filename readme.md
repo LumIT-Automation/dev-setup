@@ -13,26 +13,39 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       sudo apt install vagrant
       sudo apt install nfs-kernel-server
 
-     Plugins for virtualbox setup (user-installed):
+     Plugins for virtualbox setup (user-installed: do not use _sudo_):
      
       vagrant plugin install vagrant-reload
       vagrant plugin install vagrant-env
       vagrant plugin install vagrant-fsnotify
       vagrant plugin install vagrant-disksize
       
-     Plugins for libvirtd setup (user-installed):
+     Plugins for libvirtd setup (user-installed: do not use _sudo_):
 
       vagrant plugin install vagrant-libvirt
       vagrant plugin install vagrant-reload
       vagrant plugin install vagrant-env
       vagrant plugin install vagrant-fsnotify
+      vagrant plugin uninstall vagrant-disksize
 
-- VirtualBox
-        On Ubuntu 20+:
+- If using libvirt:
+
+      sudo apt install -y qemu libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
+      printf "\n# Vagrant\nVAGRANT_DEFAULT_PROVIDER=libvirt\n" >> ~/.bashrc
+
+      vagrant plugin uninstall vagrant-disksize
+      vagrant plugin install vagrant-libvirt
+
+      su - $USER # in order to reload user's groups without relogin.
+
+- If using VirtualBox:
         
+      # Ubuntu 20 example.
       sudo apt install -y virtualbox virtualbox-dkms virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
-     From VirtualBox 6.1.28 editing the file /etc/vbox/networks.conf is needed:
-     
+
+  From VirtualBox 6.1.28 editing the file /etc/vbox/networks.conf is needed:
+
+      [ ! -d /etc/vbox ] && mkdir /etc/vbox
       sudo echo '* 10.0.0.0/8' > /etc/vbox/networks.conf
 
 - Codebases and Vagrant vms
