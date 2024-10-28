@@ -24,7 +24,7 @@
 
     # Provision.
     empty.vm.provision "shell" do |s|
-      s.path = "deb11/bootstrap.sh"
+      s.path = "deb12/bootstrap.sh"
       s.args = ["--action", "install"]
     end
   end
