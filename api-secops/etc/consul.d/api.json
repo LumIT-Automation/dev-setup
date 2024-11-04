@@ -1,0 +1,12 @@
+{
+    "service": {
+        "id": "api-secops",
+        "name": "api-secops",
+        "tags": [
+            "api-secops"
+        ],
+        "port": 80
+    },
+    "enable_syslog": true,
+    "log_level": "info"
+}

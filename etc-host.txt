@@ -14,6 +14,7 @@
 	api zscaler     10.0.111.29
 	api proofpoint  10.0.111.30
 	api f5 xc       10.0.111.31
+	api secops      10.0.111.32
 
 	aaa (sso)       10.0.111.100
 	udb             10.0.111.110 + 10.0.111.111
