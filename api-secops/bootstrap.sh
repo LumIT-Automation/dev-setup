@@ -243,17 +243,17 @@ function System_apacheSetup()
     fi
 
     # Copy phpMyAdmin files.
-    if [ ! -f phpMyAdmin-5.2.1-all-languages.zip ]; then
-        wget -c https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip
+    if [ ! -f phpMyAdmin-5.1.3-all-languages.zip ]; then
+        wget -c https://files.phpmyadmin.net/phpMyAdmin/5.1.3/phpMyAdmin-5.1.3-all-languages.zip
     fi
 
-    unzip phpMyAdmin-5.2.1-all-languages.zip >/dev/null
+    unzip phpMyAdmin-5.1.3-all-languages.zip >/dev/null
 
     if [ -d /var/www/myadmin ]; then
         rm -fr var/www/myadmin
     fi
 
-    mv phpMyAdmin-5.2.1-all-languages /var/www/myadmin
+    mv phpMyAdmin-5.1.3-all-languages /var/www/myadmin
     chown -R www-data:www-data /var/www/myadmin
 
     # Configure phpMyAdmin for direct login.
