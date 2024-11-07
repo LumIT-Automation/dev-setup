@@ -301,6 +301,7 @@ function System_apacheSetup()
     a2ensite 001-mysql
     a2query -s 000-default && a2dissite 000-default # disable default site, only if enabled.
 
+    systemctl daemon-reload
     systemctl restart apache2
 }
 
