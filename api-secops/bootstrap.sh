@@ -280,6 +280,7 @@ function System_apacheSetup()
     printf "$1\n$1" | passwd www-data
 
     # Set PrivateTmp to false in apache's service file.
+    # @todo: use PrivateTmp=true when packaging.
     cp -f /vagrant/api-secops/etc/systemd/system/apache2.service /etc/systemd/system/apache2.service
     chmod 644 /etc/systemd/system/apache2.service
 
