@@ -70,6 +70,9 @@ System_mariadbRestore()
     mysql -e 'DROP DATABASE IF EXISTS `api`;'
     mysql -e 'CREATE DATABASE `api` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT ='"'"'pkgVersion='${pkgVer}' commit='${commit}"'"';'
 
+    mysql -e 'DROP DATABASE IF EXISTS `weblog`;'
+    mysql -e 'CREATE DATABASE `weblog` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT ='"'"'pkgVersion='${pkgVer}' commit='${commit}"'"';'
+
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
@@ -78,6 +81,7 @@ System_mariadbRestore()
     if [ -f /var/www/api/zscaler/sql/zscaler.data-development.sql ]; then
         mysql api < /var/www/api/zscaler/sql/zscaler.data-development.sql
     fi
+    mysql weblog < /var/www/api/zscaler/sql/weblog.schema.sql
 }
 
 
