@@ -13,13 +13,6 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       #sudo apt install vagrant
       sudo apt install vagrant=2.4.1-1
       sudo apt install nfs-kernel-server
-
-     Plugins for virtualbox setup (user-installed: do not use _sudo_):
-     
-      vagrant plugin install vagrant-reload
-      vagrant plugin install vagrant-env
-      vagrant plugin install vagrant-fsnotify
-      vagrant plugin install vagrant-disksize
       
      Plugins for libvirtd setup (user-installed: do not use _sudo_):
 
@@ -29,13 +22,17 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       vagrant plugin install vagrant-fsnotify
       vagrant plugin uninstall vagrant-disksize
 
+     Plugins for virtualbox setup (user-installed: do not use _sudo_):
+     
+      vagrant plugin install vagrant-reload
+      vagrant plugin install vagrant-env
+      vagrant plugin install vagrant-fsnotify
+      vagrant plugin install vagrant-disksize
+
 - If using libvirt:
 
       sudo apt install -y qemu-system libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
       printf "\n# Vagrant\nVAGRANT_DEFAULT_PROVIDER=libvirt\n" >> ~/.bashrc
-
-      vagrant plugin uninstall vagrant-disksize
-      vagrant plugin install vagrant-libvirt
 
       su - $USER # in order to reload user's groups without relogin.
 
