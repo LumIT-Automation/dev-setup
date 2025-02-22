@@ -10,7 +10,8 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/vagrant-archive-keyring.gpg
       sudo echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
       sudo apt update
-      sudo apt install vagrant
+      #sudo apt install vagrant
+      sudo apt install vagrant=2.4.1-1
       sudo apt install nfs-kernel-server
 
      Plugins for virtualbox setup (user-installed: do not use _sudo_):
@@ -30,7 +31,7 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
 
 - If using libvirt:
 
-      sudo apt install -y qemu libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
+      sudo apt install -y qemu-system libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
       printf "\n# Vagrant\nVAGRANT_DEFAULT_PROVIDER=libvirt\n" >> ~/.bashrc
 
       vagrant plugin uninstall vagrant-disksize
