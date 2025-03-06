@@ -409,7 +409,9 @@ System_celeryStart()
     printf "\n* Setting up Systemd service for starting Celery...\n"
 
     cp -f /vagrant/api-checkpoint/usr/bin/celery.sh /usr/bin/celery.sh
+    cp -f /vagrant/api-checkpoint/usr/bin/celery-checkdb.sh /usr/bin/celery-checkdb.sh
     chmod 755 /usr/bin/celery.sh
+    chmod 755 /usr/bin/celery-checkdb.sh
 
     cp -f /vagrant/api-checkpoint/etc/systemd/system/celery.service /etc/systemd/system/celery.service
     chmod 644 /etc/systemd/system/celery.service
