@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -vx
 api=api-f5
 technology=f5
 TECHNOLOGY=F5
