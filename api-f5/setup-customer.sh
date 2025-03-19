@@ -21,26 +21,6 @@ fi
 
 customer="$1"
 
-function cleanupVM() {
-    cd /var/www/api/${technology}
-    rm -f F5UsecasesUrls.py
-    find . -type l -name Usecases -exec rm -f {}\;
-    cd -
-}
-
-function setupVM() {
-    oldPwd=`pwd`
-    cd /var/www/api/${technology}/controllers/${TECHNOLOGY} || exit -1
-    ln -fs ../../../../Usecases/${technology}/controllers-Usecase /Usecases . || exit -2
-
-    cd /var/www/api/${technology}/serializers/${TECHNOLOGY} || exit -1
-    ln -fs ../../../../Usecases/${technology}/serializers-Usecase /Usecases . || exit -2
-
-    cd /var/www/api/${technology}/models/${TECHNOLOGY} || exit -1
-    ln -fs ../../../../Usecases/${technology}/models-Usecase /Usecases . || exit -2
-    cd $oldPwd
-}
-
 function setupHost() {
     oldPwd=`pwd`
     cd ${gitRepoDir}/${technology}
