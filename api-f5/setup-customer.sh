@@ -1,18 +1,21 @@
 #!/bin/bash
 set -vx
+
 api=api-f5
 technology=f5
 TECHNOLOGY=F5
-gitRepoDir=(cd `pwd`/../../${api} && pwd)
-devSetup=(cd `pwd`/.. && pwd)
+gitRepoDir=$(cd `pwd`"/../../${api}" && pwd)
+devSetup=$(cd `pwd`"/.." && pwd)
+
+help="Usage: $0 <customer> <setup|clean>"
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <customer>"
+    echo $help
     exit 0
 fi
 
-if ! [ -d "/var/www/usecases/$1" ]; then
-    echo "Customer $1 not found, check the nfs mount points"
+if ! [ -d "${devSetup}/../customer-usecases/${1}" ]; then
+    echo "Customer $1 not found, check the customer-usecases git repo"
     exit 1
 fi
 
@@ -40,38 +43,34 @@ function setupVM() {
 
 function setupHost() {
     oldPwd=`pwd`
-    cd $gitRepoDir/${technology}
-    ln -s ../../Usecases/${technology}/urls-Usecases ${TECHNOLOGY}UsecasesUrls.py
+    cd ${gitRepoDir}/${technology}
+    ln -sf ../../Usecases/${technology}/urls-Usecases ${TECHNOLOGY}UsecasesUrls.py
     cd sql
-    ln -s ../../../Usecases/${technology}/sqlUseCases ${technology}.useCases.sql
+    ln -sf ../../../Usecases/${technology}/sqlUseCases ${technology}.useCases.sql
     cd  -
     cd controllers/${TECHNOLOGY}
-    ln -s ../../../../Usecases/f5/controllers-Usecases Usecases
+    ln -sf ../../../../Usecases/f5/controllers-Usecases Usecases
     cd -
     cd serializers/${TECHNOLOGY}
-    ln -s ../../../../Usecases/f5/serializers-Usecases Usecases
+    ln -sf ../../../../Usecases/f5/serializers-Usecases Usecases
     cd -
     cd models/${TECHNOLOGY}
-    ln -s ../../../../Usecases/f5/models-Usecases Usecases
+    ln -sf ../../../../Usecases/f5/models-Usecases Usecases
     cd -
 
     if ! [ -d ../../Usecases/${technology} ]; then
         mkdir -p ../../Usecases/${technology}
     fi
 
-    cd ../../Usecases/${technology} || { echo "cannot find host Usecases dir" && exit -2 };
-    ls -sf ../../customer-usecases/${customer}/${api}/${technology}/${TECHNOLOGY}UsecasesUrls.py urls-Usecases
-    ls -sf ../../customer-usecases/${customer}/${api}/${technology}/controllers/${TECHNOLOGY}/Usecases controllers-Usecases
-    ls -sf ../../customer-usecases/${customer}/${api}/${technology}/serializers/${TECHNOLOGY}/Usecases serializers-Usecases
-    ls -sf ../../customer-usecases/${customer}/${api}/${technology}/models/${TECHNOLOGY}/Usecases models-Usecases
-    ls -sf ../../customer-usecases/${customer}/${api}/${technology}/sql/${technology}AddUsecases.sql sqlUseCases
-
-    cd $devSetup
-    vagrant provision api${technology} --provision-with db
+    cd ../../Usecases/${technology} || exit -2
+    ln -sf ../../customer-usecases/${customer}/${api}/${technology}/${TECHNOLOGY}UsecasesUrls.py urls-Usecases
+    ln -sf ../../customer-usecases/${customer}/${api}/${technology}/controllers/${TECHNOLOGY}/Usecases controllers-Usecases
+    ln -sf ../../customer-usecases/${customer}/${api}/${technology}/serializers/${TECHNOLOGY}/Usecases serializers-Usecases
+    ln -sf ../../customer-usecases/${customer}/${api}/${technology}/models/${TECHNOLOGY}/Usecases models-Usecases
+    ln -sf ../../customer-usecases/${customer}/${api}/${technology}/sql/${technology}AddUsecases.sql sqlUseCases
 
     cd $oldPwd
 }
-
 
 function cleanupHost() {
     cd $gitRepoDir
@@ -80,3 +79,25 @@ function cleanupHost() {
     find . -type l -name f5.useCases.sql -exec rm -f {} \;
     cd -
 }
+
+function reloadDb() {
+    cd $devSetup
+    vagrant provision api${technology} --provision-with db
+    cd -
+}
+
+
+
+case $2 in
+    setup)
+        setupHost
+        reloadDb
+        ;;
+    clean)
+        cleanupHost
+        reloadDb
+        ;;
+    *)
+        echo $help
+esac
+
