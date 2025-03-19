@@ -71,6 +71,9 @@ System_mariadbRestore()
 
     mysql api < /var/www/api/f5/sql/f5.schema.sql
     mysql api < /var/www/api/f5/sql/f5.data.sql
+    if [ -f /var/www/api/f5/sql/f5.useCases.sql ]; then
+        mysql api < /var/www/api/f5/sql/f5.useCases.sql
+    fi
     if [ -f /var/www/api/f5/sql/f5.data-development.sql ]; then
         mysql api < /var/www/api/f5/sql/f5.data-development.sql
     fi
