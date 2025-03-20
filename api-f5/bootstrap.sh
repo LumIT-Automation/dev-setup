@@ -410,10 +410,6 @@ System_redisSetup() {
 System_useCasesSymlinks() {
     mkdir -p /var/www/Usecases/f5
     cd /var/www/Usecases/f5
-    ln -sf ../../usecases/crif/api-f5/f5/F5UsecasesUrls.py urls-Usecases
-    ln -sf ../../usecases/crif/api-f5/f5/controllers/F5/Usecases controllers-Usecases
-    ln -sf ../../usecases/crif/api-f5/f5/serializers/F5/Usecases serializers-Usecases
-    ln -sf ../../usecases/crif/api-f5/f5/models/F5/Usecases models-Usecases
     cd -
 }
 
