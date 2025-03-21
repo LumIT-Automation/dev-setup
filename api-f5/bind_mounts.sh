@@ -18,9 +18,16 @@ function setup() {
             mkdir -p ${apiDir}/${tech}/${component}/${TECH}/Usecases
             mount -m --bind ${customersDir}/${dirName}/${api}/${tech}/${component}/${TECH}/Usecases ${apiDir}/${tech}/${component}/${TECH}/Usecases/${customer}
         done
+
+        touch ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+        mount --bind ${customersDir}/${dirName}/${api}/${tech}/sql/${tech}AddUsecases.sql ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+
+        touch ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
+        mount --bind   ${customersDir}/${dirName}/${api}/${tech}/${TECH}UsecasesUrls.py  ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
     done
 }
-
+#touch /var/www/api/f5/sql/crif-5AddUsecases.sql
+#mount --bind /var/www/usecases/crif-api-f5/api-f5/f5/sql/f5AddUsecases.sql /var/www/api/f5/sql/crif-5AddUsecases.sql
 
 function break() {
     cd $customersDir
@@ -34,6 +41,12 @@ function break() {
         for component in models controllers serializers; do
             rm -r ${apiDir}/${tech}/${component}/${TECH}/Usecases
         done
+
+        umount ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+        rm ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+
+        umount ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
+        rm ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
     done
 }
 
