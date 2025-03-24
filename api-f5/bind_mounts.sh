@@ -10,11 +10,12 @@ apiDir=/var/www/api
 
 function setup() {
     cd $customersDir
-    for dir in `find . -maxdepth 1 -mindepth 1  -not -path './.*' -type d`; do
+    for dir in `find . -maxdepth 1 -mindepth 1  -not -path './.*' -not -name '*-Usecases' -type d`; do
         dirName=`basename $dir`
+        echo "DIR: ############### $dirName"
         api=`ls $dirName | head -n1`
         customer=`echo $dirName | sed "s/-${api}//"`
-        for component in models controllers serializers; do
+        for component in models controllers serializers;do
             mkdir -p ${apiDir}/${tech}/${component}/${TECH}/Usecases
             mount -m --bind ${customersDir}/${dirName}/${api}/${tech}/${component}/${TECH}/Usecases ${apiDir}/${tech}/${component}/${TECH}/Usecases/${customer}
         done
@@ -26,12 +27,11 @@ function setup() {
         mount --bind   ${customersDir}/${dirName}/${api}/${tech}/${TECH}UsecasesUrls.py  ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
     done
 }
-#touch /var/www/api/f5/sql/crif-5AddUsecases.sql
-#mount --bind /var/www/usecases/crif-api-f5/api-f5/f5/sql/f5AddUsecases.sql /var/www/api/f5/sql/crif-5AddUsecases.sql
+
 
 function break() {
     cd $customersDir
-    for dir in `find . -maxdepth 1 -mindepth 1  -not -path './.*' -type d`; do
+    for dir in `find . -maxdepth 1 -mindepth 1  -not -path './.*' -not -name '*-Usecases' -type d`; do
         dirName=`basename $dir`
         api=`ls $dirName | head -n1`
         customer=`echo $dirName | sed "s/-${api}//"`
