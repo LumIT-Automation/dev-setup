@@ -79,7 +79,7 @@ System_mariadbRestore()
     fi
     # Load sql for usecases.
     for sqlFile in `ls /var/www/api/f5/sql/Usecases/*sql`; do
-        mysql api < /var/www/api/f5/sql/Usecases/sqlFile
+        mysql api < /var/www/api/f5/sql/Usecases/${sqlFile}
     done
 }
 
