@@ -47,7 +47,7 @@ function System_run()
             # System_mariadbRestore -> performed by db-bootstrap.sh
             System_consulAgentInstall
             System_redisSetup
-            #System_useCasesSymlinks
+            System_useCasesSymlinks
             System_pipInstallDaemon_api
             System_swaggerConverter
         else
@@ -408,9 +408,63 @@ System_redisSetup() {
 
 
 System_useCasesSymlinks() {
-    mkdir -p /var/www/Usecases/f5
-    cd /var/www/Usecases/f5
-    cd -
+    if ! df | grep -q customer-usecases; then
+        echo "usecases share not found, do not setup usecases."
+        return
+    fi
+
+    api=api-f5
+    tech=f5
+    TECH=F5
+    customers=$(
+        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d`; do 
+            basename $c | sed "s/-${api}//"
+        done
+    )
+
+    mkdir -p /var/www/customer-usecases
+
+    for customer in $customers; do
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/controllers/${TECH} && cd ${customer}-${api}/${api}/${tech}/controllers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/controllers/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/serializers/${TECH} && cd ${customer}-${api}/${api}/${tech}/serializers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+    mkdir -p ${customer}-${api}/${api}/${tech}/models/${TECH} && cd ${customer}-${api}/${api}/${tech}/models/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+        cd ${customer}-${api}/${api}/${tech} && ln -sf ../../../../usecases/${customer}-${api}/${api}/${tech}/urlsUsecases .
+        
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/sql && cd ${customer}-${api}/${api}/${tech}/sql && ln -sf ../../../../../usecases/${customer}-${api}/${api}/${tech}/sql/Usecases .
+    done
+
+    mkdir -p /var/www/api/${tech}/controllers/${TECH}/Usecases && cd /var/www/api/${tech}/controllers/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/controllers/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/models/${TECH}/Usecases && cd /var/www/api/${tech}/models/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/serializers/${TECH}/Usecases && cd /var/www/api/${tech}/serializers/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/urlsUsecases && cd /var/www/api/${tech}/urlsUsecases
+    for customer in $customers; do
+        ln -sf ../../../customer-usecases/${customer}-${api}/${api}/${tech}/urlsUsecases/${TECH}UsecasesUrls.py ${customer}.py
+    done
+
+    mkdir -p /var/www/api/${tech}/sql/Usecases && cd /var/www/api/${tech}/sql/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../customer-usecases/${customer}-${api}/${api}/${tech}/sql/Usecases/${tech}AddUsecases.sql ${customer}.sql
+    done
 }
 
 

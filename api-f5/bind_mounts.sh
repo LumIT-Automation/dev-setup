@@ -16,15 +16,14 @@ function setup() {
         api=`ls $dirName | head -n1`
         customer=`echo $dirName | sed "s/-${api}//"`
         for component in models controllers serializers;do
-            mkdir -p ${apiDir}/${tech}/${component}/${TECH}/Usecases
             mount -m --bind ${customersDir}/${dirName}/${api}/${tech}/${component}/${TECH}/Usecases ${apiDir}/${tech}/${component}/${TECH}/Usecases/${customer}
         done
 
-        touch ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
-        mount --bind ${customersDir}/${dirName}/${api}/${tech}/sql/${tech}AddUsecases.sql ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+        touch ${apiDir}/${tech}/sql/Usecases/${customer}.sql
+        mount --bind ${customersDir}/${dirName}/${api}/${tech}/sql/${tech}AddUsecases.sql ${apiDir}/${tech}/sql/Usecases/${customer}.sql
 
-        touch ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
-        mount --bind   ${customersDir}/${dirName}/${api}/${tech}/${TECH}UsecasesUrls.py  ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
+        touch ${apiDir}/${tech}/urlsUsecases/${customer}.py
+        mount --bind ${customersDir}/${dirName}/${api}/${tech}/${TECH}UsecasesUrls.py ${apiDir}/${tech}/urlsUsecases/${customer}.py
     done
 }
 
@@ -38,15 +37,12 @@ function break() {
         for component in models controllers serializers; do
             umount ${apiDir}/${tech}/${component}/${TECH}/Usecases/${customer} && rm -r ${apiDir}/${tech}/${component}/${TECH}/Usecases/${customer}
         done
-        for component in models controllers serializers; do
-            rm -r ${apiDir}/${tech}/${component}/${TECH}/Usecases
-        done
 
-        umount ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
-        rm ${apiDir}/${tech}/sql/${customer}-${tech}AddUsecases.sql
+        umount ${apiDir}/${tech}/sql/Usecases/${customer}.sql
+        rm ${apiDir}/${tech}/sql/Usecases/${customer}.sql
 
-        umount ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
-        rm ${apiDir}/${tech}/${customer}-${TECH}UsecasesUrls.py
+        umount ${apiDir}/${tech}/urlsUsecases/${customer}.py
+        rm ${apiDir}/${tech}/urlsUsecases/${customer}.py
     done
 }
 
