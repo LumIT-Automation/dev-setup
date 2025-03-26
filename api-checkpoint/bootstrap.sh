@@ -408,8 +408,8 @@ System_celeryStart()
 {
     printf "\n* Setting up Systemd service for starting Celery...\n"
 
-    cp -f /vagrant/api-checkpoint/usr/bin/celery.sh /usr/bin/celery.sh
-    cp -f /vagrant/api-checkpoint/usr/bin/celery-checkdb.sh /usr/bin/celery-checkdb.sh
+    cp -f /var/www/api/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/usr/bin/celery.sh /usr/bin/celery.sh
+    cp -f /var/www/api/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/usr/bin/celery-checkdb.sh /usr/bin/celery-checkdb.sh
     chmod 755 /usr/bin/celery.sh
     chmod 755 /usr/bin/celery-checkdb.sh
 
