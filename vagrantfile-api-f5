@@ -44,6 +44,10 @@
       s.path = "api-f5/bootstrap.sh"
       s.args = ["--action", "install"]
     end
+    api.vm.provision "customers", type: "shell" do |s|
+      s.path = "api-f5/setup-customers.sh"
+      s.args = ["--action", "run"]
+    end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-f5/db-bootstrap.sh"
       s.args = ["--action", "run"]
