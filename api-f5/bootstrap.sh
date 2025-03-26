@@ -47,7 +47,6 @@ function System_run()
             # System_mariadbRestore -> performed by db-bootstrap.sh
             System_consulAgentInstall
             System_redisSetup
-            System_useCasesSymlinks
             System_pipInstallDaemon_api
             System_swaggerConverter
         else

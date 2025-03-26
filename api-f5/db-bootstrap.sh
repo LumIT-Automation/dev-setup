@@ -78,7 +78,7 @@ System_mariadbRestore()
         mysql api < /var/www/api/f5/sql/f5.data-development.sql
     fi
     # Load sql for usecases.
-    for sqlFile in `ls /var/www/api/f5/sql/Usecases/*sql`; do
+    for sqlFile in `basename /var/www/api/f5/sql/Usecases/*sql`; do
         mysql api < /var/www/api/f5/sql/Usecases/${sqlFile}
     done
 }
