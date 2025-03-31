@@ -25,8 +25,12 @@
     # Synced folders.
     if OS.linux?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_version: 4
-      api.vm.synced_folder "../customer-usecases", "/var/www/usecases", type: "nfs", nfs_version: 4
+
+      if File.directory?(File.expand_path("../customer-usecases"))
+        api.vm.synced_folder "../customer-usecases", "/var/www/usecases", type: "nfs", nfs_version: 4
+      end
     end
+
     if OS.mac?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_udp: false
     end
