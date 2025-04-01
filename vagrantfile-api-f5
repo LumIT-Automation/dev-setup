@@ -25,7 +25,12 @@
     # Synced folders.
     if OS.linux?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_version: 4
+
+      if File.directory?(File.expand_path("../customer-usecases"))
+        api.vm.synced_folder "../customer-usecases", "/var/www/usecases", type: "nfs", nfs_version: 4
+      end
     end
+
     if OS.mac?
       api.vm.synced_folder "../api-f5", "/var/www/api", type: "nfs", nfs_udp: false
     end
@@ -42,6 +47,10 @@
     api.vm.provision "shell" do |s|
       s.path = "api-f5/bootstrap.sh"
       s.args = ["--action", "install"]
+    end
+    api.vm.provision "customers", type: "shell" do |s|
+      s.path = "api-f5/setup-customers.sh"
+      s.args = ["--action", "run"]
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-f5/db-bootstrap.sh"

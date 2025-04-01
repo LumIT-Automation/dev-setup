@@ -31,7 +31,7 @@ function System_run()
 {
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
-            echo "This script requires a fresh-installation of Almalinux 8..."
+            echo "This script requires a fresh-installation of Rocky Linux 8..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
