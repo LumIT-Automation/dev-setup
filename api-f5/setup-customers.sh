@@ -96,7 +96,7 @@ System_useCasesSymlinks() {
         mkdir -p ${customer}-${api}/${api}/${tech}/models/Asset && cd ${customer}-${api}/${api}/${tech}/models/Asset && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/models/Asset/Usecases .
 
         cd /var/www/customer-usecases
-        mkdir -p ${customer}-${api}/${api}/${tech}/helpers/decorators && cd ${customer}-${api}/${api}/${tech}/helpers/decorators && ln -sf ../../../../../../usecases/crif-api-f5/api-f5/f5/helpers/decorators/Usecases .
+        mkdir -p ${customer}-${api}/${api}/${tech}/helpers/decorators && cd ${customer}-${api}/${api}/${tech}/helpers/decorators && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/helpers/decorators/Usecases .
 
         cd /var/www/customer-usecases
         cd ${customer}-${api}/${api}/${tech} && ln -sf ../../../../usecases/${customer}-${api}/${api}/${tech}/urlsUsecases .
