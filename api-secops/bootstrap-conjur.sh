@@ -120,6 +120,10 @@ function System_setupConjur()
     podman run --add-host=conjur-1-podman:${hostIp} --name conjur --detach --restart=unless-stopped --cap-add AUDIT_WRITE --publish "443:443" --publish "444:444" --publish "5432:5432" --publish "1999:1999" --log-driver journald --security-opt seccomp=/opt/cyberark/conjur/security/seccomp.json --volume /opt/cyberark/conjur/security:/opt/cyberark/conjur/security:Z --volume /opt/cyberark/conjur/backups:/opt/conjur/backup:Z --volume /opt/cyberark/conjur/seeds:/opt/cyberark/conjur/seeds:Z --volume /opt/cyberark/conjur/logs:/var/log/:Z --volume /opt/cyberark/conjur/config:/etc/conjur/config/:Z conjur-appliance:13.5.0
 
     podman exec conjur evoke configure leader   --accept-eula   --hostname `hostname -f` --leader-altnames conjur-1-podman   --admin-password $conjurAdminPwd dgs-lab
+
+    # Login
+    # conjur init -u https://apisecops -a dgs-lab --self-signed
+    # conjur login -i admin -pCyberArk@123! 
 }
 
 # ##################################################################################################################################################
