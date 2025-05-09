@@ -8,3 +8,5 @@ smtp/smtp-vars.conf
 *rpm
 !samba_*deb
 sources.list
+*conjur-appliance-Rls*
+*conjur-cli-go_*.deb

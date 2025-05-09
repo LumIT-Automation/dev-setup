@@ -5,13 +5,13 @@
   config.vm.define :apisecops do |api|
     api.vm.provider "virtualbox" do |vb|
       vb.gui = false
-      vb.memory = "1024"
+      vb.memory = "3072"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
     end
 
     api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
+      libvrt.memory = "3072"
       libvrt.cpus = 2
     end
 
@@ -45,6 +45,10 @@
     end
     api.vm.provision "db", type: "shell" do |s|
       s.path = "api-secops/db-bootstrap.sh"
+      s.args = ["--action", "run"]
+    end
+    api.vm.provision "conjur", type: "shell" do |s|
+      s.path = "api-secops/bootstrap-conjur.sh"
       s.args = ["--action", "run"]
     end
   end
