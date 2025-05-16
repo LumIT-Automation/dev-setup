@@ -42,6 +42,7 @@ function System_run()
             if System_installConjur; then
               System_setupConjur
               System_syslogngConjurConf
+              System_conjurLogWringer
             fi
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
@@ -149,6 +150,14 @@ System_syslogngConjurConf()
 
     podman restart conjur
 }
+
+
+
+System_conjurLogWringer() {
+    cp -r /vagrant/api-secops/conjur-container/script-conjur /root
+}
+
+
 
 # ##################################################################################################################################################
 # Main

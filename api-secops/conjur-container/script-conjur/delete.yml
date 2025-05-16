@@ -1,0 +1,14 @@
+- !delete
+  record: !variable api-keytest
+
+- !delete
+  record: !variable passwordtest
+
+- !delete
+  record: !variable api-keytest2
+
+# - !delete
+#   record: !variable not-defined
+
+- !delete
+    record: !host my-new-host
