@@ -39,9 +39,10 @@ function System_run()
             echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_proxySet "$PROXY"
-            System_installConjur
-            System_setupConjur
-            System_syslogngConjurConf
+            if System_installConjur; then
+              System_setupConjur
+              System_syslogngConjurConf
+            fi
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -97,14 +98,15 @@ function System_installConjur()
     chmod 755 /opt/cyberark/conjur/config
     chmod 644 /opt/cyberark/conjur/config/conjur.yml
 
-    if [ -r /vagrant/api-secops/conjur-appliance-Rls-v13.5.0.tar.gz ] && [ -r /vagrant/api-secops/conjur-cli-go_8.0.18_amd64.deb ]; then
-        podman image load -i /vagrant/api-secops/conjur-appliance-Rls-v13.5.0.tar.gz
-        apt install /vagrant/api-secops/conjur-cli-go_8.0.18_amd64.deb -y
+    if [ -r /vagrant/api-secops/conjur-container/conjur-appliance-Rls-v13.5.0.tar.gz ] && [ -r /vagrant/api-secops/conjur-container/conjur-cli-go_8.0.18_amd64.deb ]; then
+        podman image load -i /vagrant/api-secops/conjur-container/conjur-appliance-Rls-v13.5.0.tar.gz
+        apt install /vagrant/api-secops/conjur-container/conjur-cli-go_8.0.18_amd64.deb -y
+        return 0
     else
         printf "\n##################################################################################################################################################"
         printf "\n* Conjur installation files not found, skipping"
         printf "\n##################################################################################################################################################"
-
+        return 1
     fi
 }
 
@@ -112,11 +114,12 @@ function System_installConjur()
 
 function System_setupConjur()
 {
+    # Create the seccomp.json conjur config file.
     podman run --rm --entrypoint "/bin/cat" registry.tld/conjur-appliance:13.5.0 /usr/share/doc/conjur/examples/seccomp.json > /opt/cyberark/conjur/security/seccomp.json
-
+    # Create the conjur container.
     podman run --add-host=conjur-1-podman:${hostIp} --name conjur --detach --restart=unless-stopped --cap-add AUDIT_WRITE --publish "443:443" --publish "444:444" --publish "5432:5432" --publish "1999:1999" --log-driver journald --security-opt seccomp=/opt/cyberark/conjur/security/seccomp.json --volume /opt/cyberark/conjur/security:/opt/cyberark/conjur/security:Z --volume /opt/cyberark/conjur/backups:/opt/conjur/backup:Z --volume /opt/cyberark/conjur/seeds:/opt/cyberark/conjur/seeds:Z --volume /opt/cyberark/conjur/logs:/var/log/:Z --volume /opt/cyberark/conjur/config:/etc/conjur/config/:Z conjur-appliance:13.5.0
-
-    # podman exec conjur evoke configure leader   --accept-eula   --hostname `hostname -f` --leader-altnames conjur-1-podman   --admin-password "${conjurAdminPwd}" dgs-lab
+    # Initialize the conjur services.
+    podman exec conjur evoke configure leader --accept-eula --hostname `hostname -f` --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
 
     # Login
     # conjur init -u https://apisecops -a dgs-lab --self-signed
@@ -139,6 +142,12 @@ System_syslogngConjurConf()
     chmod 644 /etc/syslog-ng/conf.d/*conf
 
     systemctl restart syslog-ng
+
+    # Adjust syslog-ng in the conjur container.
+    podman cp /vagrant/api-secops/conjur-container/net-dst.conf conjur:/etc/syslog-ng/conf.d/
+    podman cp /vagrant/api-secops/conjur-container/syslog-log.conf conjur:/etc/syslog-ng/conf.d/
+
+    podman restart conjur
 }
 
 # ##################################################################################################################################################
