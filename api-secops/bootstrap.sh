@@ -161,6 +161,7 @@ EOF
     apt install -y libapache2-mod-php8.2 libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
     apt install -y sqlite3
+    apt install -y podman # Needed for the conjur container.
     apt install -y rpm # for building rh packages.
 
     apt clean
@@ -358,7 +359,6 @@ System_syslogngInstall()
     # Add syslog.host entry in /etc/hosts (remote logger).
     serverAddress="10.0.111.253"
     sed -i '/syslog.host/d' /etc/hosts
-    echo "$serverAddress        syslog.host" >> /etc/hosts
 
     # syslog-ng config files.
     cp -f /vagrant/api-secops/etc/syslog-ng/conf.d/*conf /etc/syslog-ng/conf.d/

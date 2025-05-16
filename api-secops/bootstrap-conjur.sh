@@ -40,7 +40,8 @@ function System_run()
 
             System_proxySet "$PROXY"
             System_installConjur
-            # System_setupConjur
+            System_setupConjur
+            System_syslogngConjurConf
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -89,11 +90,7 @@ function System_proxySet()
 
 function System_installConjur()
 {
-    printf "\n* Installing podman...\n"
-
-    apt update
-    apt install podman -y
-    apt clean
+    printf "\n* Installing conjur...\n"
 
     mkdir -p /opt/cyberark/conjur/{security,config,backups,seeds,logs}
     touch /opt/cyberark/conjur/config/conjur.yml
@@ -119,11 +116,29 @@ function System_setupConjur()
 
     podman run --add-host=conjur-1-podman:${hostIp} --name conjur --detach --restart=unless-stopped --cap-add AUDIT_WRITE --publish "443:443" --publish "444:444" --publish "5432:5432" --publish "1999:1999" --log-driver journald --security-opt seccomp=/opt/cyberark/conjur/security/seccomp.json --volume /opt/cyberark/conjur/security:/opt/cyberark/conjur/security:Z --volume /opt/cyberark/conjur/backups:/opt/conjur/backup:Z --volume /opt/cyberark/conjur/seeds:/opt/cyberark/conjur/seeds:Z --volume /opt/cyberark/conjur/logs:/var/log/:Z --volume /opt/cyberark/conjur/config:/etc/conjur/config/:Z conjur-appliance:13.5.0
 
-    podman exec conjur evoke configure leader   --accept-eula   --hostname `hostname -f` --leader-altnames conjur-1-podman   --admin-password $conjurAdminPwd dgs-lab
+    # podman exec conjur evoke configure leader   --accept-eula   --hostname `hostname -f` --leader-altnames conjur-1-podman   --admin-password "${conjurAdminPwd}" dgs-lab
 
     # Login
     # conjur init -u https://apisecops -a dgs-lab --self-signed
     # conjur login -i admin -pCyberArk@123! 
+}
+
+
+
+System_syslogngConjurConf()
+{
+    # Fix the syslog-ng main file. Needed to avoid logging also in /var/log/syslog.
+    # Move the inclusion of the conf.d files before the log path entries if needed.
+    cd /etc/syslog-ng/
+
+    # Add podman interface entry in /etc/hosts (get logs from conjur container).
+    echo "10.88.0.1 podmanGw" >> /etc/hosts
+
+    # syslog-ng config files.
+    cp -f /vagrant/api-secops/etc/syslog-ng/conjur-conf/*conf /etc/syslog-ng/conf.d/
+    chmod 644 /etc/syslog-ng/conf.d/*conf
+
+    systemctl restart syslog-ng
 }
 
 # ##################################################################################################################################################
