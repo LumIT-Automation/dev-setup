@@ -192,6 +192,8 @@ function System_serveVaultSyncronizer()
 EOF
         chmod 644 /etc/apache2/sites-available/002-vaultConjurSyncronizer.conf
         a2ensite 002-vaultConjurSyncronizer.conf
+
+        systemctl restart apache2
     else
         printf "\n##################################################################################################################################################"
         printf "\n* VaultConjurSynchronizer not found, skipping: VaultConjurSynchronizer.zip won't be served"
