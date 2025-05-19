@@ -1,0 +1,56 @@
+  ############################################################################################
+  # Empty Windows 10 vm
+  ############################################################################################
+
+  config.vm.define :win10 do |win10|
+    win10.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "4096"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+
+      if Vagrant.has_plugin?("vagrant-disksize")
+        win10.disksize.size = "20GB"
+      end
+    end
+
+    win10.vm.provider "libvirt" do |libvrt|
+      libvrt.memory = "4096"
+      libvrt.cpus = 2
+    end
+
+    # OS.
+    win10.vm.box = "peru/windows-10-enterprise-x64-eval"
+    win10.vm.box_version = "20240201.01"
+
+    win10.vm.boot_timeout = 240
+    win10.vm.communicator = "winrm"
+    win10.winrm.port = 55985
+
+    # Network.
+    win10.vm.network :private_network, ip: "10.0.111.208"
+    win10.vm.hostname = "win10"
+
+    # https://codeblog.dotsandbrackets.com/vagrant-windows/
+
+    # Provision.
+    win10.vm.provision "shell" do |s|
+      s.path = "win10/bootstrap.ps1"
+    end
+
+    # WinRM via Python.
+    # pip install pywinrm
+    # import winrm
+    # s = winrm.Session(10.0.111.208, auth=('vagrant', 'vagrant'))
+    # r = s.run_cmd('ipconfig', ['/all'])
+    # >>> r.status_code
+    # 0
+    # >>> r.std_out
+    # Windows IP Configuration
+    #   Host Name . . . . . . . . . . . . : WINDOWS-HOST
+    #   Primary Dns Suffix  . . . . . . . :
+    #   Node Type . . . . . . . . . . . . : Hybrid
+    #   IP Routing Enabled. . . . . . . . : No
+    #   WINS Proxy Enabled. . . . . . . . : No
+    # >>> r.std_err
+  end
