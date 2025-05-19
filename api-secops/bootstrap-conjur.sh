@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -vx
-
 function System()
 {
     base=$FUNCNAME
@@ -43,6 +41,7 @@ function System_run()
               System_setupConjur
               System_syslogngConjurConf
               System_conjurLogWringer
+              System_serveVaultSyncronizer
             fi
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
@@ -92,7 +91,7 @@ function System_proxySet()
 
 function System_installConjur()
 {
-    printf "\n* Installing conjur...\n"
+    printf "\n* Installing Conjur...\n"
 
     mkdir -p /opt/cyberark/conjur/{security,config,backups,seeds,logs}
     touch /opt/cyberark/conjur/config/conjur.yml
@@ -115,16 +114,20 @@ function System_installConjur()
 
 function System_setupConjur()
 {
+    printf "\n* Setting up Conjur...\n"
+
     # Create the seccomp.json conjur config file.
     podman run --rm --entrypoint "/bin/cat" registry.tld/conjur-appliance:13.5.0 /usr/share/doc/conjur/examples/seccomp.json > /opt/cyberark/conjur/security/seccomp.json
+
     # Create the conjur container.
     podman run --add-host=conjur-1-podman:${hostIp} --name conjur --detach --restart=unless-stopped --cap-add AUDIT_WRITE --publish "443:443" --publish "444:444" --publish "5432:5432" --publish "1999:1999" --log-driver journald --security-opt seccomp=/opt/cyberark/conjur/security/seccomp.json --volume /opt/cyberark/conjur/security:/opt/cyberark/conjur/security:Z --volume /opt/cyberark/conjur/backups:/opt/conjur/backup:Z --volume /opt/cyberark/conjur/seeds:/opt/cyberark/conjur/seeds:Z --volume /opt/cyberark/conjur/logs:/var/log/:Z --volume /opt/cyberark/conjur/config:/etc/conjur/config/:Z conjur-appliance:13.5.0
+
     # Initialize the conjur services.
-    podman exec conjur evoke configure leader --accept-eula --hostname `hostname -f` --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
+    podman exec conjur evoke configure leader --accept-eula --hostname "`hostname -f`" --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
 
     # Login
     # conjur init -u https://apisecops -a dgs-lab --self-signed
-    # conjur login -i admin -pCyberArk@123! 
+    # conjur login -i admin -p<password>
 }
 
 
@@ -158,6 +161,44 @@ System_conjurLogWringer() {
 }
 
 
+
+function System_serveVaultSyncronizer()
+{
+    printf "\n* Serving VaultConjurSynchronizer...\n"
+
+    if [ -r /vagrant/api-secops/VaultConjurSynchronizer-Rls-v13.5.zip ]; then
+        if [ ! -d /var/www/vaultConjurSyncronizer ]; then
+            mkdir -p /var/www/vaultConjurSyncronizer
+        fi
+
+        cp -f /vagrant/api-secops/VaultConjurSynchronizer-Rls-v13.5.zip /var/www/vaultConjurSyncronizer/
+
+        if ! grep -q '^Listen 8400$' /etc/apache2/ports.conf; then
+            echo "Listen 8400" >> /etc/apache2/ports.conf
+        fi
+        cat > /etc/apache2/sites-available/002-vaultConjurSyncronizer.conf <<'EOF'
+<VirtualHost *:8400>
+    ServerName vaultConjurSyncronizer
+    ServerAdmin ing.marcoburatto@gmail.com
+
+    DocumentRoot /var/www/vaultConjurSyncronizer
+    <Directory /var/www/vaultConjurSyncronizer>
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+        chmod 644 /etc/apache2/sites-available/002-vaultConjurSyncronizer.conf
+        a2ensite 002-vaultConjurSyncronizer.conf
+    else
+        printf "\n##################################################################################################################################################"
+        printf "\n* VaultConjurSynchronizer not found, skipping: VaultConjurSynchronizer.zip won't be served"
+        printf "\n##################################################################################################################################################"
+        return 1
+    fi
+}
 
 # ##################################################################################################################################################
 # Main
@@ -204,4 +245,3 @@ else
 fi
 
 exit 0
-
