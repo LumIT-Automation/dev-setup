@@ -20,8 +20,8 @@
     end
 
     # OS.
-    win10.vm.box = "peru/windows-10-enterprise-x64-eval"
-    win10.vm.box_version = "20240201.01"
+    win10.vm.box = "jborean93/WindowsServer2022"
+    win10.vm.box_version = "1.2.0"
 
     win10.vm.boot_timeout = 240
     win10.vm.communicator = "winrm"

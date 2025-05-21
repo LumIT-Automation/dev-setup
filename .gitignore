@@ -11,3 +11,6 @@ sources.list
 *conjur-appliance-Rls*
 *conjur-cli-go_*.deb
 *VaultConjurSynchronizer*
+*VC_redist.*
+*cyberark.cer*
+

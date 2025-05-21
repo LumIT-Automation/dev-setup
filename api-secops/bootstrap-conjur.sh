@@ -125,9 +125,19 @@ function System_setupConjur()
     # Initialize the conjur services.
     podman exec conjur evoke configure leader --accept-eula --hostname "`hostname -f`" --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
 
-    # @todo: systemd to start podman.
-    # @todo: export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer
-    #     openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
+    # Export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer.
+    openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /var/www/vaultConjurSyncronizer/conjur.cer
+
+    # Conjur Systemd unit.
+    cp -f /vagrant/api-secops/usr/bin/conjur.sh /usr/bin/conjur.sh
+    chmod 755 /usr/bin/conjur.sh
+
+    cp -f /vagrant/api-secops/etc/systemd/system/conjur.service /etc/systemd/system/conjur.service
+    chmod 644 /etc/systemd/system/conjur.service
+
+    systemctl daemon-reload
+    systemctl enable conjur
+    systemctl restart conjur
 
     # Login
     # conjur init -u https://apisecops -a dgs-lab --self-signed
@@ -176,6 +186,7 @@ function System_serveVaultSyncronizer()
         fi
 
         cp -f /vagrant/api-secops/VaultConjurSynchronizer-Rls-v13.5.zip /var/www/vaultConjurSyncronizer/
+        cp -f /vagrant/api-secops/VC_* /var/www/vaultConjurSyncronizer/
 
         if ! grep -q '^Listen 8400$' /etc/apache2/ports.conf; then
             echo "Listen 8400" >> /etc/apache2/ports.conf
