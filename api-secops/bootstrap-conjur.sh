@@ -125,6 +125,10 @@ function System_setupConjur()
     # Initialize the conjur services.
     podman exec conjur evoke configure leader --accept-eula --hostname "`hostname -f`" --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
 
+    # @todo: systemd to start podman.
+    # @todo: export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer
+    #     openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
+
     # Login
     # conjur init -u https://apisecops -a dgs-lab --self-signed
     # conjur login -i admin -p<password>
