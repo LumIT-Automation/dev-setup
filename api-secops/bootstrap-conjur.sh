@@ -186,7 +186,7 @@ function System_serveVaultSyncronizer()
         cp -f /vagrant/api-secops/VC_* /var/www/vaultConjurSyncronizer/
 
         # Export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer.
-        openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /var/www/vaultConjurSyncronizer/conjur.cer
+        sleep 10 && openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /var/www/vaultConjurSyncronizer/conjur.cer
 
         # CyberArk certificate.
         cp -f /vagrant/api-secops/cyberark.cer /var/www/vaultConjurSyncronizer/

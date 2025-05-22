@@ -50,7 +50,7 @@ VaultAddress=10.32.21.33
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizer-3
+SyncSafeName=SafeVaultSynchronizer-5
 
 # CONJUR DETAILS
 
