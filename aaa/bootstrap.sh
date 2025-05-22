@@ -19,6 +19,7 @@ function System()
 
     DATABASE_USER_PASSWORD="password"
     SYSTEM_USERS_PASSWORD="Password01!"
+    shortName=sso
 }
 
 # ##################################################################################################################################################
@@ -48,6 +49,7 @@ function System_run()
             System_apacheSetup "$SYSTEM_USERS_PASSWORD" "$DATABASE_USER_PASSWORD"
             System_pipInstallDaemon_aaa
             System_swaggerConverter
+            System_about
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -426,6 +428,15 @@ System_swaggerConverter() {
 }
 
 
+
+System_about() {
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/aaa/doc/about.txt
+    echo "\"Version\": \"`cat /var/www/aaa/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/aaa/doc/about.txt
+    cd /var/www/aaa
+    currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
+    cd -
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/aaa/doc/about.txt
+}
 
 # ##################################################################################################################################################
 # Main

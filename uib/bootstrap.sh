@@ -19,6 +19,7 @@ function System()
 
     DATABASE_USER_PASSWORD="password"
     SYSTEM_USERS_PASSWORD="Password01!"
+    shortName=ui-backend
 }
 
 # ##################################################################################################################################################
@@ -47,6 +48,7 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_ui
+            System_about
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -417,6 +419,16 @@ System_pipInstallDaemon_ui()
     systemctl start pip_install_ui.path
 }
 
+
+
+System_about() {
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/ui-backend/doc/about.txt
+    echo "\"Version\": \"`cat /var/www/ui-backend/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/ui-backend/doc/about.txt
+    cd /var/www/ui-backend
+    currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
+    cd -
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/ui-backend/doc/about.txt
+}
 
 # ##################################################################################################################################################
 # Main
