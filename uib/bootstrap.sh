@@ -422,12 +422,12 @@ System_pipInstallDaemon_ui()
 
 
 System_about() {
-    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/ui-backend/doc/about.txt
-    echo "\"Version\": \"`cat /var/www/ui-backend/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/ui-backend/doc/about.txt
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/ui-backend/doc/about.json
+    echo "\"Version\": \"`cat /var/www/ui-backend/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/ui-backend/doc/about.json
     cd /var/www/ui-backend
     currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
     cd -
-    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/ui-backend/doc/about.txt
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/ui-backend/doc/about.json
 }
 
 # ##################################################################################################################################################

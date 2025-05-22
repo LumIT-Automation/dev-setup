@@ -430,12 +430,12 @@ System_swaggerConverter() {
 
 
 System_about() {
-    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/aaa/doc/about.txt
-    echo "\"Version\": \"`cat /var/www/aaa/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/aaa/doc/about.txt
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/aaa/doc/about.json
+    echo "\"Version\": \"`cat /var/www/aaa/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/aaa/doc/about.json
     cd /var/www/aaa
     currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
     cd -
-    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/aaa/doc/about.txt
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/aaa/doc/about.json
 }
 
 # ##################################################################################################################################################
