@@ -191,6 +191,9 @@ function System_serveVaultSyncronizer()
         # CyberArk certificate.
         cp -f /vagrant/api-secops/cyberark.cer /var/www/vaultConjurSyncronizer/
 
+        # Stupid files needed.
+        cp -f /vagrant/api-secops/VaultConjurSynchronizerUser.cred* /var/www/vaultConjurSyncronizer/
+
         if ! grep -q '^Listen 8400$' /etc/apache2/ports.conf; then
             echo "Listen 8400" >> /etc/apache2/ports.conf
         fi

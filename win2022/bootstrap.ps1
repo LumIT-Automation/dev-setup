@@ -44,13 +44,13 @@ VaultName=VaultDemo
 PVWAURL=https://democyberark.demo.local
 
 # Enter the Vault address. If the Vault has multiple addresses, provide a comma-separated list without spaces
-VaultAddress=10.32.21.33
+VaultAddress=10.32.21.32
 
 # Enter the Vault port (default=1858)
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizer-5
+SyncSafeName=SafeVaultSynchronizer-8
 
 # CONJUR DETAILS
 
@@ -90,14 +90,12 @@ Add-Content -Path $env:windir\System32\drivers\etc\hosts -Value "`n10.0.111.32`t
 # Install Microsoft Visual C++ x64 and x86 redistributable packages for 2022
 if (!(Test-Path C:\VC_redist.x64.exe)) {
     Invoke-WebRequest "http://10.0.111.32:8400/VC_redist.x64.exe" -OutFile "C:\VC_redist.x64.exe"
-    Invoke-WebRequest "http://10.0.111.32:8400/VC_redist.x64.exe" -OutFile "C:\VC_redist.x86.exe"
+    Invoke-WebRequest "http://10.0.111.32:8400/VC_redist.x86.exe" -OutFile "C:\VC_redist.x86.exe"
     Start-Process -Wait -FilePath "C:\VC_redist.x64.exe" -ArgumentList "/S" -PassThru
     Start-Process -Wait -FilePath "C:\VC_redist.x86.exe" -ArgumentList "/S" -PassThru
 }
 
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
-
-#C:\VaultConjurSynchronizer\Installation\CreateCredFile\CreateCredFile.exe VaultConjurSynchronizerUser.cred Password /Username WIN10 /Password <Synchronizer's Vault User password> /ExePath "<Sync-installation directory>\VaultConjurSynchronizer.exe" /AppType AppPrv /DPAPIMachineProtection /Hostname /IPAddress /EntropyFile
 
 sc.exe start CyberArkVaultConjurSynchronizer
 
