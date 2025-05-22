@@ -19,6 +19,7 @@ function System()
 
     DATABASE_USER_PASSWORD="password"
     SYSTEM_USERS_PASSWORD="Password01!"
+    shortName=api-infoblox
 }
 
 # ##################################################################################################################################################
@@ -49,6 +50,7 @@ function System_run()
             System_redisSetup
             System_pipInstallDaemon_api
             System_swaggerConverter
+            System_about
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -413,6 +415,17 @@ System_swaggerConverter() {
     python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger0.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/infoblox/InfobloxUrls.py
     rm -f /var/www/api/doc/swagger0.yaml
 
+}
+
+
+
+System_about() {
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/api/doc/about.txt
+    echo "\"Version\": \"`cat /var/www/api/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/api/doc/about.txt
+    cd /var/www/api
+    currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
+    cd -
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/api/doc/about.txt
 }
 
 # ##################################################################################################################################################
