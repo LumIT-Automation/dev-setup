@@ -125,9 +125,6 @@ function System_setupConjur()
     # Initialize the conjur services.
     podman exec conjur evoke configure leader --accept-eula --hostname "`hostname -f`" --leader-altnames conjur-1-podman --admin-password "${conjurAdminPwd}" dgs-lab
 
-    # Export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer.
-    openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /var/www/vaultConjurSyncronizer/conjur.cer
-
     # Conjur Systemd unit.
     cp -f /vagrant/api-secops/usr/bin/conjur.sh /usr/bin/conjur.sh
     chmod 755 /usr/bin/conjur.sh
@@ -178,7 +175,7 @@ System_conjurLogWringer() {
 
 function System_serveVaultSyncronizer()
 {
-    printf "\n* Serving VaultConjurSynchronizer...\n"
+    printf "\n* Serving VaultConjurSynchronizer files...\n"
 
     if [ -r /vagrant/api-secops/VaultConjurSynchronizer-Rls-v13.5.zip ]; then
         if [ ! -d /var/www/vaultConjurSyncronizer ]; then
@@ -188,23 +185,17 @@ function System_serveVaultSyncronizer()
         cp -f /vagrant/api-secops/VaultConjurSynchronizer-Rls-v13.5.zip /var/www/vaultConjurSyncronizer/
         cp -f /vagrant/api-secops/VC_* /var/www/vaultConjurSyncronizer/
 
+        # Export conjur certificate/chain to /var/www/vaultConjurSyncronizer/conjur.cer.
+        openssl s_client --showcerts --connect 127.0.0.1:443 < /dev/null 2> /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /var/www/vaultConjurSyncronizer/conjur.cer
+
+        # CyberArk certificate.
+        cp -f /vagrant/api-secops/cyberark.cer /var/www/vaultConjurSyncronizer/
+
         if ! grep -q '^Listen 8400$' /etc/apache2/ports.conf; then
             echo "Listen 8400" >> /etc/apache2/ports.conf
         fi
-        cat > /etc/apache2/sites-available/002-vaultConjurSyncronizer.conf <<'EOF'
-<VirtualHost *:8400>
-    ServerName vaultConjurSyncronizer
-    ServerAdmin ing.marcoburatto@gmail.com
 
-    DocumentRoot /var/www/vaultConjurSyncronizer
-    <Directory /var/www/vaultConjurSyncronizer>
-        Require all granted
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
+        cp -f /vagrant/api-secops/etc/apache2/sites-available/002-vaultConjurSyncronizer.conf /etc/apache2/sites-available/
         chmod 644 /etc/apache2/sites-available/002-vaultConjurSyncronizer.conf
         a2ensite 002-vaultConjurSyncronizer.conf
 
