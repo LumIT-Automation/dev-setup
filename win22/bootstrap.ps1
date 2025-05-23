@@ -50,7 +50,7 @@ VaultAddress=10.32.21.32
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizer-9
+SyncSafeName=SafeVaultSynchronizerXP3
 
 # CONJUR DETAILS
 
@@ -67,7 +67,7 @@ ConjurAccount=dgs-lab
 # LOB (LINE-OF-BUSINESS) DETAILS (FOR CONJUR ENTERPRISE WITH PAS >= 11.4 / PRIVILEGE CLOUD ONLY)
 
 # Enter a name for the LOB
-LOBName=LOB_Demo
+LOBName=LOB_Demo_XP3
 
 # Enter the platform used by the LOB account (default: CyberArk Vault)
 LOBPlatform=CyberArk Vault
@@ -101,6 +101,9 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 # Install.
 # Note: CyberArk and Conjur endpoints musti be available when installing.
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
+
+# @todo:
+# Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE. For more information, see VaultConjurSynchronizer.exe.config.
 
 sc.exe start CyberArkVaultConjurSynchronizer
 
