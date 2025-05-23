@@ -48,6 +48,7 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_ui
+            System_swaggerConverter
             System_about
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
@@ -417,6 +418,17 @@ System_pipInstallDaemon_ui()
     systemctl enable pip_install_ui.path
     systemctl stop pip_install_ui.path
     systemctl start pip_install_ui.path
+}
+
+
+
+System_swaggerConverter() {
+    cd /tmp
+    wget https://github.com/kevinswiber/postman2openapi/releases/download/1.2.1/postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
+    tar fxz postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
+    cp postman2openapi-1.2.1-x86_64-unknown-linux-musl/postman2openapi /usr/local/bin
+    chmod 755 /usr/local/bin/postman2openapi
+    postman2openapi -f yaml /var/www/ui-backend/doc/postman.json > /var/www/ui-backend/doc/swagger.yaml
 }
 
 
