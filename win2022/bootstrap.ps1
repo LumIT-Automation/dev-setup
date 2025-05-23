@@ -98,6 +98,8 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 # Change SyncSafeName= (above) at every new installation.
 # @todo: safes cleanup?
 
+# Install.
+# Note: CyberArk and Conjur endpoints musti be available when installing.
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
 sc.exe start CyberArkVaultConjurSynchronizer
