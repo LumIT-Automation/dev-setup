@@ -104,4 +104,7 @@ C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjur
 
 sc.exe start CyberArkVaultConjurSynchronizer
 
+# Set as aumotatically start upon boot. @todo: verify.
+Set-Service CyberArkVaultConjurSynchronizer -startuptype automatic
+
 # Logs: %SystemRoot%\System32\winevt\Logs -> Event Viewer
