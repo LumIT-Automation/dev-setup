@@ -50,7 +50,7 @@ VaultAddress=10.32.21.32
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizer-8
+SyncSafeName=SafeVaultSynchronizer-9
 
 # CONJUR DETAILS
 
@@ -94,6 +94,9 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
     Start-Process -Wait -FilePath "C:\VC_redist.x64.exe" -ArgumentList "/S" -PassThru
     Start-Process -Wait -FilePath "C:\VC_redist.x86.exe" -ArgumentList "/S" -PassThru
 }
+
+# Change SyncSafeName= (above) at every new installation.
+# @todo: safes cleanup?
 
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
