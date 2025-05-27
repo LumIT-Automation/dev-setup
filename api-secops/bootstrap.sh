@@ -153,7 +153,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim tree # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).

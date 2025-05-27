@@ -99,15 +99,14 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 # @todo: safes cleanup?
 
 # Install.
-# Note: CyberArk and Conjur endpoints musti be available when installing.
+# Note: CyberArk and Conjur endpoints must be available when installing.
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
-# @todo:
 # Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE. For more information, see VaultConjurSynchronizer.exe.config.
+(Get-Content "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config" -WhatIf
 
-sc.exe start CyberArkVaultConjurSynchronizer
-
-# Set as aumotatically start upon boot. @todo: verify.
-Set-Service CyberArkVaultConjurSynchronizer -startuptype automatic
+# Run service and set as aumotatically start upon boot.
+Set-Service CyberArkVaultConjurSynchronizer -StartupType Automatic
+start-Service CyberArkVaultConjurSynchronizer
 
 # Logs: %SystemRoot%\System32\winevt\Logs -> Event Viewer
