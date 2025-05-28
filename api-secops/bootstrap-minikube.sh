@@ -14,6 +14,7 @@ function System()
     # Properties list.
     ACTION="$ACTION"
     PROXY="$PROXY"
+    miniKubeIp=192.168.49.2
 }
 
 # ##################################################################################################################################################
@@ -31,7 +32,7 @@ function System_run()
             echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_proxySet "$PROXY"
-            System_installConjur
+            System_installMiniKube
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -78,18 +79,25 @@ function System_proxySet()
 
 
 
-function System_installConjur()
+function System_installMiniKube()
 {
     printf "\n* Installing Minikube...\n"
 
+    echo "$miniKubeIp minikube" >> /etc/hosts
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
     apt install -y ./minikube_latest_amd64.deb
 
-    #su - vagrant -c "minikube start --memory=2200mb"
-    #Systemd?
-    #su - vagrant -c "minikube kubectl -- get pods -A"
-    #IP in hosts file as minikube
-    #IP ???????
+    # Minikube Systemd unit.
+    cp -f /vagrant/api-secops/usr/bin/minikube.sh /usr/bin/minikube.sh
+    chmod 755 /usr/bin/minikube.sh
+    cp -f /vagrant/api-secops/etc/systemd/system/minikube.service /etc/systemd/system/minikube.service
+    chmod 644 /etc/systemd/system/minikube.service
+
+    su - vagrant -c "minikube start --memory=2200mb --static-ip $miniKubeIp"
+    su - vagrant -c "minikube kubectl -- get pods -A"
+
+    systemctl daemon-reload
+    systemctl enable minikube
 }
 
 # ##################################################################################################################################################

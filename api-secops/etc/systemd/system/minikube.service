@@ -1,0 +1,15 @@
+[Unit]
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=vagrant
+Group=vagrant
+ExecStart=/usr/bin/minikube.sh start
+ExecStop=/usr/bin/minikube.sh stop
+KillMode=process
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
