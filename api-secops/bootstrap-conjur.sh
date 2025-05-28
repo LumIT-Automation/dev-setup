@@ -143,7 +143,7 @@ function System_setupConjur()
 
 
 
-System_syslogngConjurConf()
+function System_syslogngConjurConf()
 {
     # Fix the syslog-ng main file. Needed to avoid logging also in /var/log/syslog.
     # Move the inclusion of the conf.d files before the log path entries if needed.
@@ -167,7 +167,7 @@ System_syslogngConjurConf()
 
 
 
-System_conjurLogWringer() {
+function System_conjurLogWringer() {
     cp -r /vagrant/api-secops/conjur-container/script-conjur /root
 }
 

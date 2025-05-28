@@ -51,4 +51,8 @@
       s.path = "api-secops/bootstrap-conjur.sh"
       s.args = ["--action", "run"]
     end
+    api.vm.provision "minikube", type: "shell" do |s|
+      s.path = "api-secops/bootstrap-minikube.sh"
+      s.args = ["--action", "run"]
+    end
   end
