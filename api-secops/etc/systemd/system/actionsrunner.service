@@ -1,0 +1,15 @@
+[Unit]
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/actionsrunner.sh start
+ExecStop=/usr/bin/actionsrunner.sh stop
+User=vagrant
+Group=vagrant
+KillMode=process
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

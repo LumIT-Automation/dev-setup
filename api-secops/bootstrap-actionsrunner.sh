@@ -83,16 +83,31 @@ function System_installActionsRunner()
 {
     printf "\n* Installing Actions Runner...\n"
 
-    su - vagrant -c "mkdir /usr/lib/actions-runner"
-    su - vagrant -c "cd /usr/lib/actions-runner"
-    su - vagrant -c "curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz"
-    su - vagrant -c "tar -xf actions-runner-linux-x64-2.324.0.tar.gz"
-    su - vagrant -c "bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS2CVLJ5PDLIEGQTM3TIG4PMY"
-    #cr
-    #cr
-    #vagrant
-    #cr
-    su - vagrant -c "nohup ./run.sh >output.log 2>&1"
+    if [ ! -f /usr/lib/actions-runner/run.sh ]; then
+        if [ ! -d /usr/lib/actions-runner ]; then
+            mkdir /usr/lib/actions-runner
+        fi
+
+        cd /usr/lib/actions-runner
+        curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz
+        tar -xf actions-runner-linux-x64-2.324.0.tar.gz
+
+        chown -R vagrant:vagrant /usr/lib/actions-runner
+        chmod o+x /usr/lib/actions-runner/run.sh
+
+        su - vagrant -c "printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS6CL62PF7NH3HCCSXDIG46CC"
+    fi
+
+    # ActionsRunner Systemd unit.
+    cp -f /vagrant/api-secops/usr/bin/actionsrunner.sh /usr/bin/actionsrunner.sh
+    chmod 755 /usr/bin/actionsrunner.sh
+
+    cp -f /vagrant/api-secops/etc/systemd/system/actionsrunner.service /etc/systemd/system/actionsrunner.service
+    chmod 644 /etc/systemd/system/actionsrunner.service
+
+    systemctl daemon-reload
+    systemctl enable actionsrunner
+    systemctl restart actionsrunner
 }
 
 # ##################################################################################################################################################
