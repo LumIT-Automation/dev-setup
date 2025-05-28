@@ -33,6 +33,7 @@ function System_run()
 
             System_proxySet "$PROXY"
             System_installMiniKube
+            System_installHelm
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -98,6 +99,22 @@ function System_installMiniKube()
 
     systemctl daemon-reload
     systemctl enable minikube
+}
+
+
+
+function System_installHelm()
+{
+    printf "\n* Installing Helm...\n"
+
+    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+    apt install apt-transport-https --yes
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    apt update
+    apt install helm
+
+    su - vagrant -c "helm repo add external-secrets https://charts.external-secrets.io"
+    su - vagrant -c "helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace --set installCRDs=true"
 }
 
 # ##################################################################################################################################################
