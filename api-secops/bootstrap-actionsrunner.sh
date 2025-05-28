@@ -83,11 +83,15 @@ function System_installActionsRunner()
 {
     printf "\n* Installing Actions Runner...\n"
 
-    su - vagrant -c "mkdir /tmp/actions-runner"
-    su - vagrant -c "cd /tmp/actions-runner"
+    su - vagrant -c "mkdir /usr/lib/actions-runner"
+    su - vagrant -c "cd /usr/lib/actions-runner"
     su - vagrant -c "curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz"
     su - vagrant -c "tar -xf actions-runner-linux-x64-2.324.0.tar.gz"
     su - vagrant -c "bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS2CVLJ5PDLIEGQTM3TIG4PMY"
+    #cr
+    #cr
+    #vagrant
+    #cr
     su - vagrant -c "nohup ./run.sh >output.log 2>&1"
 }
 
