@@ -88,14 +88,13 @@ function System_installActionsRunner()
             mkdir /usr/lib/actions-runner
         fi
 
-        cd /usr/lib/actions-runner
         curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz
         tar -xf actions-runner-linux-x64-2.324.0.tar.gz
 
         chown -R vagrant:vagrant /usr/lib/actions-runner
         chmod o+x /usr/lib/actions-runner/run.sh
 
-        su - vagrant -c "printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS6CL62PF7NH3HCCSXDIG46CC"
+        su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELSYSGLHWYWDK3EU2MHLIHAWLW"
     fi
 
     # ActionsRunner Systemd unit.
