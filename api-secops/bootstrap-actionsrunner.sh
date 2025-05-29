@@ -94,7 +94,7 @@ function System_installActionsRunner()
         chown -R vagrant:vagrant /usr/lib/actions-runner
         chmod o+x /usr/lib/actions-runner/run.sh
 
-        su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELSYSGLHWYWDK3EU2MHLIHAWLW"
+        su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS2FO6ZYTMQWFC52INDIHCCW6"
     fi
 
     # ActionsRunner Systemd unit.
