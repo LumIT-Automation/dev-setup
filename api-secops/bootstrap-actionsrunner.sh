@@ -96,6 +96,10 @@ function System_installActionsRunner()
         chmod 755 run.sh
 
         su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS2FO6ZYTMQWFC52INDIHCCW6"
+
+        printf "\n ################################################################################################################################################################\n"
+        printf "\n IF THE PREVIOUS STEP HAS FAILED, PLEASE CHANGE THE actionsrunner TOKEN in bootstrap-actionsrunner.sh AND RE-PROVISION THE VM WITH THE actionsrunner PROVISIONER.\n"
+        printf "\n ################################################################################################################################################################\n"
     fi
 
     # ActionsRunner Systemd unit.
