@@ -1,41 +1,41 @@
   ############################################################################################
-  # Empty Windows 10 vm
+  # Windows 2022 vm
   ############################################################################################
 
-  config.vm.define :win22 do |win22|
-    win22.vm.provider "virtualbox" do |vb|
+  config.vm.define :winp22 do |winp22|
+    winp22.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "4096"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 
       if Vagrant.has_plugin?("vagrant-disksize")
-        win22.disksize.size = "20GB"
+        winp22.disksize.size = "20GB"
       end
     end
 
-    win22.vm.provider "libvirt" do |libvrt|
+    winp22.vm.provider "libvirt" do |libvrt|
       libvrt.memory = "4096"
       libvrt.cpus = 2
     end
 
     # OS.
-    win22.vm.box = "jborean93/WindowsServer2022"
-    win22.vm.box_version = "1.2.0"
+    winp22.vm.box = "jborean93/WindowsServer2022"
+    winp22.vm.box_version = "1.2.0"
 
-    win22.vm.boot_timeout = 240
-    win22.vm.communicator = "winrm"
-    win22.winrm.port = 55985
+    winp22.vm.boot_timeout = 240
+    winp22.vm.communicator = "winrm"
+    winp22.winrm.port = 55985
 
     # Network.
-    win22.vm.network :private_network, ip: "10.0.111.208"
-    win22.vm.hostname = "win22"
+    winp22.vm.network :private_network, ip: "10.0.111.208"
+    winp22.vm.hostname = "winp22"
 
     # https://codeblog.dotsandbrackets.com/vagrant-windows/
 
     # Provision.
-    win22.vm.provision "shell" do |s|
-      s.path = "win22/bootstrap.ps1"
+    winp22.vm.provision "shell" do |s|
+      s.path = "winp22/bootstrap.ps1"
     end
 
     # WinRM via Python.

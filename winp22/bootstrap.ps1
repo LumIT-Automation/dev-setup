@@ -50,7 +50,7 @@ VaultAddress=10.32.21.32
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizerXP3
+SyncSafeName=SafeVaultSynchronizer202506
 
 # CONJUR DETAILS
 
@@ -67,7 +67,7 @@ ConjurAccount=dgs-lab
 # LOB (LINE-OF-BUSINESS) DETAILS (FOR CONJUR ENTERPRISE WITH PAS >= 11.4 / PRIVILEGE CLOUD ONLY)
 
 # Enter a name for the LOB
-LOBName=LOB_Demo_XP3
+LOBName=LOB_Demo202506
 
 # Enter the platform used by the LOB account (default: CyberArk Vault)
 LOBPlatform=CyberArk Vault
@@ -103,7 +103,8 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
 # Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE. For more information, see VaultConjurSynchronizer.exe.config.
-(Get-Content "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Out-File -FilePath "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
+# @todo: not working.
+#(Get-Content "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Out-File -FilePath "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
 
 # Run service and set as automatically start upon boot.
 Set-Service CyberArkVaultConjurSynchronizer -StartupType Automatic
