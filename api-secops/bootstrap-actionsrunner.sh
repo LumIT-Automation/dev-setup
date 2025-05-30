@@ -87,20 +87,18 @@ function System_installActionsRunner()
         mkdir /usr/lib/actions-runner
         cd /usr/lib/actions-runner
 
-        if [ ! -f run.sh ]; then
-          curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz
-          tar -xf actions-runner-linux-x64-2.324.0.tar.gz
-        fi
+        curl -o actions-runner-linux-x64-2.324.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.324.0/actions-runner-linux-x64-2.324.0.tar.gz
+        tar -xf actions-runner-linux-x64-2.324.0.tar.gz
 
         chown -R vagrant:vagrant /usr/lib/actions-runner
         chmod 755 run.sh
-
-        su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS2FO6ZYTMQWFC52INDIHCCW6"
-
-        printf "\n ################################################################################################################################################################\n"
-        printf "\n IF THE PREVIOUS STEP HAS FAILED, PLEASE CHANGE THE actionsrunner TOKEN in bootstrap-actionsrunner.sh AND RE-PROVISION THE VM WITH THE actionsrunner PROVISIONER.\n"
-        printf "\n ################################################################################################################################################################\n"
     fi
+
+    su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS7QLGIVSQIOMO4VGGTIHFPFG"
+
+    printf "\n ################################################################################################################################################################\n"
+    printf "\n IF THE PREVIOUS STEP HAS FAILED, PLEASE CHANGE THE actionsrunner TOKEN in bootstrap-actionsrunner.sh AND RE-PROVISION THE VM WITH THE actionsrunner PROVISIONER.\n"
+    printf "\n ################################################################################################################################################################\n"
 
     # ActionsRunner Systemd unit.
     cp -f /vagrant/api-secops/usr/bin/actionsrunner.sh /usr/bin/actionsrunner.sh
