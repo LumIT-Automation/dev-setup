@@ -14,7 +14,7 @@ function System()
     # Properties list.
     ACTION="$ACTION"
     PROXY="$PROXY"
-    miniKubeIp=192.168.49.2
+    ACTIONS_RUNNER_TOKEN=""
 }
 
 # ##################################################################################################################################################
@@ -32,7 +32,11 @@ function System_run()
             echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_proxySet "$PROXY"
-            System_installActionsRunner
+            if [ -n "$ACTIONS_RUNNER_TOKEN" ]; then
+                System_installActionsRunner
+            else
+                printf "\n* Actions Runner installation skipped, token not set\n"
+            fi
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -94,7 +98,7 @@ function System_installActionsRunner()
         chmod 755 run.sh
     fi
 
-    su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token BJOELS7QLGIVSQIOMO4VGGTIHFPFG"
+    su - vagrant -c "cd /usr/lib/actions-runner && printf '\n\nvagrant\nY\n' | bash config.sh --url https://github.com/DGSSpa/cyberark-automation-lab --token $ACTIONS_RUNNER_TOKEN"
 
     printf "\n ################################################################################################################################################################\n"
     printf "\n IF THE PREVIOUS STEP HAS FAILED, PLEASE CHANGE THE actionsrunner TOKEN in bootstrap-actionsrunner.sh AND RE-PROVISION THE VM WITH THE actionsrunner PROVISIONER.\n"
