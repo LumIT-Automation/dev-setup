@@ -31,6 +31,7 @@ function System_run()
             printf "\n* Configuring system...\n"
 
             System_mariadbRestore
+            #System_sqliteDbRestore
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -68,10 +69,18 @@ System_mariadbRestore()
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
-    mysql api < /var/www/api/f5xc/sql/f5.schema.sql
-    mysql api < /var/www/api/f5xc/sql/f5.data.sql
-    if [ -f /var/www/api/f5xc/sql/f5.data-development.sql ]; then
-        mysql api < /var/www/api/f5xc/sql/f5.data-development.sql
+    mysql api < /var/www/api/f5xc/sql/f5xc.schema.sql
+    mysql api < /var/www/api/f5xc/sql/f5xc.data.sql
+    
+    # Load sql for usecases.
+    for sqlFile in `basename /var/www/api/f5xc/sql/Usecases/*sql`; do
+        if [ -e $sqlFile ]; then # check if the file is a broken symlink. 
+            mysql api < /var/www/api/f5xc/sql/Usecases/${sqlFile}
+        fi
+    done
+    
+    if [ -f /var/www/api/f5xc/sql/f5xc.data-development.sql ]; then
+        mysql api < /var/www/api/f5xc/sql/f5xc.data-development.sql
     fi
 }
 

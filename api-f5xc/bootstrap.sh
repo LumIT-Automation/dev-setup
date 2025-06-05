@@ -19,6 +19,7 @@ function System()
 
     DATABASE_USER_PASSWORD="password"
     SYSTEM_USERS_PASSWORD="Password01!"
+    shortName=api-f5xc
 }
 
 # ##################################################################################################################################################
@@ -48,7 +49,8 @@ function System_run()
             System_consulAgentInstall
             System_redisSetup
             System_pipInstallDaemon_api
-            # System_swaggerConverter
+            System_swaggerConverter
+            System_about
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -406,16 +408,92 @@ System_redisSetup() {
 
 
 
-#System_swaggerConverter() {
-#    cd /tmp
-#    wget https://github.com/kevinswiber/postman2openapi/releases/download/1.2.1/postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
-#    tar fxz postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
-#    cp postman2openapi-1.2.1-x86_64-unknown-linux-musl/postman2openapi /usr/local/bin
-#    chmod 755 /usr/local/bin/postman2openapi
-#    postman2openapi -f yaml /var/www/api/doc/postman.json > /var/www/api/doc/swagger0.yaml
-#    python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger0.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/f5xc/F5Urls.py
-#    rm -f /var/www/api/doc/swagger0.yaml
-#}
+System_useCasesSymlinks() {
+    if ! df | grep -q customer-usecases; then
+        echo "usecases share not found, do not setup usecases."
+        return
+    fi
+
+    api=api-f5xc
+    tech=f5xc
+    TECH=F5XC
+    customers=$(
+        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d`; do 
+            basename $c | sed "s/-${api}//"
+        done
+    )
+
+    mkdir -p /var/www/customer-usecases
+
+    for customer in $customers; do
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/controllers/${TECH} && cd ${customer}-${api}/${api}/${tech}/controllers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/controllers/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/serializers/${TECH} && cd ${customer}-${api}/${api}/${tech}/serializers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+    mkdir -p ${customer}-${api}/${api}/${tech}/models/${TECH} && cd ${customer}-${api}/${api}/${tech}/models/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases .
+
+        cd /var/www/customer-usecases
+        cd ${customer}-${api}/${api}/${tech} && ln -sf ../../../../usecases/${customer}-${api}/${api}/${tech}/urlsUsecases .
+        
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/sql && cd ${customer}-${api}/${api}/${tech}/sql && ln -sf ../../../../../usecases/${customer}-${api}/${api}/${tech}/sql/Usecases .
+    done
+
+    mkdir -p /var/www/api/${tech}/controllers/${TECH}/Usecases && cd /var/www/api/${tech}/controllers/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/controllers/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/models/${TECH}/Usecases && cd /var/www/api/${tech}/models/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/serializers/${TECH}/Usecases && cd /var/www/api/${tech}/serializers/${TECH}/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases $customer
+    done
+
+    mkdir -p /var/www/api/${tech}/urlsUsecases && cd /var/www/api/${tech}/urlsUsecases
+    for customer in $customers; do
+        ln -sf ../../../customer-usecases/${customer}-${api}/${api}/${tech}/urlsUsecases/${TECH}UsecasesUrls.py ${customer}.py
+    done
+
+    mkdir -p /var/www/api/${tech}/sql/Usecases && cd /var/www/api/${tech}/sql/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../customer-usecases/${customer}-${api}/${api}/${tech}/sql/Usecases/${tech}AddUsecases.sql ${customer}.sql
+    done
+}
+
+
+
+System_swaggerConverter() {
+    cd /tmp
+    wget https://github.com/kevinswiber/postman2openapi/releases/download/1.2.1/postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
+    tar fxz postman2openapi-1.2.1-x86_64-unknown-linux-musl.tar.gz
+    cp postman2openapi-1.2.1-x86_64-unknown-linux-musl/postman2openapi /usr/local/bin
+    chmod 755 /usr/local/bin/postman2openapi
+    postman2openapi -f yaml /var/www/api/doc/postman.json > /var/www/api/doc/swagger0.yaml
+    python /var/www/api/doc/openapi-fix.py -i /var/www/api/doc/swagger0.yaml -o /var/www/api/doc/swagger.yaml -u /var/www/api/f5xc/F5XCUrls.py
+    rm -f /var/www/api/doc/swagger0.yaml
+}
+
+
+
+System_about() {
+    echo "{\"Component\": \"$shortName\"," > $workingFolderPath/var/www/api/doc/about.json
+    echo "\"Version\": \"`cat /var/www/api/CONTAINER-DEBIAN-PKG/DEBIAN-PKG/deb.release`\"," >> $workingFolderPath/var/www/api/doc/about.json
+    cd /var/www/api
+    currentGitCommit=$(git log --pretty=oneline | head -1 | awk '{print $1}')
+    cd -
+    echo "\"Commit\": \"$currentGitCommit\"}" >> $workingFolderPath/var/www/api/doc/about.json
+}
+
+
+
 
 # ##################################################################################################################################################
 # Main

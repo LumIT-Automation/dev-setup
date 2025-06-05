@@ -69,9 +69,9 @@ System_useCasesSymlinks() {
         return
     fi
 
-    api=api-f5
-    tech=f5
-    TECH=F5
+    api=api-f5xc
+    tech=f5xc
+    TECH=F5XC
     customers=$(
         for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d -name "*${api}*"`; do 
             basename $c | sed "s/-${api}//"
