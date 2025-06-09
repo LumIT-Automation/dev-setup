@@ -4,7 +4,7 @@
 
   config.vm.define :apisecops do |api|
     api.vm.provider "virtualbox" do |vb|
-      vb.gui = false
+      vb.gui = true
       vb.memory = "4096"
       vb.cpus = 2
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # https://serverfault.com/questions/453185/vagrant-virtualbox-dns-10-0-2-3-not-working
