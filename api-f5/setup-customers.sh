@@ -112,7 +112,9 @@ System_useCasesSymlinks() {
     
     mkdir -p /var/www/api/api/Usecases && cd /var/www/api/api/Usecases
     for customer in $customers; do
-        ln -sf ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/settings_custom.py settings_custom_${customer}.py
+        if [ -r ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/settings_custom.py ]; then
+            ln -sf ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/settings_custom.py settings_custom_${customer}.py
+        fi
     done
 
     mkdir -p /var/www/api/${tech}/controllers/${TECH}/Usecases && cd /var/www/api/${tech}/controllers/${TECH}/Usecases
