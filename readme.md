@@ -29,6 +29,14 @@ A Vagrant virtual machine is set up and run for each node (a subnet where all no
       vagrant plugin install vagrant-fsnotify
       vagrant plugin install vagrant-disksize
 
+      - Known issue and workaround (https://github.com/hashicorp/vagrant/issues/13550):
+      - Affected systems: Debian 13, Ubuntu 24.04
+      The Ruby Gem dotenv.rb installed from the vagrant-env plugin is from an outdated version.
+      The "exists" method should be renamed as "exist":
+      sed -i -e 's/exists?/exist?/g' ~/.vagrant.d/gems/3.3.6/gems/dotenv-0.11.1/lib/dotenv.rb
+        
+
+
 - If using libvirt:
 
       sudo apt install -y qemu-system libvirt-daemon-system libvirt-dev ebtables libguestfs-tools
