@@ -25,6 +25,10 @@
     # Synced folders.
     if OS.linux?
       uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs", nfs_version: 4
+
+      if File.directory?(File.expand_path("../customer-usecases"))
+        uib.vm.synced_folder "../customer-usecases", "/var/www/usecases", type: "nfs", nfs_version: 4
+      end
     end
     if OS.mac?
       uib.vm.synced_folder "../ui-backend", "/var/www/ui-backend", type: "nfs", nfs_udp: false
@@ -42,6 +46,10 @@
     uib.vm.provision "shell" do |s|
       s.path = "uib/bootstrap.sh"
       s.args = ["--action", "install"]
+    end
+    uib.vm.provision "customers", type: "shell" do |s|
+      s.path = "uib/setup-customers.sh"
+      s.args = ["--action", "run"]
     end
     uib.vm.provision "db", type: "shell" do |s|
       s.path = "uib/db-bootstrap.sh"

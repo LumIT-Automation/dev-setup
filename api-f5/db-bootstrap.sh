@@ -74,7 +74,7 @@ System_mariadbRestore()
     
     # Load sql for usecases.
     for sqlFile in `basename /var/www/api/f5/sql/Usecases/*sql`; do
-        if [ -e $sqlFile ]; then # check if the file is a broken symlink. 
+        if [ -e "/var/www/api/f5/sql/Usecases/$sqlFile" ]; then # check if the file is a broken symlink. 
             mysql api < /var/www/api/f5/sql/Usecases/${sqlFile}
         fi
     done
