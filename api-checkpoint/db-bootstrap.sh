@@ -72,9 +72,9 @@ System_mariadbRestore()
     mysql api < /var/www/api/checkpoint/sql/checkpoint.data.sql
     
     # Load sql for usecases.
-    for sqlFile in `basename /var/www/api/checkpoint/sql/Usecases/*sql`; do
-        if [ -e "/var/www/api/checkpoint/sql/Usecases/$sqlFile" ]; then # check if the file is a broken symlink.
-            mysql api < /var/www/api/checkpoint/sql/Usecases/${sqlFile}
+    for sqlFile in `ls /var/www/api/checkpoint/sql/Usecases/*sql`; do 
+        if [ -e "$sqlFile" ]; then # check if the file is a broken symlink.
+            mysql api < "$sqlFile"
         fi
     done
 

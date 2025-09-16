@@ -71,13 +71,12 @@ System_mariadbRestore()
     mysql uib < /var/www/ui-backend/ui_backend/sql/uib.schema.sql
     mysql uib < /var/www/ui-backend/ui_backend/sql/uib.data.sql
 
-    # Load sql for usecases.
-    for sqlFile in `basename /var/www/ui-backend/ui_backend/sql/Usecases/*sql`; do
-        if [ -e "/var/www/ui-backend/ui_backend/sql/Usecases/$sqlFile" ]; then # check if the file is a broken symlink. 
-            mysql uib < /var/www/ui-backend/ui_backend/sql/Usecases/${sqlFile}
+     # Load sql for usecases.
+    for sqlFile in `ls /var/www/ui-backend/ui_backend/sql/Usecases/*sql`; do 
+        if [ -e "$sqlFile" ]; then # check if the file is a broken symlink.
+            mysql api < "$sqlFile"
         fi
     done
-
 
     if [ -f /var/www/ui-backend/ui_backend/sql/uib.data-development.sql ]; then
         mysql uib < /var/www/ui-backend/ui_backend/sql/uib.data-development.sql
