@@ -98,8 +98,8 @@ System_useCasesSymlinks() {
         #cd /var/www/customer-usecases
         #mkdir -p ${customer}-${api}/${api}/${tech}/models/Asset && cd ${customer}-${api}/${api}/${tech}/models/Asset && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/models/Asset/Usecases .
 
-        #cd /var/www/customer-usecases
-        #mkdir -p ${customer}-${api}/${api}/${tech}/helpers && cd ${customer}-${api}/${api}/${tech}/helpers && ln -sf ../../../../../usecases/${customer}-${api}/${api}/${tech}/helpers/Usecases .
+        cd /var/www/customer-usecases
+        mkdir -p ${customer}-${api}/${api}/${tech}/helpers && cd ${customer}-${api}/${api}/${tech}/helpers && ln -sf ../../../../../usecases/${customer}-${api}/${api}/${tech}/helpers/Usecases .
         #cd /var/www/customer-usecases
         #mkdir -p ${customer}-${api}/${api}/${tech}/helpers/decorators && cd ${customer}-${api}/${api}/${tech}/helpers/decorators && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/helpers/decorators/Usecases .
 
@@ -143,10 +143,10 @@ System_useCasesSymlinks() {
     #    ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/models/Asset/Usecases $customer
     #done
 
-    #mkdir -p /var/www/api/${tech}/helpers/Usecases && cd /var/www/api/${tech}/helpers/Usecases
-    #for customer in $customers; do
-    #    ln -sf ../../../../customer-usecases/${customer}-${api}/${api}/${tech}/helpers/Usecases $customer
-    #done
+    mkdir -p /var/www/api/${tech}/helpers/Usecases && cd /var/www/api/${tech}/helpers/Usecases
+    for customer in $customers; do
+        ln -sf ../../../../customer-usecases/${customer}-${api}/${api}/${tech}/helpers/Usecases $customer
+    done
 
     #mkdir -p /var/www/api/${tech}/helpers/decorators/Usecases && cd /var/www/api/${tech}/helpers/decorators/Usecases
     #for customer in $customers; do
