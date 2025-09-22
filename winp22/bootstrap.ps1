@@ -50,7 +50,8 @@ VaultAddress=10.32.21.32
 VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
-SyncSafeName=SafeVaultSynchronizer202506
+# NOTE: a clean safe name (not present in CyberArk) must be provided
+SyncSafeName=" + [guid]::NewGuid().ToString() + "
 
 # CONJUR DETAILS
 
@@ -95,16 +96,14 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
     Start-Process -Wait -FilePath "C:\VC_redist.x86.exe" -ArgumentList "/S" -PassThru
 }
 
-# Change SyncSafeName= (above) at every new installation.
-# @todo: safes cleanup?
-
 # Install.
 # Note: CyberArk and Conjur endpoints must be available when installing.
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
 # Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE. For more information, see VaultConjurSynchronizer.exe.config.
-# @todo: not working.
-#(Get-Content "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Out-File -FilePath "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
+Start-Sleep -Seconds 2
+# @todo: the following line does not work.
+(Get-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
 
 # Run service and set as automatically start upon boot.
 Set-Service CyberArkVaultConjurSynchronizer -StartupType Automatic
