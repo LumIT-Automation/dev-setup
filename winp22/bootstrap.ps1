@@ -1,3 +1,5 @@
+# @todo: 10.32.21.33	democyberark.demo.local into hosts file.
+
 # Install and configure CyberArk Vault Synchronizer.
 if (!(Test-Path C:\VaultConjurSynchronizer-Rls-v13.5.zip)) {
     Invoke-WebRequest "http://10.0.111.32:8400/VaultConjurSynchronizer-Rls-v13.5.zip" -OutFile "C:\VaultConjurSynchronizer-Rls-v13.5.zip"
