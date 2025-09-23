@@ -9,6 +9,8 @@ if (!(Test-Path C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe)) 
     Expand-Archive C:\VaultConjurSynchronizer-Rls-v13.5.zip -DestinationPath C:\VaultConjurSynchronizer
 }
 
+$RANDOM = -join ((48..57) + (97..122) | Get-Random -Count 8 | % {[char]$_})
+
 "
 ######################################################################
 ### Welcome to the CyberArk Vault Synchronizer Silent installation ###
@@ -53,7 +55,7 @@ VaultPort=1858
 
 # Enter the name of the Synchronzer Safe for storing accounts used to manage this Vault Synchronizer
 # NOTE: a clean safe name (not present in CyberArk) must be provided
-SyncSafeName=" + [guid]::NewGuid().ToString() + "
+SyncSafeName=Safe_" + $RANDOM + "
 
 # CONJUR DETAILS
 
@@ -70,11 +72,14 @@ ConjurAccount=dgs-lab
 # LOB (LINE-OF-BUSINESS) DETAILS (FOR CONJUR ENTERPRISE WITH PAS >= 11.4 / PRIVILEGE CLOUD ONLY)
 
 # Enter a name for the LOB
-LOBName=LOB_Demo202506
+LOBName=LOB_" + $RANDOM + "
 
 # Enter the platform used by the LOB account (default: CyberArk Vault)
 LOBPlatform=CyberArk Vault
 " | Out-File -FilePath C:\VaultConjurSynchronizer\Installation\silent.ini
+
+Write-Output "--> SyncSafeName: Safe_$RANDOM"
+Write-Output "--> LOBName: LOB_$RANDOM"
 
 # Install all certificates from 10.0.111.32:8400 into RootCerts.
 if (!(Test-Path C:\conjur.cer)) {
@@ -102,12 +107,13 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 # Note: CyberArk and Conjur endpoints must be available when installing.
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
-# Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE. For more information, see VaultConjurSynchronizer.exe.config.
+# Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE.
 Start-Sleep -Seconds 2
 # @todo: the following line does not work.
-(Get-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
+(Get-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config.modified"
+Move-Item -Force "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config.modified" "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
 
-# Run service and set as automatically start upon boot.
+# Run service and set as automatically starting upon boot.
 Set-Service CyberArkVaultConjurSynchronizer -StartupType Automatic
 start-Service CyberArkVaultConjurSynchronizer
 
