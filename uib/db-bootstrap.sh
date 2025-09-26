@@ -74,7 +74,7 @@ System_mariadbRestore()
      # Load sql for usecases.
     for sqlFile in `ls /var/www/ui-backend/ui_backend/sql/Usecases/*sql`; do 
         if [ -e "$sqlFile" ]; then # check if the file is a broken symlink.
-            mysql api < "$sqlFile"
+            mysql uib < "$sqlFile"
         fi
     done
 
