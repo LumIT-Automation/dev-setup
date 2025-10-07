@@ -1,0 +1,12 @@
+{
+    "service": {
+        "id": "api-extremenetworks",
+        "name": "api-extremenetworks",
+        "tags": [
+            "api-extremenetworks"
+        ],
+        "port": 80
+    },
+    "enable_syslog": true,
+    "log_level": "info"
+}
