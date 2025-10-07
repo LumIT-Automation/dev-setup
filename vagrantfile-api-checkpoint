@@ -11,7 +11,7 @@
     end
 
     api.vm.provider "libvirt" do |libvrt|
-      libvrt.memory = "1024"
+      libvrt.memory = "2048"
       libvrt.cpus = 2
     end
 
