@@ -6,8 +6,8 @@ After=network-online.target
 
 [Service]
 Type=idle
-User=consul
-Group=consul
+#User=consul
+#Group=consul
 ExecStart=/usr/bin/consul.sh start
 ExecReload=/usr/bin/consul.sh reload
 ExecStop=/usr/bin/consul.sh stop

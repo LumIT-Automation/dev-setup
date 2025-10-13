@@ -3,6 +3,7 @@
 set -e
 
 function start() {
+    echo "{\"last_seen_unix\":$(date +%s)}" > /var/lib/consul/server_metadata.json
     /usr/bin/consul agent -server -enable-local-script-checks=true -bootstrap-expect=1 -bind=10.0.111.254 -config-dir=/etc/consul.d/ -data-dir=/var/lib/consul/
 }
 
