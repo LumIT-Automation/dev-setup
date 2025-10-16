@@ -88,8 +88,12 @@ System_useCasesSymlinks() {
 
         cd /var/www/customer-usecases
         mkdir -p ${customer}-${api}/${api}/${tech}/controllers/${TECH} && cd ${customer}-${api}/${api}/${tech}/controllers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/controllers/${TECH}/Usecases .
-        cd /var/www/customer-usecases
-        mkdir -p ${customer}-${api}/${api}/${tech}/serializers/${TECH} && cd ${customer}-${api}/${api}/${tech}/serializers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases .
+
+        if [ -d "/var/www/usecases/${customer}-${api}/${api}/${tech}/serializers" ]; then
+            cd /var/www/customer-usecases
+            mkdir -p ${customer}-${api}/${api}/${tech}/serializers/${TECH} && cd ${customer}-${api}/${api}/${tech}/serializers/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases .
+        fi
+
         cd /var/www/customer-usecases
         mkdir -p ${customer}-${api}/${api}/${tech}/models/${TECH} && cd ${customer}-${api}/${api}/${tech}/models/${TECH} && ln -sf ../../../../../../usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases .
 
@@ -142,10 +146,12 @@ System_useCasesSymlinks() {
     for customer in $customers; do
         ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/models/${TECH}/Usecases $customer
     done
-    mkdir -p /var/www/api/${tech}/serializers/${TECH}/Usecases && cd /var/www/api/${tech}/serializers/${TECH}/Usecases
-    for customer in $customers; do
-        ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases $customer
-    done
+    if [ -d "/var/www/usecases/${customer}-${api}/${api}/${tech}/serializers" ]; then
+        mkdir -p /var/www/api/${tech}/serializers/${TECH}/Usecases && cd /var/www/api/${tech}/serializers/${TECH}/Usecases
+        for customer in $customers; do
+            ln -sf ../../../../../customer-usecases/${customer}-${api}/${api}/${tech}/serializers/${TECH}/Usecases $customer
+        done
+    fi
 
     if [ -d "/var/www/usecases/${customer}-${api}/${api}/${tech}/controllers/Asset" ]; then
         mkdir -p /var/www/api/${tech}/controllers/Asset/Usecases && cd /var/www/api/${tech}/controllers/Asset/Usecases
