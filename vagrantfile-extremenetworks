@@ -19,7 +19,7 @@
     extreme.vm.box = "debian/bookworm64"
 
     # Network.
-    extreme.vm.network :private_network, ip: "10.0.200.10"
+    extreme.vm.network :private_network, ip: "10.0.111.33"
     extreme.vm.hostname = "api"
 
     # Synced folders.

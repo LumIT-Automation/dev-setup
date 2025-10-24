@@ -68,10 +68,12 @@ System_mariadbRestore()
     mysql -e "GRANT USAGE ON *.* TO 'api'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
     mysql -e "GRANT ALL privileges ON *.* TO 'api'@'%';"
 
-    mysql api < /var/www/api/extreme/sql/schema.sql
-    mysql api < /var/www/api/extreme/sql/data.sql
-    if [ -f /var/www/api/extreme/sql/data-development.sql ]; then
-        mysql api < /var/www/api/extreme/sql/data-development.sql
+    if [ -f /var/www/api/extreme/sql/schema.sql ] && [ -f /var/www/api/extreme/sql/data.sql ]; then
+      mysql api < /var/www/api/extreme/sql/schema.sql
+      mysql api < /var/www/api/extreme/sql/data.sql
+      if [ -f /var/www/api/extreme/sql/data-development.sql ]; then
+          mysql api < /var/www/api/extreme/sql/data-development.sql
+      fi
     fi
 }
 
