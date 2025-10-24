@@ -157,6 +157,13 @@ System_useCasesSymlinks() {
 
 
 
+System_useCasesPipInstall() {
+    if [ -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements ]; then
+        printf "\n* Install the python packages needed for the customization...\n"
+        pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements
+    fi
+}
+
 # ##################################################################################################################################################
 # Main
 # ##################################################################################################################################################

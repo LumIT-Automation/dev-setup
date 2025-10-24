@@ -35,6 +35,7 @@ function System_run()
             printf "\n* Configuring system...\n"
 
             System_useCasesSymlinks
+            System_useCasesPipInstall
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -200,6 +201,13 @@ System_useCasesSymlinks() {
 }
 
 
+
+System_useCasesPipInstall() {
+    if [ -r /var/www/usecases/${customer}-${api}/${api}/api/Usecases/pip.requirements ]; then
+        printf "\n* Install the python packages needed for the customization...\n"
+        pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/api/Usecases/pip.requirements
+    fi
+}
 
 # ##################################################################################################################################################
 # Main
