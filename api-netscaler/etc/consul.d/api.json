@@ -1,0 +1,12 @@
+{
+  "service": {
+    "id": "api-netscaler",
+    "name": "api-netscaler",
+    "tags": [
+      "api-netscaler"
+    ],
+    "port": 80
+  },
+  "enable_syslog": true,
+  "log_level": "info"
+}
