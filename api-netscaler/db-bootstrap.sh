@@ -73,8 +73,7 @@ System_mariadbRestore()
     mysql api < /var/www/api/netscaler/sql/netscaler.data.sql
     
     # Load sql for usecases.
-     # Load sql for usecases.
-    for sqlFile in `ls /var/www/api/netscaler/sql/Usecases/*sql`; do
+    for sqlFile in `find /var/www/api/netscaler/sql/Usecases -type f -name '*sql'`; do
         if [ -e "$sqlFile" ]; then # check if the file is a broken symlink.
             mysql api < "$sqlFile"
         fi
