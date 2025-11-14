@@ -35,6 +35,7 @@ function System_run()
             printf "\n* Configuring system...\n"
 
             System_useCasesSymlinks
+            System_useCasesPipInstall
         else
             echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
@@ -115,6 +116,9 @@ System_useCasesSymlinks() {
         if [ -e ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/settings_custom.py ]; then
             ln -sf ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/settings_custom.py settings_custom_${customer}.py
         fi
+        if [ -e ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom ]; then
+            ln -sf ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom pip.requirements_custom_${customer}
+        fi
     done
 
     mkdir -p /var/www/${api}/${tech}/controllers/${TECH}/Usecases && cd /var/www/${api}/${tech}/controllers/${TECH}/Usecases
@@ -158,10 +162,12 @@ System_useCasesSymlinks() {
 
 
 System_useCasesPipInstall() {
-    if [ -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements ]; then
-        printf "\n* Install the python packages needed for the customization...\n"
-        pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements
-    fi
+    for customer in $customers; do
+        if [ -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom ]; then
+            printf "\n* Install the python packages needed for the customization...\n"
+            pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom
+        fi
+    done
 }
 
 # ##################################################################################################################################################
