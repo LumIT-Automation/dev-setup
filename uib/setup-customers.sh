@@ -116,8 +116,8 @@ System_useCasesSymlinks() {
         if [ -e ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/settings_custom.py ]; then
             ln -sf ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/settings_custom.py settings_custom_${customer}.py
         fi
-        if [ -e ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom ]; then
-            ln -sf ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom pip.requirements_custom_${customer}
+        if [ -e ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements ]; then
+            ln -sf ../../../customer-usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements pip.requirements_custom_${customer}
         fi
     done
 
@@ -163,9 +163,9 @@ System_useCasesSymlinks() {
 
 System_useCasesPipInstall() {
     for customer in $customers; do
-        if [ -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom ]; then
+        if [ -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements ]; then
             printf "\n* Install the python packages needed for the customization...\n"
-            pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements_custom
+            pip install --break-system-packages -r /var/www/usecases/${customer}-${api}/${api}/backend/Usecases/pip.requirements
         fi
     done
 }
