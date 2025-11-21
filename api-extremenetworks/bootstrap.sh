@@ -140,7 +140,7 @@ EOF
 
     # Python 3.13.
     # https://community.home-assistant.io/t/python-3-13-backport-for-debian-12-bookworm/842333
-    wget -qO- https://pascalroeleven.nl/deb-pascalroeleven.gpg
+    wget -qO- https://pascalroeleven.nl/deb-pascalroeleven.gpg > /etc/apt/keyrings/deb-pascalroeleven.gpg
     cat > /etc/apt/sources.list.d/pascalroeleven.sources<<EOF
 Types: deb
 URIs: http://deb.pascalroeleven.nl/python3.13
