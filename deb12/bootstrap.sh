@@ -31,7 +31,7 @@ function System_run()
 {
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
-            echo "This script requires a fresh-installation of Debian Trixie..."
+            echo "This script requires a fresh-installation of Debian Bookworm..."
 
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
@@ -39,7 +39,7 @@ function System_run()
             System_installDependencies
             System_installPodman
         else
-            echo "A Debian Trixie operating system is required for the installation. Aborting."
+            echo "A Debian Bookworm operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -54,7 +54,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'trixie' /etc/os-release; then
+        if ! grep -qi 'bookworm' /etc/os-release; then
             return 0
         fi
     else
