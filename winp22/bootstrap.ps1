@@ -108,13 +108,13 @@ if (!(Test-Path C:\VC_redist.x64.exe)) {
 C:\VaultConjurSynchronizer\Installation\InstallerLauncher.exe trustPVWAAndConjurCert vaultAdminUsername="Administrator" vaultAdminPassword="Ux7ScZ1hs!" conjurUsername="admin" conjurApiKey="CyberArk@123!"
 
 # Set the USE_DISK_SIGNATURE parameter in VaultConjurSynchronizer.exe.config to FALSE.
-Start-Sleep -Seconds 2
+Copy-Item "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config" "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.original"
+
 # @todo: the following line does not work.
-(Get-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config.modified"
-Move-Item -Force "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config.modified" "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
+(Get-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config") -replace '<add key="USE_DISK_SIGNATURE" value=true" />', '<add key="USE_DISK_SIGNATURE" value=false" />' | Set-Content -Path "C:\Program Files\CyberArk\Synchronizer\VaultConjurSynchronizer.exe.config"
 
 # Run service and set as automatically starting upon boot.
 Set-Service CyberArkVaultConjurSynchronizer -StartupType Automatic
-start-Service CyberArkVaultConjurSynchronizer
+Start-Service CyberArkVaultConjurSynchronizer
 
 # Logs: %SystemRoot%\System32\winevt\Logs -> Event Viewer.
