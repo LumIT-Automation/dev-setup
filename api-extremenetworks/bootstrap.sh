@@ -128,7 +128,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
-    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim tree # base.
+    apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim tree locales-all # base.
     apt install -y python3-pip python3-dev # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
@@ -137,6 +137,20 @@ EOF
     apt install -y redis-server # redis.
     apt install -y sqlite3
     apt install -y rpm # for building rh packages.
+
+    # Python 3.13.
+    # https://community.home-assistant.io/t/python-3-13-backport-for-debian-12-bookworm/842333
+    wget -qO- https://pascalroeleven.nl/deb-pascalroeleven.gpg
+    cat > /etc/apt/sources.list.d/pascalroeleven.sources<<EOF
+Types: deb
+URIs: http://deb.pascalroeleven.nl/python3.13
+Suites: bookworm-backports
+Components: main
+Signed-By: /etc/apt/keyrings/deb-pascalroeleven.gpg
+EOF
+
+    apt update
+    apt install -y python3.13 python3.13-venv python3.13-dev
 
     apt clean
 }
