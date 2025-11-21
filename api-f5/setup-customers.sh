@@ -74,7 +74,7 @@ System_useCasesSymlinks() {
     tech=f5
     TECH=F5
     customers=$(
-        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d -name "*${api}*"`; do 
+        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d -name "*${api}"`; do 
             basename $c | sed "s/-${api}//"
         done
     )
@@ -129,12 +129,16 @@ System_useCasesSymlinks() {
         cd /var/www/customer-usecases
         mkdir -p ${customer}-${api}/${api}/${tech}/sql && cd ${customer}-${api}/${api}/${tech}/sql && ln -sf ../../../../../usecases/${customer}-${api}/${api}/${tech}/sql/Usecases .
     done
-    
+   
+    set -vx
     if [ -d "/var/www/usecases/${customer}-${api}/${api}/api" ]; then
         mkdir -p /var/www/api/api/Usecases && cd /var/www/api/api/Usecases
         for customer in $customers; do
             if [ -e ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/settings_custom.py ]; then
                 ln -sf ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/settings_custom.py settings_custom_${customer}.py
+            fi
+            if [ -e ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/pip.requirements ]; then
+                ln -sf ../../../customer-usecases/${customer}-${api}/${api}/api/Usecases/pip.requirements pip.requirements_custom_${customer}
             fi
         done
     fi

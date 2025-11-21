@@ -74,7 +74,7 @@ System_useCasesSymlinks() {
     tech=checkpoint
     TECH=CheckPoint
     customers=$(
-        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d -name "*${api}*"`; do 
+        for c in `find /var/www/usecases -maxdepth 1 -mindepth 1 -type d -name "*${api}"`; do 
             basename $c | sed "s/-${api}//"
         done
     )
