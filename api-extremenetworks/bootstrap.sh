@@ -90,6 +90,15 @@ function System_proxySet()
 
 
 
+function System_vagrantBoxFixes()
+{
+    printf "\n* Applying fixes...\n"
+
+    sed -i "s|vagrant:x:1000:1000::/home/vagrant:/bin/sh|vagrant:x:1000:1000::/home/vagrant:/bin/bash|g" /etc/passwd
+}
+
+
+
 function System_installDependencies()
 {
     printf "\n* Preparing the environment: removing the cdrom entry in apt/sources.list, if present...\n"
