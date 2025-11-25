@@ -36,6 +36,7 @@ function System_run()
             System_rootPasswordConfig "$SYSTEM_USERS_PASSWORD"
             System_sshConfig
             System_proxySet "$PROXY"
+            System_boxFixes
             System_installDependencies
             System_installPodman
         else
@@ -100,6 +101,16 @@ function System_proxySet()
 
     export http_proxy=$1
     export https_proxy=$1
+}
+
+
+
+function System_boxFixes()
+{
+    printf "\n* Applying box fixes...\n"
+
+    sed -i 's|vagrant:x:1000:1000::/home/vagrant:/bin/sh|vagrant:x:1000:1000::/home/vagrant:/bin/bash|' /etc/passwd
+
 }
 
 

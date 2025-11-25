@@ -22,6 +22,17 @@
     empty.vm.network :private_network, ip: "10.0.111.206"
     empty.vm.hostname = "deb13"
 
+    # Synced folders - /vagrant.
+    if OS.linux?
+      empty.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_version: 4
+    end
+    if OS.mac?
+      empty.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_udp: false
+    end
+    if OS.windows?
+      empty.vm.synced_folder ".", "/vagrant", type: "smb"
+    end
+
     # Provision.
     empty.vm.provision "shell" do |s|
       s.path = "deb13/bootstrap.sh"
