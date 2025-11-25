@@ -19,7 +19,7 @@
     empty.vm.box = "cloud-image/debian-13"
 
     # Network.
-    empty.vm.network :private_network, ip: "10.0.111.206"
+    empty.vm.network :private_network, ip: "10.0.111.207"
     empty.vm.hostname = "deb13"
 
     # Synced folders - /vagrant.
