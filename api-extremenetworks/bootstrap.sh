@@ -32,9 +32,10 @@ function System_run()
     if [ "$ACTION" == "install" ]; then
         if System_checkEnvironment; then
             printf "\n* Installing system...\n"
-            echo "This script requires a fresh-installation of Debian Bookworm..."
+            echo "This script requires a fresh-installation of Debian Trixie..."
 
             System_proxySet "$PROXY"
+            System_vagrantBoxFixes
             System_installDependencies
             System_pythonSetup
             System_syslogngInstall
@@ -45,7 +46,7 @@ function System_run()
             System_redisSetup
             System_pipInstallDaemon_api
         else
-            echo "A Debian Bookworm operating system is required for the installation. Aborting."
+            echo "A Debian Trixie operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -60,7 +61,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 13 (trixie)' /etc/os-release; then
             return 1
         fi
     else
@@ -138,28 +139,14 @@ EOF
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade    
 
     apt install -y wget git unzip net-tools dnsutils dos2unix curl gpg vim tree locales-all # base.
-    apt install -y python3-pip python3-dev # base python + dev.
+    apt install -y python3-pip python3-dev pkg-config # base python + dev.
     apt install -y python3-venv # for making the .deb.
     apt install -y mariadb-server libmariadb-dev # mariadb server + dev (for the mysqlclient pip package).
-    apt install -y php8.2-mysql php8.2-mbstring # php and php for mysql.
-    apt install -y libapache2-mod-php8.2 libapache2-mod-wsgi-py3 # apache for php and python.
+    apt install -y php-mysql php-mbstring # php and php for mysql.
+    apt install -y libapache2-mod-php libapache2-mod-wsgi-py3 # apache for php and python.
     apt install -y redis-server # redis.
     apt install -y sqlite3
     apt install -y rpm # for building rh packages.
-
-    # Python 3.13.
-    # https://community.home-assistant.io/t/python-3-13-backport-for-debian-12-bookworm/842333
-    wget -qO- https://pascalroeleven.nl/deb-pascalroeleven.gpg > /etc/apt/keyrings/deb-pascalroeleven.gpg
-    cat > /etc/apt/sources.list.d/pascalroeleven.sources<<EOF
-Types: deb
-URIs: http://deb.pascalroeleven.nl/python3.13
-Suites: bookworm-backports
-Components: main
-Signed-By: /etc/apt/keyrings/deb-pascalroeleven.gpg
-EOF
-
-    apt update
-    apt install -y python3.13 python3.13-venv python3.13-dev
 
     apt clean
 }
@@ -170,7 +157,9 @@ function System_pythonSetup()
 {
     printf "\n* Installing pip dependencies...\n"
 	
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.13 1
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13 1
+    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 # best practice for simply creating a symlink.
 
     # pip Requirements files are used to hold the result from pip freeze for the purpose of achieving repeatable installations.
     # In this case, your requirement file contains a pinned version of everything that was installed when pip freeze was run.
@@ -184,7 +173,15 @@ function System_pythonSetup()
     # SomeProject[foo, bar]
     # SomeProject~=1.4.2
 
-    pip install --break-system-packages -r /var/www/api/api/pip.requirements # pip install requirements.
+    # Install pip dependencies in a virtual env.
+    mkdir -p /var/lib/python-venv
+    python3.13 -m venv /var/lib/python-venv
+    source /var/lib/python-venv/bin/activate
+
+    python3.13 -m pip install --upgrade pip
+    python3.13 -m pip install -r /var/www/api/api/pip.requirements
+
+    deactivate
 }
 
 

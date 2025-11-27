@@ -150,7 +150,7 @@ EOF
     #apt-mark hold grub-pc grub-pc-bin
     #DEBIAN_FRONTEND=noninteractive apt -y upgrade
 
-    apt install -y wget git unzip dnsutils net-tools dos2unix openconnect locales-all # base.
+    apt install -y wget git unzip dnsutils net-tools dos2unix openconnect locales-all rsyslog # base.
     apt clean
 }
 

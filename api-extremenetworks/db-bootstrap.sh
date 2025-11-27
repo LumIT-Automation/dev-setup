@@ -32,7 +32,7 @@ function System_run()
 
             System_mariadbRestore
         else
-            echo "A Debian Bookworm operating system is required for the installation. Aborting."
+            echo "A Debian Trixie operating system is required for the installation. Aborting."
             exit 1
         fi
     else
@@ -47,7 +47,7 @@ function System_run()
 function System_checkEnvironment()
 {
     if [ -f /etc/os-release ]; then
-        if ! grep -qi 'Debian GNU/Linux 12 (bookworm)' /etc/os-release; then
+        if ! grep -qi 'Debian GNU/Linux 13 (trixie)' /etc/os-release; then
             return 1
         fi
     else
