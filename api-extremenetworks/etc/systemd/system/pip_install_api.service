@@ -11,7 +11,7 @@ RemainAfterExit=no
 Restart=always
 RestartSec=10
 KillMode=process
-ExecStart=pip install --break-system-packages -r /var/www/api/api/pip.requirements
+ExecStart=/usr/bin/pipInstall.sh
 
 StandardOutput=syslog
 StandardError=syslog

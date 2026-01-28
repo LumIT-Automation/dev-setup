@@ -365,7 +365,9 @@ System_pipInstallDaemon_api()
     printf "\n* Setting up Systemd service for installing pip dependencies from project's requirements file...\n"
 
     # pip install service.
+    cp -f /vagrant/api-extremenetworks/usr/bin/pipInstall.sh /usr/bin/
     cp -f /vagrant/api-extremenetworks/etc/systemd/system/pip_install_api.service /etc/systemd/system/pip_install_api.service
+    chmod +x /usr/bin/pipInstall.sh
     chmod 644 /etc/systemd/system/pip_install_api.service
 
     # Watchdog service: monitor folder for changes.
