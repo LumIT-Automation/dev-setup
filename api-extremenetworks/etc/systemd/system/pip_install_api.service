@@ -8,8 +8,10 @@ Wants=systemd-networkd-wait-online.service
 [Service]
 Type=idle
 RemainAfterExit=no
+#Restart=on-failure
+#RestartSec=10
 Restart=always
-RestartSec=10
+RestartSec=60
 KillMode=process
 ExecStart=/usr/bin/pipInstall.sh
 

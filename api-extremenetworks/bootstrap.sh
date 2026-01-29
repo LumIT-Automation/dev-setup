@@ -371,16 +371,16 @@ System_pipInstallDaemon_api()
     chmod 644 /etc/systemd/system/pip_install_api.service
 
     # Watchdog service: monitor folder for changes.
-    cp -f /vagrant/api-extremenetworks/etc/systemd/system/pip_install_api.path /etc/systemd/system/pip_install_api.path
-    chmod 644 /etc/systemd/system/pip_install_api.path
+    # To have this monitor working, fsnotify: true, :mount_options => ["nolock" ] has to be enabled in the Vagrant file, synced folders.
+    # Also, change pip_install_api.service with: Restart=on-failure and RestartSec=10. Current behaviour is instead polling.
+    #cp -f /vagrant/api-extremenetworks/etc/systemd/system/pip_install_api.path /etc/systemd/system/pip_install_api.path
+    #chmod 644 /etc/systemd/system/pip_install_api.path
 
     systemctl daemon-reload
     systemctl enable systemd-networkd.service systemd-networkd-wait-online.service
 
-    systemctl enable pip_install_api.path
-    systemctl enable pip_install_api.service
-    systemctl stop pip_install_api.path
-    systemctl start pip_install_api.path
+    systemctl enable pip_install_api.service && systemctl start pip_install_api.path
+    #systemctl enable pip_install_api.path && systemctl stop pip_install_api.path
 }
 
 
